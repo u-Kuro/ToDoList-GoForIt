@@ -38,10 +38,10 @@ app.use(express.static('public/scripts'));
 
 // Create Session (Always on Top of Routes)
 var sessionStore = new MySQLStore({
-    host: process.env.database_host,
-    port: process.env.database_port,
-    user: process.env.database_user,
-    database: process.env.database,
+    host: process.env.database_host || '127.0.0.1',
+    port: process.env.database_port || '3306',
+    user: process.env.database_user || 'root',
+    database: process.env.database || 'gfi_v1',
     clearExpired: true,
     checkExpirationInterval: 900000,
     expiration: 86400000,
