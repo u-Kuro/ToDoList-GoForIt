@@ -10,7 +10,7 @@ require('dotenv').config();
 const app = express();
 
 /// Create Server
-app.listen(process.env.PORT || 5500, () => {
+app.listen(5500, () => {
     console.log('Server started on port 5500');
 });
 
