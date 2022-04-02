@@ -58,8 +58,8 @@ var sessionStore = new MySQLStore({
 },db);
 
 app.use(session({
-    name: process.env.sess_name,
-	secret: process.env.sess_secret,
+    name: process.env.sess_name || 'asdadsads',
+	secret: process.env.sess_secret || 'asdsad',
 	resave: false,
 	saveUninitialized: false,
     store: sessionStore
