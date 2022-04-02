@@ -65,7 +65,7 @@ app.use(session({
     store: sessionStore
 }));
 
-///Define Routes
+////Define Routes
 app.use('/', require('./routes/pages'));
 app.use('/auth', require('./routes/auth'));
 app.use('/category', require('./routes/category'));
