@@ -2,7 +2,7 @@ var db = require('../db').db;
 
 exports.addcategory = (req, res) => {
     const { category_name } = req.body;
-    db.query('INSERT INTO category SET ? ', {users_id: req.session.users_id, category_name: category_name}, (error, results) => {
+    db.query('INSERT INTO category SET ? ', {users_id: req.session.users_id, category_name: category_name, user_chosen: 0} , (error, results) => {
         if(error){
             console.log(error);
         } else {
