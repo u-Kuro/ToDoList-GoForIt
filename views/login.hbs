@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <title>Home Page</title>
+</head>
+
+<body class="reg-log-bg">
+    
+    <section id="log" class="log">
+        <div class="log-container">
+            <form class="login-form" action="/auth/login" method="post">
+                <h1 class="cur-def">Login</h1>
+                <input type="text" name="useremail" id="useremail" placeholder="Username or Email" maxlength="255" required>
+                <input type="password" name="password" id="password" placeholder="Password" maxlength="255" required>
+                {{#if message}}
+                    <h4 class="cur-def alerts-{{messagecolor}}">{{message}}</h4> 
+                {{/if}}
+                <button class="cur-point" type="submit">Login</button>
+                <a href="/register"><h5 class="cur-point">Don't have an account?</h5></a>
+            </form>
+        </div>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+const express = require('express');
+const db = require('../db').db;
+const timeConverter = require('../public/scripts/additional').timeConverter;
+const timeConverterSQLtoHTML = require('../public/scripts/additional').timeConverterSQLtoHTML;
+const router = express.Router();
+var havemessage = require('../controllers/auth').havemessage;
+var message = require('../controllers/auth').message;
+
+router.get('/', (req, res) => {
+    if(req.session.isAuth){
+        return res.redirect('/home');
+    }
+    return res.render('login');
+});
+
+router.get('/register', (req, res) => {
+    if(req.session.isAuth){
+        return res.redirect('/home');
+    } if(havemessage){
+        return res.render('register',{
+            message: message
+        });
+    }
+    return res.render('register');
+});
+
+router.get('/login', (req, res) => {
+    if(req.session.isAuth){
+        return res.redirect('/home');
+    } else {
+        if(req.session.isNotLogged) {
+            req.session.isNotLogged = false;
+            return res.render('login', {
+                message_color: 'red',
+                message: 'Unauthorized, Login First'
+            });
+        }
+        return res.render('login')
+    }
+});
+
+router.get('/home', (req, res) => {
+    if(req.session.isAuth){
+        db.query('SELECT * FROM category WHERE users_id = ?', [req.session.users_id], async (error, catres) => {  
+                if(error){
+                    console.log(error);
+                }
+                if(catres.length>0){
+                    if(req.session.categoryischosen){
+                        const category_id = req.session.category_id;
+                        var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
+                        db.query(sql, 'Missed', async (error, mistasres) => {  if(error){console.log(error);}
+                            var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
+                            db.query(sql, 'Today', async (error, todtasres) => {  if(error){console.log(error);}
+                                var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
+                                db.query(sql, 'Soon', async (error, sootasres) => {  if(error){console.log(error);}
+                                    db.query('SELECT * FROM tasks WHERE category_id = ? ORDER BY end_date', category_id, async (error, tasres) => {  if(error){console.log(error);}
+                                        db.query('SELECT * FROM tasks WHERE users_id = ? ORDER BY end_date', req.session.users_id, async (error, newtasres) => {  if(error){console.log(error);}
+                                            if(tasres.length>0){
+                                                for(let i=0; i<tasres.length; i++){
+                                                    tasres[i].start_date = timeConverter(tasres[i].start_date);
+                                                    tasres[i].end_date = timeConverter(tasres[i].end_date);
+                                                }
+                                            }
+                                            if(newtasres.length>0){
+                                                for(let i=0;i<newtasres.length; i++){
+                                                    newtasres[i].start_date = timeConverterSQLtoHTML(newtasres[i].start_date);
+                                                    newtasres[i].end_date = timeConverterSQLtoHTML(newtasres[i].end_date);
+                                                }
+                                            }
+                                            if(mistasres.length>0){
+                                                for(let i=0; i<mistasres.length; i++){
+                                                    mistasres[i].start_date = timeConverter(mistasres[i].start_date);
+                                                    mistasres[i].end_date = timeConverter(mistasres[i].end_date);
+                                                }
+                                            }
+                                            if(todtasres.length>0){
+                                                for(let i=0; i<todtasres.length; i++){
+                                                    todtasres[i].start_date = timeConverter(todtasres[i].start_date);
+                                                    todtasres[i].end_date = timeConverter(todtasres[i].end_date);
+                                                }
+                                            }
+                                            if(sootasres.length>0){
+                                                for(let i=0; i<sootasres.length; i++){
+                                                    sootasres[i].start_date = timeConverter(sootasres[i].start_date);
+                                                    sootasres[i].end_date = timeConverter(sootasres[i].end_date);
+                                                }
+                                            }
+                                            return res.render('home', {
+                                                category: catres,
+                                                tasks: tasres,
+                                                newtasks: newtasres,
+                                                missedtasks: mistasres,
+                                                todaytasks: todtasres,
+                                                soontasks: sootasres,
+                                                username: req.session.username
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    } else {
+                        const resetcategorychosen = "UPDATE category SET ? WHERE id = '"+ catres[0].id +"' AND users_id = '"+ req.session.users_id +"'";
+                        db.query(resetcategorychosen,{user_chosen: 1});
+                        req.session.category_id = catres[0].id
+                        req.session.categoryischosen = true;
+                        return res.redirect('/home')
+                    }
+                } else {
+                    return res.render('home',{
+                        username: req.session.username
+                    });
+                }
+            });
+    } else {
+        req.session.isNotLogged = true;
+        return res.redirect('login');
+    }
+});
+
+
+module.exports = router;

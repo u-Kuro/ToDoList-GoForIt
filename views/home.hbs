@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <link rel='stylesheet' href='/style.css'>
+    <script src='/home.js' defer></script>
+    <title>GoForIt</title>
+</head>
+
+<body>
+
+    <nav class='side-bar'>
+        <div class='container'>
+            <img class='logo' src='/logo white.png' alt='logo'>
+            <img onclick="opencategoryMenu()" id="category-icon" class="cur-point category-icon" src="/hamburger.png" alt="categories menu small screen">
+            <form style="display: none;" id='logout' action='/auth/logout' method='post'></form>
+            <img onclick='logout()' class='icon logout-icon cur-point' src='/logout white.png' alt='logo'>
+        </div>
+    </nav>
+    <div class="fixed-top-bar">
+        <div class="top-bar-container">
+        <nav class='top-bar'>
+            <h1 class="cur-def">GoForIt</h1>
+            <h4 class="cur-def">Hello, {{username}}</h4>
+        </nav>
+    </div>
+    </div>
+
+    <section class='home-contents'>
+        <div id="categoriesMenu" class='categories'>
+            <h2 class="cur-def">Categories</h2>
+            <form id='addcategoryForm' class='cur-def add-category' action='/category/addcategory' method='post'>
+                <img class="cur-point" onclick='addCategory()' src='/add button green.png' alt='add category'>
+                <input id='inputcategoryName' type='text' name="category_name" placeholder='Add Category' onkeydown="addCategoryEnter(event)" maxlength="50" required>
+            </form>
+            <ul>
+            {{#if category.length}}
+              {{#each category}} 
+                <form id="opencategory{{this.id}}" style="display:none" action="/category/opencategory" method="post">
+                    <input style="display:none" type="text" name="category_id" value="{{this.id}}">
+                </form>
+                {{#if this.user_chosen}}
+                <li onclick="openCategory({{this.id}})" class="category-selected category cur-point">
+                    <input class="cur-point" type="text" value="{{this.category_name}}" readonly>
+                    <div onclick="openCSP({{this.id}},event)" class="cur-point category-settings">
+                        <img src="/three dots black.png" alt="category settings">
+                    </div>
+                </li>
+                {{else}}
+                <li onclick="openCategory({{this.id}})" class="category cur-point">
+                    <input class="cur-point" type="text" value="{{this.category_name}}" readonly>
+                    <div onclick="openCSP({{this.id}},event)" class="cur-point category-settings">
+                        <img src="/three dots black.png" alt="category settings">
+                    </div>
+                </li>
+                {{/if}}
+              {{/each}}
+              {{else}}
+                <li class='category-empty'>
+                    <img src="/empty.png" alt="empty category">
+                    <h5>...Whew Empty...</h5>
+                </li>
+            {{/if}}
+            </ul>
+        </div>
+
+        <div onclick="closecategoriesMenu()" id="main-contents" class='main-contents'>
+            <div class='tasks'>
+                <div class="ts-header">
+                    <h2 class="cur-def">Tasks</h2>
+                    <img class="cur-point" onclick="openATP()" src="/add button green.png" alt="add task">
+                </div>
+                <ul>
+                {{#if tasks.length}}
+                {{#each tasks}}
+                    {{#if this.task_status}}
+                    <li class="task task-finished {{this.date_status}}">
+                        <div class="cur-def ts-title">
+                            <div class="cur-def ts-title-1">
+                                <form id="changetaskstatus{{this.id}}" style="display:none;" action="/task/changetaskstatus" method="post">
+                                    <input style="display:none;" type="text" name="task_id" value="{{this.id}}">
+                                    <input id="taskcheckbox{{this.id}}" style="display:none;" type="text" name="task_status" value="{{this.task_status}}">
+                                </form>
+                                <input class="cur-point ts-checkbox" type="checkbox" name="status" onchange="checktaskStatus({{this.id}},event)" checked>
+                                <input class="cur-def ts-name" type="text" value="{{this.task_name}}" readonly>
+                            </div>
+                            <div onclick="opentaskSettings({{this.id}})" class="cur-point task-settings">
+                                <img src="/three dots black.png" alt="task settings">
+                            </div>
+                        </div>
+                        <div class="cur-def ts-description">
+                            <h5>{{this.description}}</h5>
+                        </div>
+                        <div class="ts-date-container">
+                            <div class="ts-date">
+                                <input class="cur-def" type="text" value="Start: {{this.start_date}}" readonly>
+                                <input class="cur-def" type="text" value="End: {{this.end_date}}" readonly>
+                            </div>
+                        </div>
+                    </li>
+                    {{else}}
+                    <li class="task {{this.date_status}}">
+                        <div class="cur-def ts-title">
+                            <div class="cur-def ts-title-1">
+                                <form id="changetaskstatus{{this.id}}" style="display:none;" action="/task/changetaskstatus" method="post">
+                                    <input style="display:none;" type="text" name="task_id" value="{{this.id}}">
+                                    <input id="taskcheckbox{{this.id}}" style="display:none;" type="text" name="task_status" value="{{this.task_status}}">
+                                </form>
+                                <input class="cur-point ts-checkbox" type="checkbox" name="status" onchange="checktaskStatus({{this.id}},event)">
+                                <input class="cur-def ts-name" type="text" value="{{this.task_name}}" readonly>
+                            </div>
+                            <div onclick="opentaskSettings({{this.id}})" class="cur-point task-settings">
+                                <img src="/three dots black.png" alt="task settings">
+                            </div>
+                        </div>
+                        <div class="cur-def ts-description">
+                            <h5>{{this.description}}</h5>
+                        </div>
+                        <div class="ts-date-container">
+                            <div class="ts-date">
+                                <input class="cur-def" type="text" value="Start: {{this.start_date}}" readonly>
+                                <input class="cur-def" type="text" value="End: {{this.end_date}}" readonly>
+                            </div>
+                        </div>
+                    </li>
+                    {{/if}}
+                {{/each}}
+                {{else}}
+                <li class='category-empty'>
+                    <img src="/empty.png" alt="empty task">
+                    <h5>...Whew Empty...</h5>
+                </li>
+                {{#if emptycategory}}
+                    <h4 class="alerts-red">{{emptycategory}}</h4>
+                {{/if}}
+                {{/if}}
+                </ul>
+            </div>
+
+            {{!-- Dashboard --}}
+            <div class='dashboard'>
+                <div class="ts-header">
+                    <h2 class="cur-def">Dashboard</h2>
+                </div>
+                <h4 class="cur-def">Missed Tasks</h4>
+                <ul class="dashboardul">
+                {{#if missedtasks.length}}
+                {{#each missedtasks}}
+                    {{#if this.task_status}}
+                    <li class="task task-finished {{this.date_status}}">
+                        <div class="ts-title">
+                            <div class="ts-title-1">
+                                <form id="changetaskstatus{{this.id}}" style="display:none;" action="/task/changetaskstatus" method="post">
+                                    <input style="display:none;" type="text" name="task_id" value="{{this.id}}">
+                                    <input id="taskcheckbox{{this.id}}" style="display:none;" type="text" name="task_status" value="{{this.task_status}}">
+                                </form>
+                                <input class="cur-point ts-checkbox" type="checkbox" name="status" onchange="checktaskStatus({{this.id}},event)" checked>
+                                <input class="cur-def ts-name" type="text" value="{{this.task_name}}" readonly>
+                            </div>
+                            <div onclick="opentaskSettings({{this.id}})" class="cur-point task-settings">
+                                <img src="/three dots black.png" alt="task settings">
+                            </div>
+                        </div>
+                        <div class="cur-def ts-description">
+                            <h5>{{this.description}}</h5>
+                        </div>
+                        <div class="ts-date-container">
+                            <div class="ts-date">
+                                <input class="cur-def" type="text" value="Start: {{this.start_date}}" readonly>
+                                <input class="cur-def" type="text" value="End: {{this.end_date}}" readonly>
+                            </div>
+                        </div>
+                    </li>
+                    {{else}}
+                    <li class="task {{this.date_status}}">
+                        <div class="ts-title">
+                            <div class="ts-title-1">
+                                <form id="changetaskstatus{{this.id}}" style="display:none;" action="/task/changetaskstatus" method="post">
+                                    <input style="display:none;" type="text" name="task_id" value="{{this.id}}">
+                                    <input id="taskcheckbox{{this.id}}" style="display:none;" type="text" name="task_status" value="{{this.task_status}}">
+                                </form>
+                                <input class="cur-point ts-checkbox" type="checkbox" name="status" onchange="checktaskStatus({{this.id}},event)">
+                                <input class="cur-def ts-name" type="text" value="{{this.task_name}}" readonly>
+                            </div>
+                            <div onclick="opentaskSettings({{this.id}})" class="cur-point task-settings">
+                                <img src="/three dots black.png" alt="task settings">
+                            </div>
+                        </div>
+                        <div class="cur-def ts-description">
+                            <h5>{{this.description}}</h5>
+                        </div>
+                        <div class="ts-date-container">
+                            <div class="ts-date">
+                                <input class="cur-def" type="text" value="Start: {{this.start_date}}" readonly>
+                                <input class="cur-def" type="text" value="End: {{this.end_date}}" readonly>
+                            </div>
+                        </div>
+                    </li>
+                    {{/if}}
+                {{/each}}
+                {{/if}}
+                </ul>
+                {{!--  --}}
+                <h4 class="cur-def">Tasks Today</h4>
+                <ul class="dashboardul">
+                {{#if todaytasks.length}}
+                {{#each todaytasks}}
+                    {{#if this.task_status}}
+                    <li class="task task-finished {{this.date_status}}">
+                        <div class="ts-title">
+                            <div class="ts-title-1">
+                                <form id="changetaskstatus{{this.id}}" style="display:none;" action="/task/changetaskstatus" method="post">
+                                    <input style="display:none;" type="text" name="task_id" value="{{this.id}}">
+                                    <input id="taskcheckbox{{this.id}}" style="display:none;" type="text" name="task_status" value="{{this.task_status}}">
+                                </form>
+                                <input class="cur-point ts-checkbox" type="checkbox" name="status" onchange="checktaskStatus({{this.id}},event)" checked>
+                                <input class="cur-def ts-name" type="text" value="{{this.task_name}}" readonly>
+                            </div>
+                            <div onclick="opentaskSettings({{this.id}})" class="cur-point task-settings">
+                                <img src="/three dots black.png" alt="task settings">
+                            </div>
+                        </div>
+                        <div class="cur-def ts-description">
+                            <h5>{{this.description}}</h5>
+                        </div>
+                        <div class="ts-date-container">
+                            <div class="ts-date">
+                                <input class="cur-def" type="text" value="Start: {{this.start_date}}" readonly>
+                                <input class="cur-def" type="text" value="End: {{this.end_date}}" readonly>
+                            </div>
+                        </div>
+                    </li>
+                    {{else}}
+                    <li class="task {{this.date_status}}">
+                        <div class="ts-title">
+                            <div class="ts-title-1">
+                                <form id="changetaskstatus{{this.id}}" style="display:none;" action="/task/changetaskstatus" method="post">
+                                    <input style="display:none;" type="text" name="task_id" value="{{this.id}}">
+                                    <input id="taskcheckbox{{this.id}}" style="display:none;" type="text" name="task_status" value="{{this.task_status}}">
+                                </form>
+                                <input class="cur-point ts-checkbox" type="checkbox" name="status" onchange="checktaskStatus({{this.id}},event)">
+                                <input class="cur-def ts-name" type="text" value="{{this.task_name}}" readonly>
+                            </div>
+                            <div onclick="opentaskSettings({{this.id}})" class="cur-point task-settings">
+                                <img src="/three dots black.png" alt="task settings">
+                            </div>
+                        </div>
+                        <div class="cur-def ts-description">
+                            <h5>{{this.description}}</h5>
+                        </div>
+                        <div class="ts-date-container">
+                            <div class="ts-date">
+                                <input class="cur-def" type="text" value="Start: {{this.start_date}}" readonly>
+                                <input class="cur-def" type="text" value="End: {{this.end_date}}" readonly>
+                            </div>
+                        </div>
+                    </li>
+                    {{/if}}
+                {{/each}}
+                {{/if}}
+                </ul>
+                {{!--  --}}
+                <h4 class="cur-def">Tasks Soon</h4>
+                <ul class="dashboardul">
+                {{#if soontasks.length}}
+                {{#each soontasks}}
+                    {{#if this.task_status}}
+                    <li class="task task-finished {{this.date_status}}">
+                        <div class="ts-title">
+                            <div class="ts-title-1">
+                                <form id="changetaskstatus{{this.id}}" style="display:none;" action="/task/changetaskstatus" method="post">
+                                    <input style="display:none;" type="text" name="task_id" value="{{this.id}}">
+                                    <input id="taskcheckbox{{this.id}}" style="display:none;" type="text" name="task_status" value="{{this.task_status}}">
+                                </form>
+                                <input class="cur-point ts-checkbox" type="checkbox" name="status" onchange="checktaskStatus({{this.id}},event)" checked>
+                                <input class="cur-def ts-name" type="text" value="{{this.task_name}}" readonly>
+                            </div>
+                            <div onclick="opentaskSettings({{this.id}})" class="cur-point task-settings">
+                                <img src="/three dots black.png" alt="task settings">
+                            </div>
+                        </div>
+                        <div class="cur-def ts-description">
+                            <h5>{{this.description}}</h5>
+                        </div>
+                        <div class="ts-date-container">
+                            <div class="ts-date">
+                                <input class="cur-def" type="text" value="Start: {{this.start_date}}" readonly>
+                                <input class="cur-def" type="text" value="End: {{this.end_date}}" readonly>
+                            </div>
+                        </div>
+                    </li>
+                    {{else}}
+                    <li class="task {{this.date_status}}">
+                        <div class="ts-title">
+                            <div class="ts-title-1">
+                                <form id="changetaskstatus{{this.id}}" style="display:none;" action="/task/changetaskstatus" method="post">
+                                    <input style="display:none;" type="text" name="task_id" value="{{this.id}}">
+                                    <input id="taskcheckbox{{this.id}}" style="display:none;" type="text" name="task_status" value="{{this.task_status}}">
+                                </form>
+                                <input class="cur-point ts-checkbox" type="checkbox" name="status" onchange="checktaskStatus({{this.id}},event)">
+                                <input class="cur-def ts-name" type="text" value="{{this.task_name}}" readonly>
+                            </div>
+                            <div onclick="opentaskSettings({{this.id}})" class="cur-point task-settings">
+                                <img src="/three dots black.png" alt="task settings">
+                            </div>
+                        </div>
+                        <div class="cur-def ts-description">
+                            <h5>{{this.description}}</h5>
+                        </div>
+                        <div class="ts-date-container">
+                            <div class="ts-date">
+                                <input class="cur-def" type="text" value="Start: {{this.start_date}}" readonly>
+                                <input class="cur-def" type="text" value="End: {{this.end_date}}" readonly>
+                            </div>
+                        </div>
+                    </li>
+                    {{/if}}
+                {{/each}}
+                {{/if}}
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+{{!-- Popups --}}
+  {{#if category.length}}
+   {{#each category}} 
+    {{!-- Category Settings Popup --}}
+    <section onclick="closeCSP({{this.id}})" id="CSP{{this.id}}" class="category-settings-popup">
+        <div onclick="dontcloseCSP(event)" id="CSPcontainer{{this.id}}" class="cs-container">
+            <div class="cs-header">
+                <h2 class="cur-def">Edit Category</h2>
+                <div onclick="closeCSP({{this.id}})" class="cur-point xclose-csp">
+                    <img src="/xclose black.png" alt="close settings">
+                </div>
+            </div>
+            <form id="editcategoryForm{{this.id}}" action="/category/updatecategory" method="post">
+                <input style="display: none;" type="text" name="category_id" value="{{this.id}}">
+                <input id="editcategory{{this.id}}" onkeydown="saveCategoryEnter({{this.id}},event)" type="text" name="category_name" placeholder="New Category Name" value="{{this.category_name}}" maxlength="50" required>
+            </form>
+            <div class="cs-btns">
+                <button onclick="openCSPA({{this.id}})" class="cur-point red-btn">Delete</button>
+                <button onclick="saveCategory({{this.id}})" class="cur-point green-btn">Save</button>
+            </div>
+        </div>
+    </section>
+
+    {{!-- Delete Category Validation Popup--}}
+    <section onclick="closeCSPA({{this.id}})" id="CSPA{{this.id}}" class="csp-alert">
+        <div onclick="dontcloseCSPA(event)" class="cspa-container">
+            <div class="cspa-header">
+                <h5 class="cur-def">Are you sure you want to delete the category 
+                    <span style="color:#bd0303;">{{this.category_name}}</span>? This will permanently <span style="color:#bd0303;">delete</span> 
+                    the tasks that it contains.
+                </h5>
+            </div>
+            <div class="cspa-btns">
+                <form style="display:none" id="deleteCategory{{this.id}}" action="/category/deletecategory" method="post">
+                    <input style="display:none" type="text" name="category_id" value="{{this.id}}">
+                </form>
+                <button onclick="closeCSPA({{this.id}},event)" class="cur-point cancel-btn">Cancel</button>
+                <button onclick="deleteCategory({{this.id}})" class="cur-point delete-btn">Delete</button>
+            </div>
+        </div>
+    </section>
+    {{/each}}
+  {{/if}}
+
+  {{!-- Add Task --}}
+    <section onclick="closeATP()" id="ATP" class="add-task-popup">
+        <div onclick="dontcloseATP(event)" class="atp-container">
+            <div class="atp-header">
+                <h2 class="cur-def">Add Task</h2>
+                <div onclick="closeATP()" class="cur-point xclose-atp">
+                    <img src="/xclose black.png" alt="close add task popup">
+                </div>
+            </div>
+            <form id="addtaskForm" class="atp-form" action="/task/addtask" method="post">
+                <div class="atpf-1">
+                    <input type="text" name="task_name" placeholder="Task Name" required>
+                </div>
+                <div class="atpf-2">
+                    <label for="start_date">Start Date</label>
+                    <input type="datetime-local" name="start_date" id="startdate" onchange="checkDate(event)" required>
+                </div>
+                <div class="atpf-3">
+                    <label for="end_date">End Date</label>
+                    <input type="datetime-local" name="end_date" id="enddate" onchange="checkDate(event)" required>
+                </div>
+                <div class="atpf-4">
+                    <textarea name="description" cols="45" rows="5" placeholder="Task Description" required></textarea>
+                </div>
+                <div class="atp-btns">
+                    <button onclick="addtask()" class="cur-point atp-btn">Add Task</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+  {{#if newtasks.length}}
+    {{#each newtasks}}
+    {{!-- Task-Settings Pop-up --}}
+    <section onclick="closeTPS({{this.id}})" id="TPS{{this.id}}" class="add-task-popup">
+        <div onclick="dontcloseTPS(event)" class="atp-container">
+            <div class="atp-header">
+                <h2 class="cur-def">Edit Task</h2>
+                <div onclick="closeTPS({{this.id}})" class="cur-point xclose-atp">
+                    <img src="/xclose black.png" alt="close add task popup">
+                </div>
+            </div>
+            <form id="editTask{{this.id}}" class="atp-form" action="/task/updatetask" method="post">
+                <div class="atpf-1">
+                    <input type="text" name="task_name" placeholder="Task Name" value='{{this.task_name}}' required>
+                </div>
+                <div class="atpf-2">
+                    <label for="start_date">Start Date</label>
+                    <input type="datetime-local" name="start_date" id="startdate" onchange="ATPScheckDate({{this.id}},event)" value='{{this.start_date}}' required>
+                </div>
+                <div class="atpf-3">
+                    <label for="end_date">End Date</label>
+                    <input type="datetime-local" name="end_date" id="enddate" onchange="ATPScheckDate({{this.id}},event)" value='{{this.end_date}}' required>
+                </div>
+                <div class="atpf-4">
+                    <textarea name="description" cols="45" rows="5" placeholder="Task Description" required>{{this.description}}</textarea>
+                </div>
+                <input style="display:none;" name="task_id" type="text" value="{{this.id}}">
+            </form>
+            <div class="tps-btns">
+                <button onclick="openTPSA({{this.id}})" class="tp-btn-delete">Delete</button>
+                <button onclick="editTask({{this.id}})" class="tp-btn-save">Save</button>
+            </div>
+        </div>
+    </section>
+
+    {{!-- Delete Task Validation Popup--}}
+    <section onclick="closeTPSA({{this.id}})" id="TPSA{{this.id}}" class="csp-alert">
+        <div onclick="dontcloseTPSA(event)" class="cspa-container">
+            <div class="cspa-header">
+                <h5 class="cur-def">Are you sure you want to delete the category 
+                    <span style="color:#bd0303;">{{this.tasks_name}}</span>? This will permanently <span style="color:#bd0303;">delete</span> 
+                    the item.
+                </h5>
+            </div>
+            <div class="cspa-btns">
+                <form style="display:none" id="deleteTask{{this.id}}" action="/task/deletetask" method="post">
+                    <input style="display:none" type="text" name="task_id" value="{{this.id}}">
+                </form>
+                <button onclick="closeTPSA({{this.id}},event)" class="cur-point cancel-btn">Cancel</button>
+                <button onclick="deleteTask({{this.id}})" class="cur-point delete-btn">Delete</button>
+            </div>
+        </div>
+    </section>
+    {{/each}}
+  {{/if}}
+
+</body>
+</html>
