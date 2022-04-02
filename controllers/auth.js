@@ -50,15 +50,15 @@ exports.register = (req, res) => {
 
 exports.login = (req, res) => {
     const {useremail, password} = req.body;
-    db.query('SELECT password, id FROM users WHERE email = ?', [useremail], async (error, results) => {
+    db.query('SELECT password, id FROM users WHERE email = ?', [useremail], async (error, emres) => {
         if(error){
             console.log(error);
         }
-        if(results.length>0){
-            const accountisValid = await bcryptjs.compare(password, results[0].password);
+        if(emres.length>0){
+            const accountisValid = await bcryptjs.compare(password, emres[0].password);
             if(accountisValid){
                 req.session.isAuth = true; // Allows User Session
-                req.session.users_id = results[0].id;
+                req.session.users_id = emres[0].id;
                 res.redirect('/home');
             } else {
                 return res.render('login', {
@@ -67,16 +67,16 @@ exports.login = (req, res) => {
                 });
             }
         } else {
-            db.query('SELECT password, id, username FROM users WHERE username = ?', [useremail], async (error, results) => {
+            db.query('SELECT password, id, username FROM users WHERE username = ?', [useremail], async (error, useres) => {
                 if(error){
                     console.log(error);
                 }
-                if(results.length>0){
-                    const accountisValid = await bcryptjs.compare(password, results[0].password);
+                if(useres.length>0){
+                    const accountisValid = await bcryptjs.compare(password, useres[0].password);
                     if(accountisValid){
                         req.session.isAuth = true; // Allows User Session
-                        req.session.username = results[0].username;
-                        req.session.users_id = results[0].id;
+                        req.session.username = useres[0].username;
+                        req.session.users_id = useres[0].id;
                         res.redirect('/home');
                     } else {
                         return res.render('login', {
