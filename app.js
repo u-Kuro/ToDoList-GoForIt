@@ -2,9 +2,9 @@ const express = require('express');
 const path = require('path');
 const livereload = require('livereload');
 const connectLivereload = require('connect-livereload');
+var db = require('./db').db;
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
-var db = require('./db').db;
 require('dotenv').config();
 
 const app = express();
