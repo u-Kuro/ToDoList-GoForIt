@@ -10,8 +10,9 @@ require('dotenv').config();
 const app = express();
 
 // Create Server
-app.listen(process.env.PORT||5500, () => {
-    console.log('Server started on port 5500');
+let PORT = process.env.PORT||5500
+app.listen(PORT, () => {
+    console.log('Server started on port '+PORT);
 });
 
 const publicDirectory = path.join(__dirname, 'public');
