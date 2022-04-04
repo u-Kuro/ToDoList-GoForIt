@@ -82,7 +82,7 @@
 /* Added */ 
 .fixed-top-bar{
     position: absolute;
-    z-index: 1;
+    z-index: 3;
 }
 
 .top-bar-container {
