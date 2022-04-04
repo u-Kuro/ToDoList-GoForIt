@@ -9,14 +9,14 @@ require('dotenv').config();
 
 const app = express();
 
-/// Create Server
+// Create Server
 app.listen(5500, () => {
     console.log('Server started on port 5500');
 });
 
 const publicDirectory = path.join(__dirname, 'public');
 
-/// Auto Reload Template (HTML/HBS) Changes
+// Auto Reload Template (HTML/HBS) Changes
 const livereloadServer = livereload.createServer();
 livereloadServer.watch(publicDirectory);
 livereloadServer.server.once("connection", () => {
@@ -65,7 +65,7 @@ app.use(session({
     store: sessionStore
 }));
 
-////Define Routes
+//Define Routes
 app.use('/', require('./routes/pages'));
 app.use('/auth', require('./routes/auth'));
 app.use('/category', require('./routes/category'));
