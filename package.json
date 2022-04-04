@@ -21,6 +21,7 @@
     "hbs": "^4.2.0",
     "livereload": "^0.9.3",
     "mysql": "^2.18.1",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "xmlhttprequest": "^1.8.0"
   }
 }

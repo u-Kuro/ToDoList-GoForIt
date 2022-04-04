@@ -50,16 +50,43 @@ exports.register = (req, res) => {
 
 exports.login = (req, res) => {
     const {useremail, password} = req.body;
-    db.query('SELECT password, id FROM users WHERE email = ?', [useremail], async (error, emres) => {
+    db.query('SELECT password, id, username FROM users WHERE email = ?', [useremail], async (error, emres) => {
         if(error){
             console.log(error);
         }
         if(emres.length>0){
             const accountisValid = await bcryptjs.compare(password, emres[0].password);
-            if(accountisValid){
+            if(accountisValid){   
                 req.session.isAuth = true; // Allows User Session
+                req.session.username = emres[0].username;
                 req.session.users_id = emres[0].id;
-                res.redirect('/home');
+                req.session.categoryischosen = false;
+                // Recover Tasks Date Status
+                const sql = "UPDATE tasks SET ? WHERE users_id = '"+req.session.users_id +"'";
+                db.query('SELECT * FROM tasks WHERE users_id = ?', [req.session.users_id], async (error, tasksres) => {  
+                    if(tasksres.length>0){
+                        for(let i=0;i<tasksres.length;i++){
+                            var currentdate = new Date();
+                            var date_status = tasksres[i].date_status;
+                            currentdate.setHours(currentdate.getHours());
+                            if(tasksres[i].end_date<currentdate)
+                                date_status = 'Missed';
+                            else if(tasksres[i].start_date>currentdate)
+                                date_status = 'Soon';
+                            else if(tasksres[i].start_date<=currentdate && currentdate<=tasksres[i].end_date)
+                                date_status = 'Today';
+                            db.query(sql, {date_status: date_status}, (error, results) => {
+                                if(error){
+                                    console.log(error);
+                                } else {
+                                    res.redirect('/home');
+                                }
+                            });
+                        }
+                    } else {
+                        res.redirect('/home');
+                    }
+                });
             } else {
                 return res.render('login', {
                     messagecolor: 'red',
@@ -73,11 +100,37 @@ exports.login = (req, res) => {
                 }
                 if(useres.length>0){
                     const accountisValid = await bcryptjs.compare(password, useres[0].password);
-                    if(accountisValid){
+                    if(accountisValid){     
                         req.session.isAuth = true; // Allows User Session
                         req.session.username = useres[0].username;
                         req.session.users_id = useres[0].id;
-                        res.redirect('/home');
+                        req.session.categoryischosen = false;
+                        // Recover Tasks Date Status
+                        const sql = "UPDATE tasks SET ? WHERE users_id = '"+req.session.users_id +"'";
+                        db.query('SELECT * FROM tasks WHERE users_id = ?', [req.session.users_id], async (error, tasksres) => {  
+                            if(tasksres.length>0){
+                                for(let i=0;i<tasksres.length;i++){
+                                    var currentdate = new Date();
+                                    var date_status = tasksres[i].date_status;
+                                    currentdate.setHours(currentdate.getHours());
+                                    if(tasksres[i].end_date<currentdate)
+                                        date_status = 'Missed';
+                                    else if(tasksres[i].start_date>currentdate)
+                                        date_status = 'Soon';
+                                    else if(tasksres[i].start_date<=currentdate && currentdate<=tasksres[i].end_date)
+                                        date_status = 'Today';
+                                    db.query(sql, {date_status: date_status}, (error, results) => {
+                                        if(error){
+                                            console.log(error);
+                                        } else {
+                                            res.redirect('/home');
+                                        }
+                                    });
+                                }
+                            } else {
+                                res.redirect('/home');
+                            }
+                        });
                     } else {
                         return res.render('login', {
                             messagecolor: 'red',

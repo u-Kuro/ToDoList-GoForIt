@@ -78,3 +78,29 @@ exports.changetaskstatus = (req, res) => {
         }
     });
 }
+
+exports.refreshtasks = (req, res) => {
+    const sql = "UPDATE tasks SET ? WHERE users_id = '"+req.session.users_id +"'";
+    db.query('SELECT * FROM tasks WHERE users_id = ?', [req.session.users_id], async (error, tasksres) => {  
+        if(tasksres.length>0){    
+            for(let i=0;i<tasksres.length;i++){
+                var currentdate = new Date();
+                var date_status = tasksres[i].date_status;
+                currentdate.setHours(currentdate.getHours());
+                if(tasksres[i].end_date<currentdate)
+                    date_status = 'Missed';
+                else if(tasksres[i].start_date>currentdate)
+                    date_status = 'Soon';
+                else if(tasksres[i].start_date<=currentdate && currentdate<=tasksres[i].end_date)
+                    date_status = 'Today';
+                db.query(sql, {date_status: date_status}, (error, results) => {
+                    if(error){
+                        console.log(error);
+                    } else {
+                        res.redirect('/home');
+                    }
+                });
+            }
+        }
+    });
+}

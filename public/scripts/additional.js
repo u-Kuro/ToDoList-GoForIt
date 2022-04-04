@@ -1,4 +1,4 @@
-
+const db = require("../../db").db;
 function fixdatetime(time){
     if(time<10)
         return '0'+time.toString();

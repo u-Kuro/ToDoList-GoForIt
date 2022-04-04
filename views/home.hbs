@@ -5,6 +5,7 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <link rel='stylesheet' href='/style.css'>
+    <link rel="shortcut icon" type="image/x-icon" href="/logo white.png"/>
     <script src='/home.js' defer></script>
     <title>GoForIt</title>
 </head>
@@ -33,7 +34,7 @@
             <h2 class="cur-def">Categories</h2>
             <form id='addcategoryForm' class='cur-def add-category' action='/category/addcategory' method='post'>
                 <img class="cur-point" onclick='addCategory()' src='/add button green.png' alt='add category'>
-                <input id='inputcategoryName' type='text' name="category_name" placeholder='Add Category' onkeydown="addCategoryEnter(event)" maxlength="50" required>
+                <input id='inputcategoryName' type='text' name="category_name" placeholder='Add Category' onkeydown="addCategoryEnter(event)" value="" maxlength="50" required>
             </form>
             <ul>
             {{#if category.length}}
@@ -455,6 +456,6 @@
     </section>
     {{/each}}
   {{/if}}
-
+  <form id="refreshTask" style="display:none;" action="/task/refreshtasks" method="post"></form>
 </body>
 </html>

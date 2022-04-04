@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db').db;
 const timeConverter = require('../public/scripts/additional').timeConverter;
 const timeConverterSQLtoHTML = require('../public/scripts/additional').timeConverterSQLtoHTML;
+const updateTaskDate = require('../public/scripts/additional').updateTaskDate;
 const router = express.Router();
 var havemessage = require('../controllers/auth').havemessage;
 var message = require('../controllers/auth').message;
@@ -31,11 +32,11 @@ router.get('/login', (req, res) => {
         if(req.session.isNotLogged) {
             req.session.isNotLogged = false;
             return res.render('login', {
-                message_color: 'red',
+                messagecolor: 'red',
                 message: 'Unauthorized, Login First'
             });
         }
-        return res.render('login')
+        return res.render('login');
     }
 });
 
@@ -47,14 +48,14 @@ router.get('/home', (req, res) => {
                 }
                 if(catres.length>0){
                     if(req.session.categoryischosen){
-                        const category_id = req.session.category_id;
                         var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
                         db.query(sql, 'Missed', async (error, mistasres) => {  if(error){console.log(error);}
                             var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
                             db.query(sql, 'Today', async (error, todtasres) => {  if(error){console.log(error);}
                                 var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
                                 db.query(sql, 'Soon', async (error, sootasres) => {  if(error){console.log(error);}
-                                    db.query('SELECT * FROM tasks WHERE category_id = ? ORDER BY end_date', category_id, async (error, tasres) => {  if(error){console.log(error);}
+                                var sql = "SELECT * FROM tasks WHERE category_id = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
+                                    db.query(sql, req.session.category_id, async (error, tasres) => {  if(error){console.log(error);}
                                         db.query('SELECT * FROM tasks WHERE users_id = ? ORDER BY end_date', req.session.users_id, async (error, newtasres) => {  if(error){console.log(error);}
                                             if(tasres.length>0){
                                                 for(let i=0; i<tasres.length; i++){

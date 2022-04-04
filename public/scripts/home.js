@@ -1,3 +1,25 @@
+var CSPinuse;
+var CSPAinuse;
+var TSPAinuse;
+var ATPinuse;
+var TPSinuse;
+
+// Auto Reload Update Dates
+setInterval(function () {
+    var inuse =
+        document.getElementById("inputcategoryName") === document.activeElement
+        || document.getElementById("inputcategoryName").value != ''
+        || CSPinuse
+        || CSPAinuse
+        || TSPAinuse
+        || ATPinuse
+        || TPSinuse
+        || (document.body.clientWidth<785 && document.getElementById("categoriesMenu").style.display == 'block')
+    if(!inuse){
+        document.getElementById('refreshTask').submit();   
+    }
+}, 60000);
+
 //Logout
 function logout(){
     document.getElementById("logout").submit();
@@ -10,7 +32,6 @@ function addCategory(){
     if(inputcatnameval==''){
         inputcatname.setCustomValidity("Category Name can't be Empty")
         return inputcatname.reportValidity();
-        
     }
     if(inputcatnameval.length>50){
         inputcatname.setCustomValidity("Category Name can't be Longer than 50 Characters")
@@ -45,6 +66,7 @@ function addCategoryEnter(event){
 
 //Open Category Settings
 function openCSP(id,event){
+    CSPinuse = true;
     const CSP = document.getElementById('CSP'+id)
     CSP.style.display = 'flex';
     setTimeout(function () {
@@ -56,6 +78,7 @@ function openCSP(id,event){
 
 //Close Category Settings
 function closeCSP(id,event){
+    CSPinuse = false;
     const CSP = document.getElementById('CSP'+id);
     CSP.style.visibility = '0';
     CSP.style.opacity = '0';
@@ -70,6 +93,7 @@ function dontcloseCSP(event){
 
 //Open Category Settings Delete Validation
 function openCSPA(id){
+    CSPAinuse = true;
     const CSP = document.getElementById('CSP'+id);
     CSP.style.visibility = '0';
     CSP.style.opacity = '0';
@@ -85,6 +109,7 @@ function openCSPA(id){
 
 //Closing Category Settings Delete Validation
 function closeCSPA(id,event){
+    CSPAinuse = false;
     const CSPA = document.getElementById('CSPA'+id);
     CSPA.style.display = 'none';
     CSPA.style.visibility = '0';
@@ -151,6 +176,7 @@ function openCategory(id){
 
 //Open Task Settings Delete Validation
 function openTPSA(id){
+    TSPAinuse = true;
     const TPS = document.getElementById('TPS'+id);
     TPS.style.visibility = '0';
     TPS.style.opacity = '0';
@@ -166,6 +192,7 @@ function openTPSA(id){
 
 //Closing Task Settings Delete Validation
 function closeTPSA(id,event){
+    TSPAinuse = false;
     const TPSA = document.getElementById('TPSA'+id);
     TPSA.style.display = 'none';
     TPSA.style.visibility = '0';
@@ -200,6 +227,7 @@ function checkDate(event){
 
 //Open Add Task Form
 function openATP() {
+    ATPinuse = true;
     const addtaskpopup = document.getElementById('ATP');
     addtaskpopup.style.display = 'flex';
     setTimeout(function () {
@@ -210,6 +238,7 @@ function openATP() {
 
 //Close Add Task Form
 function closeATP() {
+    ATPinuse = false;
     const addtaskpopup = document.getElementById('ATP');
     addtaskpopup.style.visibility = '0';
     addtaskpopup.style.opacity = '0';
@@ -224,6 +253,7 @@ function dontcloseATP(event) {
 
 //Open Task Settings
 function opentaskSettings(id){
+    TPSinuse = true;
     const TPS = document.getElementById('TPS'+id);
     TPS.style.display = 'flex';
     setTimeout(function () {
@@ -249,6 +279,7 @@ function TPScheckDate(event){
 
 //Close the Task Settings
 function closeTPS(id) {
+    TPSinuse = false;
     const addtaskpopup = document.getElementById('TPS'+id);
     addtaskpopup.style.visibility = '0';
     addtaskpopup.style.opacity = '0';
@@ -297,7 +328,6 @@ function closecategoriesMenu(){
     if(document.body.clientWidth<785){
         const catmenu = document.getElementById('categoriesMenu');
         catmenu.style.display = 'none';
-        console.log('isclicked')
     }
 }
 
@@ -319,4 +349,4 @@ window.addEventListener("resize", function(event) {
     mainmenu.style.margin = '0.25em';
     mainmenu.style.paddingTop = '3em';
     return catmenu.style.display = 'none'
-})
+});
