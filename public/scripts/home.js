@@ -303,18 +303,20 @@ function closecategoriesMenu(){
 
 //Fix Categories menu after resize 
 window.addEventListener("resize", function(event) {
-    if(document.body.clientWidth>785){
+    if(document.body.clientWidth>=785){
         const catmenu = document.getElementById('categoriesMenu');
         const mainmenu = document.getElementById('main-contents');
         const caticon = document.getElementById('category-icon');
         caticon.style.display = 'none'
-        mainmenu.style.marginLeft = '16.5em';
+        mainmenu.style.marginLeft = '15.5em';
+        mainmenu.style.paddingTop = '4em';
         return catmenu.style.display = 'block'
     }
     const catmenu = document.getElementById('categoriesMenu');
     const mainmenu = document.getElementById('main-contents');
     const caticon = document.getElementById('category-icon');
     caticon.style.display = 'flex';
-    mainmenu.style.marginLeft = '2em';
+    mainmenu.style.margin = '0.25em';
+    mainmenu.style.paddingTop = '3em';
     return catmenu.style.display = 'none'
 })

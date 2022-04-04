@@ -199,10 +199,10 @@
 
 .home-contents .main-contents {
     display: flex;
-    gap: 2em;
-    margin: 2em;
-    margin-left: 16.5em;
-    padding-top: 3.25em;
+    gap: 1em;
+    margin: 1em;
+    padding-top: 4em;
+    margin-left: 15.5em;
     flex-wrap: wrap;
     flex: 1 1 85%;
 }
@@ -214,7 +214,7 @@
 }
 
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 785px) {
 
     .category-icon{
         display: flex;
@@ -226,9 +226,9 @@
 
     .home-contents .main-contents {
         display: flex;
-        gap: 2em;
-        margin: 2em;    
-        padding-top: 2em;
+        gap: 0.25em;
+        margin: 0.25em;
+        padding-top: 3em;
         flex-wrap: wrap;
         flex: 1 1 85%;
     }
@@ -236,39 +236,6 @@
     .main-contents > * {
         border-radius: 5px;
         min-width: 400px;
-        box-shadow: 0 0 0px 2px rgb(221, 216, 216);
-    }
-}
-
-@media screen and (max-width: 680px) {
-
-    .home-contents .main-contents {
-        display: flex;
-        gap: 1em;
-        margin: 1em;
-        flex-wrap: wrap;
-        flex: 1 1 85%;
-    }
-
-    .main-contents > * {
-        border-radius: 5px;
-        min-width: 260px;
-        box-shadow: 0 0 0px 2px rgb(221, 216, 216);
-    }
-}
-
-@media screen and (max-width: 520px) {
-    .home-contents .main-contents {
-        display: flex;
-        gap: 0.25em;
-        margin: 0.25em;
-        flex-wrap: wrap;
-        flex: 1 1 85%;
-    }
-
-    .main-contents > * {
-        border-radius: 5px;
-        min-width: 220px;
         box-shadow: 0 0 0px 2px rgb(221, 216, 216);
     }
 }
