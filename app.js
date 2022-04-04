@@ -10,7 +10,7 @@ require('dotenv').config();
 const app = express();
 
 // Create Server
-let PORT = process.env.PORT||5500
+let PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log('Server started on port '+PORT);
 });
@@ -39,10 +39,10 @@ app.use(express.static('public/scripts'));
 
 // Create Session (Always on Top of Routes)
 var sessionStore = new MySQLStore({
-    host: process.env.database_host || '127.0.0.1',
-    port: process.env.database_port || '3306',
-    user: process.env.database_user || 'root',
-    database: process.env.database || 'gfi_v1',
+    host: process.env.database_host,
+    port: process.env.database_port,
+    user: process.env.database_user,
+    database: process.env.database,
     clearExpired: true,
     checkExpirationInterval: 900000,
     expiration: 86400000,
@@ -59,8 +59,8 @@ var sessionStore = new MySQLStore({
 },db);
 
 app.use(session({
-    name: process.env.sess_name || 'asdadsads',
-	secret: process.env.sess_secret || 'asdsad',
+    name: process.env.sess_name,
+	secret: process.env.sess_secret,
 	resave: false,
 	saveUninitialized: false,
     store: sessionStore
