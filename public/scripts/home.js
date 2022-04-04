@@ -16,13 +16,13 @@ setInterval(function () {
         || TPSinuse
         || (document.body.clientWidth<785 && document.getElementById("categoriesMenu").style.display == 'block')
     if(!inuse){
-        document.getElementById('refreshTask').submit();   
+        return document.getElementById('refreshTask').submit();   
     }
 }, 60000);
 
 //Logout
 function logout(){
-    document.getElementById("logout").submit();
+    return document.getElementById("logout").submit();
 }
 
 //Add Category
@@ -32,14 +32,14 @@ function addCategory(){
     if(inputcatnameval==''){
         inputcatname.setCustomValidity("Category Name can't be Empty")
         return inputcatname.reportValidity();
-    }
-    if(inputcatnameval.length>50){
+    } else if(inputcatnameval.length>50){
         inputcatname.setCustomValidity("Category Name can't be Longer than 50 Characters")
         return inputcatname.reportValidity();
+    } else{
+        inputcatname.setCustomValidity("Category Name can't be Empty")
+        inputcatname.reportValidity();
+        return document.getElementById("addcategoryForm").submit();
     }
-    inputcatname.setCustomValidity("Category Name can't be Empty")
-    inputcatname.reportValidity();
-    return document.getElementById("addcategoryForm").submit();
 }
 
 function addCategoryEnter(event){
@@ -73,7 +73,7 @@ function openCSP(id,event){
         CSP.style.visibility = '1';
         CSP.style.opacity = '1';
     }, 100);
-    event.stopPropagation();
+    return event.stopPropagation();
 }
 
 //Close Category Settings
@@ -83,12 +83,12 @@ function closeCSP(id,event){
     CSP.style.visibility = '0';
     CSP.style.opacity = '0';
     setTimeout(function () {
-        CSP.style.display = 'none';
+        return CSP.style.display = 'none';
     }, 100);
 }
 
 function dontcloseCSP(event){
-    event.stopPropagation();
+    return event.stopPropagation();
 }
 
 //Open Category Settings Delete Validation
@@ -103,7 +103,7 @@ function openCSPA(id){
     CSPA.style.display = 'flex';
     setTimeout(function () {
         CSPA.style.visibility = '1';
-        CSPA.style.opacity = '1';
+        return CSPA.style.opacity = '1';
     }, 100);
 }
 
@@ -119,17 +119,17 @@ function closeCSPA(id,event){
     CSP.style.display = 'flex';
     setTimeout(function () {
         CSP.style.visibility = '1';
-        CSP.style.opacity = '1';
+        return CSP.style.opacity = '1';
     }, 100);
 }
 
 function dontcloseCSPA(event){
-    event.stopPropagation();
+    return event.stopPropagation();
 }
 
 //Delete Category
 function deleteCategory(id){
-    document.getElementById("deleteCategory"+id).submit();
+    return document.getElementById("deleteCategory"+id).submit();
 }
 
 //Edit Category
@@ -141,14 +141,14 @@ function saveCategoryEnter(id,event){
             inputcatname.setCustomValidity("Category Name can't be Empty")
             return inputcatname.reportValidity();
             
-        }
-        if(inputcatnameval.length>50){
+        } else if(inputcatnameval.length>50){
             inputcatname.setCustomValidity("Category Name can't be Longer than 50 Characters")
             return inputcatname.reportValidity();
+        } else {
+            inputcatname.setCustomValidity("Category Name can't be Empty")
+            inputcatname.reportValidity();
+            return document.getElementById("editcategoryForm"+id).submit();
         }
-        inputcatname.setCustomValidity("Category Name can't be Empty")
-        inputcatname.reportValidity();
-        return document.getElementById("editcategoryForm"+id).submit();
     }
 }
 
@@ -158,20 +158,19 @@ function saveCategory(id){
     if(inputcatnameval==''){
         inputcatname.setCustomValidity("Category Name can't be Empty")
         return inputcatname.reportValidity();
-        
-    }
-    if(inputcatnameval.length>50){
+    } else if(inputcatnameval.length>50){
         inputcatname.setCustomValidity("Category Name can't be Longer than 50 Characters")
         return inputcatname.reportValidity();
+    } else {
+        inputcatname.setCustomValidity("Category Name can't be Empty")
+        inputcatname.reportValidity();
+        return document.getElementById("editcategoryForm"+id).submit();
     }
-    inputcatname.setCustomValidity("Category Name can't be Empty")
-    inputcatname.reportValidity();
-    return document.getElementById("editcategoryForm"+id).submit();
 }
 
 //Open Category
 function openCategory(id){
-    document.getElementById("opencategory"+id).submit();
+    return document.getElementById("opencategory"+id).submit();
 }
 
 //Open Task Settings Delete Validation
@@ -186,7 +185,7 @@ function openTPSA(id){
     TPSA.style.display = 'flex';
     setTimeout(function () {
         TPSA.style.visibility = '1';
-        TPSA.style.opacity = '1';
+        return TPSA.style.opacity = '1';
     }, 100);
 }
 
@@ -202,7 +201,7 @@ function closeTPSA(id,event){
     TPS.style.display = 'flex';
     setTimeout(function () {
         TPS.style.visibility = '1';
-        TPS.style.opacity = '1';
+        return TPS.style.opacity = '1';
     }, 100);
 }
 
@@ -218,9 +217,8 @@ function checkDate(event){
         if(startdate>enddate){
             event.target.setCustomValidity("Start Date should be greater than End Date")
             event.target.reportValidity();
-            event.target.value = '';
+            return event.target.value = '';
         }
-        return false;
     }
     return true;
 }
@@ -232,7 +230,7 @@ function openATP() {
     addtaskpopup.style.display = 'flex';
     setTimeout(function () {
         addtaskpopup.style.visibility = '1';
-        addtaskpopup.style.opacity = '1';
+        return addtaskpopup.style.opacity = '1';
     }, 100);
 }
 
@@ -243,12 +241,12 @@ function closeATP() {
     addtaskpopup.style.visibility = '0';
     addtaskpopup.style.opacity = '0';
     setTimeout(function () {
-        addtaskpopup.style.display = 'none';
+        return addtaskpopup.style.display = 'none';
     }, 100);
 }
 
 function dontcloseATP(event) {
-    event.stopPropagation();
+    return event.stopPropagation();
 }
 
 //Open Task Settings
@@ -258,21 +256,20 @@ function opentaskSettings(id){
     TPS.style.display = 'flex';
     setTimeout(function () {
         TPS.style.visibility = '1';
-        TPS.style.opacity = '1';
+        return TPS.style.opacity = '1';
     }, 100);
 }
 
 //Check Task Setting's Form's Input for Dates to be Valid
-function TPScheckDate(event){
-    const startdate = document.getElementById('startdate').value;
-    const enddate = document.getElementById('enddate').value;
+function TPScheckDate(id,event){
+    const startdate = document.getElementById('startdate'+id).value;
+    const enddate = document.getElementById('enddate'+id).value;
     if(startdate!='' && enddate!=''){
         if(startdate>enddate){
             event.target.setCustomValidity("Start Date should be greater than End Date")
             event.target.reportValidity();
-            event.target.value = '';
+            return event.target.value = '';
         }
-        return false;
     }
     return true;
 }
@@ -284,34 +281,35 @@ function closeTPS(id) {
     addtaskpopup.style.visibility = '0';
     addtaskpopup.style.opacity = '0';
     setTimeout(function () {
-        addtaskpopup.style.display = 'none';
+        return addtaskpopup.style.display = 'none';
     }, 100);
 }
 
 function dontcloseTPS(event) {
-    event.stopPropagation();
+    return event.stopPropagation();
 }
 
 function addtask(){
-    document.getElementById("addtaskForm").submit();
+    return document.getElementById("addtaskForm").submit();
 }
 
 function editTask(id){
-    document.getElementById("editTask"+id).submit();
+    return document.getElementById("editTask"+id).submit();
 }
 
 function deleteTask(id){
-    document.getElementById("deleteTask"+id).submit();
+    return document.getElementById("deleteTask"+id).submit();
 }
 
 //Task Status by Checkbox 
 function checktaskStatus(id,event){
     if(event.target.checked){
         document.getElementById('taskcheckbox'+id).value = 1;
+        return document.getElementById('changetaskstatus'+id).submit();         
     } else{
         document.getElementById('taskcheckbox'+id).value = 0;   
+        return document.getElementById('changetaskstatus'+id).submit();         
     }
-    document.getElementById('changetaskstatus'+id).submit();         
 }
 
 //Open Category (small screen)
@@ -327,7 +325,7 @@ function opencategoryMenu(){
 function closecategoriesMenu(){
     if(document.body.clientWidth<785){
         const catmenu = document.getElementById('categoriesMenu');
-        catmenu.style.display = 'none';
+        return catmenu.style.display = 'none';
     }
 }
 
@@ -341,12 +339,13 @@ window.addEventListener("resize", function(event) {
         mainmenu.style.marginLeft = '15.5em';
         mainmenu.style.paddingTop = '4em';
         return catmenu.style.display = 'block'
+    } else {
+        const catmenu = document.getElementById('categoriesMenu');
+        const mainmenu = document.getElementById('main-contents');
+        const caticon = document.getElementById('category-icon');
+        caticon.style.display = 'flex';
+        mainmenu.style.margin = '0.25em';
+        mainmenu.style.paddingTop = '3em';
+        return catmenu.style.display = 'none'
     }
-    const catmenu = document.getElementById('categoriesMenu');
-    const mainmenu = document.getElementById('main-contents');
-    const caticon = document.getElementById('category-icon');
-    caticon.style.display = 'flex';
-    mainmenu.style.margin = '0.25em';
-    mainmenu.style.paddingTop = '3em';
-    return catmenu.style.display = 'none'
 });

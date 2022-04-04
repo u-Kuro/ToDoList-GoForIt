@@ -418,11 +418,11 @@
                 </div>
                 <div class="atpf-2">
                     <label for="start_date">Start Date</label>
-                    <input type="datetime-local" name="start_date" id="startdate" onchange="ATPScheckDate({{this.id}},event)" value='{{this.start_date}}' required>
+                    <input type="datetime-local" name="start_date" id="startdate{{id}}" onchange="TPScheckDate({{this.id}},event)" value='{{this.start_date}}' required>
                 </div>
                 <div class="atpf-3">
                     <label for="end_date">End Date</label>
-                    <input type="datetime-local" name="end_date" id="enddate" onchange="ATPScheckDate({{this.id}},event)" value='{{this.end_date}}' required>
+                    <input type="datetime-local" name="end_date" id="enddate{{id}}" onchange="TPScheckDate({{this.id}},event)" value='{{this.end_date}}' required>
                 </div>
                 <div class="atpf-4">
                     <textarea name="description" cols="45" rows="5" placeholder="Task Description" required>{{this.description}}</textarea>
