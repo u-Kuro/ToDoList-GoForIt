@@ -50,7 +50,9 @@ module.exports = {
     // Check Status
     checktasktimeStatus: function checktasktimeStatus(start_date, end_date){
         var current_date = new Date();
-        current_date.setHours(current_date.getHours() - getTimeZoneOffset()) //Change Local Time to UTC
+        console.log(start_date)
+        console.log(end_date)
+        console.log(current_date)
         if(end_date<current_date)
             return 'Missed'
         if(start_date>current_date)
