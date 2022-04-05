@@ -46,7 +46,7 @@ module.exports = {
         var m = time.substring(14,16);
         var localdate = y+'-'+mo+'-'+d+'T'+h+':'+m+':00.000Z';
         var utc = new Date(localdate);
-        utc.setHours(utc.getHours() - getTimeOffset()); //Change Local Time to UTC+0 
+        utc.setHours(utc.getHours() - 8); //Change PH Local Time to UTC+0 
         return utc;
     },
     // Check Status
