@@ -18,6 +18,7 @@ module.exports = {
     // Time Converter Client
     timeConverter: function timeConverter(time){
         var dt = new Date(time);
+        dt.setHours(dt.getHours()-getTimeOffset()+8);//Change to PH timeoffset
         var y = dt.getFullYear().toString()
         var mo = getMonth(dt.getMonth());
         var d = fixdatetime(dt.getDate());
@@ -28,6 +29,7 @@ module.exports = {
     // Time Converter SQL to HTML
     timeConverterSQLtoHTML: function timeConverterSQLtoHTML(time){   
         var dt = new Date(time);
+        dt.setHours(dt.getHours()-getTimeOffset()+8);//Change to PH timeoffset
         var y = dt.getFullYear().toString();
         var mo = fixdatetime(dt.getMonth()+1);
         var d = fixdatetime(dt.getDate());
@@ -44,13 +46,12 @@ module.exports = {
         var m = time.substring(14,16);
         var localdate = y+'-'+mo+'-'+d+'T'+h+':'+m+':00.000Z';
         var utc = new Date(localdate);
-        utc.setHours(utc.getHours() - getTimeOffset()); //Change Local Time to UTC+0
+        utc.setHours(utc.getHours() - getTimeOffset()); //Change Local Time to UTC+0 
         return utc;
     },
     // Check Status
     checktasktimeStatus: function checktasktimeStatus(start_date, end_date){
         var current_date = new Date();
-        current_date.setHours(current_date.getHours());
         console.log(getTimeOffset())
         console.log(current_date)
         console.log(start_date)
