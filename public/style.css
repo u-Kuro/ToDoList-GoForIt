@@ -209,6 +209,7 @@
 
 .main-contents > * {
     border-radius: 5px;
+    min-width: 400px;
     box-shadow: 0 0 0px 2px rgb(221, 216, 216);
 }
 
@@ -801,36 +802,42 @@
 }
 
 .atpf-2 {
-    margin-left: 2ch;
+    margin: 0 2ch;
+    display: flex;
 }
 
 .atpf-2 input {
     max-width: 185px;
     border: 1px solid rgb(10,180,180);
     outline: none;
+    flex: 1 1 100%;
 }
 
 .atpf-3 {
-    margin-left: 2ch;
+    margin: 0 2ch;
+    display: flex;
 }
 
 .atpf-3 input {
     max-width: 185px;
     border: 1px solid rgb(10,180,180);
     outline: none;
+    flex: 1 1 100%;
 }
 
 .atpf-3 label {
-    margin-right: 1ch;
+    margin-right: 0.9ch;
 }
 
 .atpf-4 {
-    margin-left: 2ch;
+    margin: 0 2ch;
+    display: flex;
 }
 
 .atpf-4 textarea {
     border: 1px solid rgb(10,180,180);
     outline: none;
+    flex: 1 1 100%;
     padding: 1ch;
     font-weight: 100;
     font-size: 14px;

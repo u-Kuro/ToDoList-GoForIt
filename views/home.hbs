@@ -392,7 +392,7 @@
                     <input type="datetime-local" name="end_date" id="enddate" onchange="checkDate(event)" required>
                 </div>
                 <div class="atpf-4">
-                    <textarea name="description" id="descriptions" cols="30" rows="5" placeholder="Task Description" required></textarea>
+                    <textarea name="description" id="descriptions" rows="5" placeholder="Task Description" required></textarea>
                 </div>
                 <div class="atp-btns">
                     <button onclick="addtask()" class="cur-point atp-btn">Add Task</button>
@@ -425,13 +425,14 @@
                     <input type="datetime-local" name="end_date" id="enddate{{this.id}}" onchange="TPScheckDate({{this.id}},event)" value='{{this.end_date}}' required>
                 </div>
                 <div class="atpf-4">
-                    <textarea name="description" id="descriptions{{this.id}}" cols="30" rows="5" placeholder="Task Description" required>{{this.description}}</textarea>
+                    <textarea name="description" id="descriptions{{this.id}}" rows="5" placeholder="Task Description" required>{{this.description}}</textarea>
                 </div>
                 <input style="display:none;" name="task_id" type="text" value="{{this.id}}">
+                <button onclick="editTask({{this.id}})" style="display:none;" id="edittaskbutton{{this.id}}"></button>
             </form>
             <div class="tps-btns">
                 <button onclick="openTPSA({{this.id}})" class="cur-point tp-btn-delete">Delete</button>
-                <button onclick="editTask({{this.id}})" class="cur-point tp-btn-save">Save</button>
+                <button onclick="validateEdit({{this.id}})" class="cur-point tp-btn-save">Save</button>
             </div>
         </div>
     </section>

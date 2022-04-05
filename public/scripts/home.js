@@ -36,6 +36,7 @@ function addCategory(){
         inputcatname.setCustomValidity("Category Name can't be Longer than 50 Characters")
         return inputcatname.reportValidity();
     } else {
+        inputcatname.setCustomValidity("")
         return document.getElementById("addcategoryForm").submit();
     }
 }
@@ -140,8 +141,7 @@ function saveCategoryEnter(id,event){
             inputcatname.setCustomValidity("Category Name can't be Longer than 50 Characters")
             return inputcatname.reportValidity();
         } else {
-            inputcatname.setCustomValidity("Category Name can't be Empty")
-            inputcatname.reportValidity();
+            inputcatname.setCustomValidity("");
             return document.getElementById("editcategoryForm"+id).submit();
         }
     }
@@ -157,8 +157,7 @@ function saveCategory(id){
         inputcatname.setCustomValidity("Category Name can't be Longer than 50 Characters")
         return inputcatname.reportValidity();
     } else {
-        inputcatname.setCustomValidity("Category Name can't be Empty")
-        inputcatname.reportValidity();
+        inputcatname.setCustomValidity("");
         return document.getElementById("editcategoryForm"+id).submit();
     }
 }
@@ -223,8 +222,8 @@ function checkDate(event){
     const startdate = document.getElementById('startdate').value;
     const enddate = document.getElementById('enddate').value;
     if(startdate!='' && enddate!=''){
-        if(startdate>enddate){
-            event.target.setCustomValidity("Start Date should be greater than End Date");
+        if(startdate>=enddate){
+            event.target.setCustomValidity("Start Date should before the End Date");
             event.target.reportValidity();
             return event.target.value = '';
         } else {
@@ -278,7 +277,7 @@ function TPScheckDate(id,event){
     const enddate = document.getElementById('enddate'+id).value;
     if(startdate!='' && enddate!=''){
         if(startdate>=enddate){
-            event.target.setCustomValidity("Start Date should be greater than End Date")
+            event.target.setCustomValidity("Start Date should before the End Date")
             event.target.reportValidity();
             return event.target.value = '';
         } else {
@@ -302,6 +301,10 @@ function closeTPS(id) {
 
 function dontcloseTPS(event) {
     return event.stopPropagation();
+}
+
+function validateEdit(id){
+    return document.getElementById("edittaskbutton"+id).click();
 }
 
 function editTask(id){
@@ -355,7 +358,8 @@ window.addEventListener("resize", function(event) {
         const catmenu = document.getElementById('categoriesMenu');
         const mainmenu = document.getElementById('main-contents');
         const caticon = document.getElementById('category-icon');
-        caticon.style.display = 'none'
+        caticon.style.display = 'none';
+        mainmenu.style.margin = '1em';
         mainmenu.style.marginLeft = '15.5em';
         mainmenu.style.paddingTop = '4em';
         return catmenu.style.display = 'block'
