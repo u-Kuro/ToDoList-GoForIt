@@ -18,7 +18,7 @@ module.exports = {
     // Time Converter Client
     timeConverter: function timeConverter(time){
         var dt = new Date(time);
-        dt.setHours(dt.getHours()-getTimeOffset()+8);//Change to PH timeoffset
+        dt.setHours(dt.getHours()+8);//Change to PH timeoffset
         var y = dt.getFullYear().toString()
         var mo = getMonth(dt.getMonth());
         var d = fixdatetime(dt.getDate());
@@ -29,7 +29,7 @@ module.exports = {
     // Time Converter SQL to HTML
     timeConverterSQLtoHTML: function timeConverterSQLtoHTML(time){   
         var dt = new Date(time);
-        dt.setHours(dt.getHours()-getTimeOffset()+8);//Change to PH timeoffset
+        dt.setHours(dt.getHours()+8);//Change to PH timeoffset
         var y = dt.getFullYear().toString();
         var mo = fixdatetime(dt.getMonth()+1);
         var d = fixdatetime(dt.getDate());
