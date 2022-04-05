@@ -38,19 +38,19 @@ module.exports = {
         var d = time.substring(8,10);
         var h = time.substring(11,13);
         var m = time.substring(14,16);
-        return y+'-'+mo+'-'+d+'T'+h+':'+m+':00.000Z';
+        var localdate = y+'-'+mo+'-'+d+'T'+h+':'+m+':00.000Z';
+        var utc = new Date(localdate);
+        utc.setHours(utc.getHours() - 8); //Changed Local Time Input to UTC GMT+8
+        return utc;
     },
     // Check Status
     checktasktimeStatus: function checktasktimeStatus(start_date, end_date){
-        var startdate = new Date(start_date);
-        var enddate = new Date(end_date);
-        var currentdate = new Date();
-        currentdate.setHours(currentdate.getHours() + 8);
-        if(enddate<currentdate)
+        var current_date = new Date();
+        if(end_date<current_date)
             return 'Missed'
-        if(startdate>currentdate)
+        if(start_date>current_date)
             return 'Soon'
-        if(startdate<=currentdate && currentdate<=enddate)
+        if(start_date<=current_date && current_date<=end_date)
             return 'Today'
     }
 }

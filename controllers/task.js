@@ -10,6 +10,7 @@ exports.addtask = (req, res) => {
         if(catres.length>0){
             const { task_name, start_date, end_date, description } = req.body;
             const newstartdate = timeConverterHTMLtoSQL(start_date);
+            console.log(typeof newstartdate)
             const newenddate = timeConverterHTMLtoSQL(end_date);
             const date_status = checktasktimeStatus(newstartdate,newenddate);
             db.query('INSERT INTO tasks SET ? ', {
@@ -36,8 +37,8 @@ exports.addtask = (req, res) => {
 
 exports.updatetask = (req, res) => {
     const { task_id, task_name, start_date, end_date, description } = req.body;
-    const newstartdate = timeConverterHTMLtoSQL(start_date);
-    const newenddate = timeConverterHTMLtoSQL(end_date);
+    const newstartdate = new Date(timeConverterHTMLtoSQL(start_date));
+    const newenddate = new Date(timeConverterHTMLtoSQL(end_date));
     const date_status = checktasktimeStatus(newstartdate,newenddate);
     const sql = "UPDATE tasks SET ? WHERE id = '"+ task_id +"' AND users_id = '"+ req.session.users_id +"'";
     db.query(sql, {

@@ -35,9 +35,7 @@ function addCategory(){
     } else if(inputcatnameval.length>50){
         inputcatname.setCustomValidity("Category Name can't be Longer than 50 Characters")
         return inputcatname.reportValidity();
-    } else{
-        inputcatname.setCustomValidity("Category Name can't be Empty")
-        inputcatname.reportValidity();
+    } else {
         return document.getElementById("addcategoryForm").submit();
     }
 }
@@ -51,16 +49,13 @@ function addCategoryEnter(event){
             event.preventDefault();
             return inputcatname.reportValidity();
             
-        }
-        if(inputcatnameval.length>50){
+        } else if(inputcatnameval.length>50){
             inputcatname.setCustomValidity("Category Name can't be Longer than 50 Characters")
             event.preventDefault();
             return inputcatname.reportValidity();
+        } else {
+            return document.getElementById("addcategoryForm").submit();
         }
-        inputcatname.setCustomValidity("Category Name can't be Empty")
-        inputcatname.reportValidity();
-        event.preventDefault();
-        return document.getElementById("addcategoryForm").submit();
     }
 }
 
