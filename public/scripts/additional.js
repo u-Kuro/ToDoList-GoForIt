@@ -11,7 +11,7 @@ function getMonth(month){
 }
 
 function getTimeZoneOffset(){
-    return offset = ((new Date().getTimezoneOffset())*-1)/60 
+    return offset = ((new Date().getTimezoneOffset())*-1)/60
 }
 
 module.exports = {
@@ -44,12 +44,13 @@ module.exports = {
         var m = time.substring(14,16);
         var localdate = y+'-'+mo+'-'+d+'T'+h+':'+m+':00.000Z';
         var utc = new Date(localdate);
-        utc.setHours(utc.getHours() - getTimeZoneOffset()); //Change Local Time to Offset
+        utc.setHours(utc.getHours() - getTimeZoneOffset()); //Change Local Time to UTC
         return utc;
     },
     // Check Status
     checktasktimeStatus: function checktasktimeStatus(start_date, end_date){
         var current_date = new Date();
+        current_date.setHours(current_date.getHours() - getTimeZoneOffset()) //Change Local Time to UTC
         if(end_date<current_date)
             return 'Missed'
         if(start_date>current_date)
