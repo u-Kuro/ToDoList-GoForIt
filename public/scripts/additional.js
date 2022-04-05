@@ -60,10 +60,6 @@ module.exports = {
     // Check Status
     checktasktimeStatus: function checktasktimeStatus(start_date, end_date){
         var current_date = new Date();
-        console.log(getTimeOffset())
-        console.log(current_date)
-        console.log(start_date)
-        console.log(end_date)
         if(end_date<current_date)
             return 'Missed'
         else if(start_date>current_date)
