@@ -11,14 +11,19 @@ function getMonth(month){
 }
 
 function getTimeOffset(){
-    return offset = ((new Date().getTimezoneOffset())*-1)/60
+    var offset = ((new Date().getTimezoneOffset())*-1)/60
+    var houroffset = Math.floor(offset);
+    var minoffset = 60*(offset - houroffset);
+    return [houroffset, minoffset];
 }
 
 module.exports = {
     // Time Converter Client
     timeConverter: function timeConverter(time){
         var dt = new Date(time);
-        dt.setHours(dt.getHours()-getTimeOffset()+8);//Change to PH timeoffset
+        var offsets = getTimeOffset();
+        dt.setHours(dt.getHours()-offsets[0]+8);
+        dt.setMinutes(dt.getMinutes()+offsets[1])//Change to PH timeoffset
         var y = dt.getFullYear().toString()
         var mo = getMonth(dt.getMonth());
         var d = fixdatetime(dt.getDate());
@@ -29,7 +34,9 @@ module.exports = {
     // Time Converter SQL to HTML
     timeConverterSQLtoHTML: function timeConverterSQLtoHTML(time){   
         var dt = new Date(time);
-        dt.setHours(dt.getHours()-getTimeOffset()+8);//Change to PH timeoffset
+        var offsets = getTimeOffset();
+        dt.setHours(dt.getHours()-offsets[0]+8);
+        dt.setMinutes(dt.getMinutes()+offsets[1])//Change to PH timeoffset
         var y = dt.getFullYear().toString();
         var mo = fixdatetime(dt.getMonth()+1);
         var d = fixdatetime(dt.getDate());
@@ -46,7 +53,8 @@ module.exports = {
         var m = time.substring(14,16);
         var localdate = y+'-'+mo+'-'+d+'T'+h+':'+m+':00.000Z';
         var utc = new Date(localdate);
-        utc.setHours(utc.getHours() - 8); //Change PH Local Time to UTC+0 
+        var offsets = getTimeOffset();
+        utc.setHours(utc.getHours() - offsets[0] - (8-offsets[0])); //Change PH Local Time to UTC+0 
         return utc;
     },
     // Check Status
