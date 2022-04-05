@@ -209,7 +209,6 @@
 
 .main-contents > * {
     border-radius: 5px;
-    min-width: 400px;
     box-shadow: 0 0 0px 2px rgb(221, 216, 216);
 }
 
