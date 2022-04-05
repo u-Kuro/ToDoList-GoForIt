@@ -127,7 +127,7 @@
     background-color: rgb(45,44,57);
     width: 50px;
     height: 100%;
-    z-index: 5;
+    z-index: 4;
     box-shadow: 4px 0 2px -2px rgb(221, 216, 216);
 }
 
@@ -171,7 +171,6 @@
 .home-contents .categories {
     position: fixed;
     flex: 1 1 15%;
-    min-width: 175px;
     min-height: 100%;
     padding-top: 50px;
     background-color: white;
@@ -209,7 +208,6 @@
 
 .main-contents > * {
     border-radius: 5px;
-    min-width: 400px;
     box-shadow: 0 0 0px 2px rgb(221, 216, 216);
 }
 
@@ -235,7 +233,6 @@
     
     .main-contents > * {
         border-radius: 5px;
-        min-width: 400px;
         box-shadow: 0 0 0px 2px rgb(221, 216, 216);
     }
 }
@@ -272,7 +269,7 @@
 }
 
 .category-empty h5 {
-    color: rgb(160, 156, 156);
+    color: black;
     font-weight: 100;
     font-size: 14px;
     margin: 0;
@@ -310,8 +307,7 @@
     border: 1px solid rgb(10,180,180);
     font-weight: 100;
     font-size: 14px;
-    color: rgb(73, 71, 71);
-    min-width: 0;
+    color: black;
 }
 
 .add-category img {
@@ -321,7 +317,6 @@
 
 .category-settings{
     min-height: 30px;
-    min-width: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -502,7 +497,6 @@
 .cspa-header .close-settings-container{
     border-radius: 100%;
     background-color: white;
-    min-width: 30px;
     min-height: 30px;
     max-height: 30px;
     display: flex;
@@ -697,7 +691,6 @@
 
 .ts-date input {
     flex-grow: 1;
-    min-width: 25ch;
     justify-self: right;
     text-align: right;
     border: none;
@@ -748,7 +741,6 @@
 
 .xclose-atp {
     max-width: 30px;
-    min-width: 30px;
     min-height: 30px;
     max-height: 30px;
     display: flex;
@@ -763,7 +755,6 @@
 
 .xclose-atp img {
     max-width: 20px;
-    min-width: 20px;
     min-height: 20px;
     max-height: 20px;
 }
@@ -801,8 +792,7 @@
     border: 1px solid rgb(10,180,180);
     font-weight: 100;
     font-size: 14px;
-    color: rgb(73, 71, 71);
-    min-width: 0;
+    color: black;
 }
 
 .atpf-2 {
@@ -940,11 +930,8 @@
 /* Register */
 
 .reg-log-bg{
-    position: fixed;
-    background-color: rgba(0,0,0,0.3);
     width: 100%;
     height: 100%;
-    position: fixed;
     top: 0;
     z-index: 3;
     display: flex;
@@ -954,11 +941,8 @@
 }
 
 .reg {
-    position: fixed;
-    background-color: rgba(0,0,0,0.3);
     width: 100%;
     height: 100%;
-    position: fixed;
     top: 0;
     z-index: 3;
     display: flex;
@@ -1040,8 +1024,6 @@
 
 /* Login */
 .log {
-    position: fixed;
-    background-color: rgba(0,0,0,0.3);
     width: 100%;
     height: 100%;
     position: fixed;

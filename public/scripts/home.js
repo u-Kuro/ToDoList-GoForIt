@@ -334,6 +334,12 @@ window.addEventListener("resize", function(event) {
         mainmenu.style.marginLeft = '15.5em';
         mainmenu.style.paddingTop = '4em';
         return catmenu.style.display = 'block'
+    } else if(document.body.clientWidth<785 && document.getElementById('categoriesMenu').style.display=='block') {
+        const mainmenu = document.getElementById('main-contents');
+        const caticon = document.getElementById('category-icon');
+        caticon.style.display = 'flex';
+        mainmenu.style.margin = '0.25em';
+        return mainmenu.style.paddingTop = '3em';
     } else {
         const catmenu = document.getElementById('categoriesMenu');
         const mainmenu = document.getElementById('main-contents');
