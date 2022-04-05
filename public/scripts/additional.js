@@ -10,6 +10,10 @@ function getMonth(month){
     return mts[month]
 }
 
+function getTimeZoneOffset(){
+    return offset = ((new Date().getTimezoneOffset())*-1)/60 
+}
+
 module.exports = {
     // Time Converter Client
     timeConverter: function timeConverter(time){
@@ -40,7 +44,7 @@ module.exports = {
         var m = time.substring(14,16);
         var localdate = y+'-'+mo+'-'+d+'T'+h+':'+m+':00.000Z';
         var utc = new Date(localdate);
-        utc.setHours(utc.getHours() - 8); //Changed Local Time Input to UTC GMT+8
+        utc.setHours(utc.getHours() - getTimeZoneOffset()); //Change Local Time to Offset
         return utc;
     },
     // Check Status
