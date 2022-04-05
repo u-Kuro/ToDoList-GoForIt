@@ -201,7 +201,21 @@ function closeTPSA(id,event){
 }
 
 function dontcloseTPSA(event){
-    event.stopPropagation();
+    return event.stopPropagation();
+}
+
+// Add Task
+function addtask(){
+    const startdate = document.getElementById('startdate').value;
+    const enddate = document.getElementById('enddate').value;
+    const taskname = document.getElementById('taskname').value;
+    const description = document.getElementById('descriptions').value;
+    if(startdate!='' && enddate!='' && taskname!='' && description!=''){
+        if(startdate<enddate){
+            return document.getElementById('addtaskForm').submit();
+        }
+    }
+    return true;
 }
 
 // Check Add Task Form's Input for Dates
@@ -210,9 +224,12 @@ function checkDate(event){
     const enddate = document.getElementById('enddate').value;
     if(startdate!='' && enddate!=''){
         if(startdate>enddate){
-            event.target.setCustomValidity("Start Date should be greater than End Date")
+            event.target.setCustomValidity("Start Date should be greater than End Date");
             event.target.reportValidity();
             return event.target.value = '';
+        } else {
+            event.target.setCustomValidity("");
+            return event.target.reportValidity();
         }
     }
     return true;
@@ -260,10 +277,13 @@ function TPScheckDate(id,event){
     const startdate = document.getElementById('startdate'+id).value;
     const enddate = document.getElementById('enddate'+id).value;
     if(startdate!='' && enddate!=''){
-        if(startdate>enddate){
+        if(startdate>=enddate){
             event.target.setCustomValidity("Start Date should be greater than End Date")
             event.target.reportValidity();
             return event.target.value = '';
+        } else {
+            event.target.setCustomValidity("")
+            return event.target.reportValidity();
         }
     }
     return true;
@@ -284,12 +304,17 @@ function dontcloseTPS(event) {
     return event.stopPropagation();
 }
 
-function addtask(){
-    return document.getElementById("addtaskForm").submit();
-}
-
 function editTask(id){
-    return document.getElementById("editTask"+id).submit();
+    const startdate = document.getElementById('startdate'+id).value;
+    const enddate = document.getElementById('enddate'+id).value;
+    const taskname = document.getElementById('taskname'+id).value;
+    const description = document.getElementById('descriptions'+id).value;
+    if(startdate!='' && enddate!='' && taskname!='' && description!=''){
+        if(startdate<enddate){
+            return document.getElementById("editTask"+id).submit();
+        }
+    }
+    return true;
 }
 
 function deleteTask(id){

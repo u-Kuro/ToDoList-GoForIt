@@ -86,7 +86,8 @@
 }
 
 .top-bar-container {
-    width: 100%;
+    width: calc(100% - 50px);
+    margin-left: 50px;
     position: fixed;
     z-index: 1;
 }
@@ -95,7 +96,6 @@
     position: flex;
     background-color: white;
     z-index: 1;
-    margin-left: 50px;
     min-height: 50px;
     display: flex;
     align-items: center;
@@ -127,7 +127,7 @@
     background-color: rgb(45,44,57);
     width: 50px;
     height: 100%;
-    z-index: 4;
+    z-index: 2;
     box-shadow: 4px 0 2px -2px rgb(221, 216, 216);
 }
 
@@ -202,6 +202,7 @@
     margin: 1em;
     padding-top: 4em;
     margin-left: 15.5em;
+    min-width: 300px;
     flex-wrap: wrap;
     flex: 1 1 85%;
 }
@@ -317,6 +318,7 @@
 
 .category-settings{
     min-height: 30px;
+    min-width: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -351,7 +353,7 @@
 .category-settings-popup .cs-container{
     background-color: white;
     height: 150px;
-    width: 375px;
+    width: 310px;
     z-index: 3;
     border-radius: 5px;
     box-shadow: 0 0 0 1px rgb(221, 216, 216);
@@ -476,7 +478,7 @@
 .csp-alert .cspa-container{
     background-color: white;
     height: 100px;
-    width: 375px;
+    width: 300px;
     z-index: 3;
     border-radius: 5px;
     box-shadow: 0 0 0 1px rgb(221, 216, 216);
@@ -691,6 +693,7 @@
 
 .ts-date input {
     flex-grow: 1;
+    min-width: 25ch;
     justify-self: right;
     text-align: right;
     border: none;
@@ -718,7 +721,7 @@
 .add-task-popup .atp-container{
     background-color: white;
     height: 350px;
-    width: 425px;
+    width: 300px;
     z-index: 3;
     border-radius: 5px;
     box-shadow: 0 0 0 1px rgb(221, 216, 216);
@@ -741,6 +744,7 @@
 
 .xclose-atp {
     max-width: 30px;
+    min-width: 30px;
     min-height: 30px;
     max-height: 30px;
     display: flex;
@@ -755,6 +759,7 @@
 
 .xclose-atp img {
     max-width: 20px;
+    min-width: 20px;
     min-height: 20px;
     max-height: 20px;
 }
@@ -800,6 +805,7 @@
 }
 
 .atpf-2 input {
+    max-width: 185px;
     border: 1px solid rgb(10,180,180);
     outline: none;
 }
@@ -809,6 +815,7 @@
 }
 
 .atpf-3 input {
+    max-width: 185px;
     border: 1px solid rgb(10,180,180);
     outline: none;
 }
@@ -954,7 +961,7 @@
 .reg-container {
     background-color: rgb(240,242,245);
     height: 350px;
-    width: 300px;
+    width: 250px;
     z-index: 3;
     border-radius: 5px;
     box-shadow: 0 0 0 1px rgb(221, 216, 216);
@@ -1038,7 +1045,7 @@
 .log-container {
     background-color: rgb(240,242,245);
     height: 275px;
-    width: 300px;
+    width: 250px;
     z-index: 3;
     border-radius: 5px;
     box-shadow: 0 0 0 1px rgb(221, 216, 216);
@@ -1104,4 +1111,186 @@
 
 .login-form h5:hover {
     color: black;
+}
+
+@media screen and (max-height: 350px){
+    /* Register */
+
+.reg-log-bg{
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.reg {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.reg-container {
+    background-color: rgb(225,222,223);
+    height: 80%;
+    width: 80%;
+    z-index: 3;
+    border-radius: 5px;
+    box-shadow: 0 0 0 0 rgb(221, 216, 216);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 5ch;
+}
+
+.register-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.register-form > * {
+    flex: 1 1 100%;
+    align-self: center;
+}
+
+.register-form h1 {
+    margin: 0;
+}
+
+.register-form h4 {
+    margin: 0;
+}
+
+.register-form input{
+    outline: 0;
+    padding: 1ch;
+    border-radius: 5px;
+    background: transparent;
+    border: 1px solid black;
+    font-size: 15px;
+}
+
+.register-form button{
+    background-color: rgb(9, 157, 157);
+    color: rgb(240,242,245);
+    padding: 1ch;
+    border-radius: 5px;
+    border: 1px solid;
+    font-size: 15px;
+}
+
+.register-form button:hover{
+    border: 1px solid rgb(9, 157, 157);
+    background-color: rgb(240,242,245);
+    color: black;
+}
+
+.register-form a {
+    text-decoration: none;
+    padding-bottom: 5ch;
+}
+
+.register-form h5 {
+    margin: 0;
+    text-align: center;
+    color: rgb(10,180,180);
+}
+
+.register-form h5:hover {
+    color: black;
+}
+
+/* Login */
+.log {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.log-container {
+    background-color: rgb(225,222,223);
+    height: 100%;
+    width: 80%;
+    z-index: 3;
+    border-radius: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    box-shadow: 0 0 0 0 rgb(221, 216, 216);
+    justify-content: center;
+    align-items: center;
+    padding: 5ch;
+}
+
+.login-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.login-form > * {
+    flex: 1 1 100%;
+    align-self: center;
+}
+
+.login-form h1 {
+    margin: 0;
+}
+
+.login-form h4 {
+    margin: 0;
+}
+
+.login-form input{
+    outline: 0;
+    padding: 1ch;
+    border-radius: 5px;
+    background: transparent;
+    border: 1px solid black;
+    font-size: 15px;
+}
+
+.login-form button{
+    background-color: rgb(9, 157, 157);
+    color: rgb(240,242,245);
+    padding: 1ch;
+    border-radius: 5px;
+    border: 1px solid;
+    font-size: 15px;
+}
+
+.login-form button:hover{
+    border: 1px solid rgb(9, 157, 157);
+    background-color: rgb(240,242,245);
+    color: black;
+}
+
+.login-form a {
+    text-decoration: none;
+}
+
+.login-form h5 {
+    margin: 0;
+    text-align: center;
+    color: rgb(10,180,180);
+}
+
+.login-form h5:hover {
+    color: black;
+}
 }

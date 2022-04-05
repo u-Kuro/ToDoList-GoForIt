@@ -6,7 +6,7 @@ exports.addcategory = (req, res) => {
         if(error){
             console.log(error);
         } else {
-            res.redirect('/home');
+            return res.redirect('/home');
         }
     });
  
@@ -19,7 +19,7 @@ exports.updatecategory = (req, res) => {
         if(error){
             console.log(error);
         } else {
-            res.redirect('/home');
+            return res.redirect('/home');
         }
     });
 }
@@ -37,7 +37,7 @@ exports.deletecategory = (req, res) => {
                 if(error){
                     console.log(error);
                 } else {
-                    res.redirect('/home');
+                    return res.redirect('/home');
                 }
             });
         }
@@ -55,5 +55,5 @@ exports.opencategory = (req, res) => {
     // Save in Cookies
     req.session.category_id = category_id;
     req.session.categoryischosen = true;
-    res.redirect('/home');
+    return res.redirect('/home');
 }

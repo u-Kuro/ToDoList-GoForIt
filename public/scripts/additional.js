@@ -50,12 +50,12 @@ module.exports = {
     // Check Status
     checktasktimeStatus: function checktasktimeStatus(start_date, end_date){
         var current_date = new Date();
-        current_date.setHours(current_date.getHours() - getTimeOffset());
+        current_date.setHours(current_date.getHours() - getTimeOffset()); //Change Local Time to UTC+0 for comparing
         if(end_date<current_date)
             return 'Missed'
-        if(start_date>current_date)
+        else if(start_date>current_date)
             return 'Soon'
-        if(start_date<=current_date && current_date<=end_date)
+        else (start_date<=current_date && current_date<=end_date)
             return 'Today'
     }
 }
