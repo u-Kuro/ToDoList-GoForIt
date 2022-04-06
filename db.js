@@ -8,7 +8,7 @@ dotenv.config({
 });
 // export
 module.exports = {
-    db: mysql.createConnection({
+    db: mysql.createPool({
         host: process.env.database_host || 'localhost',
         user: process.env.database_user || 'root',
         password: process.env.database_password || '',

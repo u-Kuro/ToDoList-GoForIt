@@ -98,10 +98,6 @@ var localhour = serverDate.getHours();
 if (localhour >= 7 && localhour <= 21) {// 7am to 9pm
     intervalisSet = true;
     setInterval(ping, 5*60*1000); // Ping Website Interval 5 min
-    // Ping Database
-    setInterval(function () {
-    db.query('SELECT 1');
-    }, 5*1000);// Ping DB Interval 5 secons
 }
 
 
