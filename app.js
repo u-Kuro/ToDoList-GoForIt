@@ -92,7 +92,7 @@ var pingweb = setInterval(function () {
     serverDate.setHours(serverDate.getHours()-shouroffset+8); // Server to GMT+8 PH
     serverDate.setMinutes(serverDate.getMinutes()-sminoffset);
     var localhour = serverDate.getHours();
-    if (localhour >= 7 && localhour <= 23) { // Ping between 7am to 12midnight
+    if (localhour >= 7 && localhour <= 20) { // Ping between 7am to 9pm
         ping
     } else {
         clearInterval(pingweb);
