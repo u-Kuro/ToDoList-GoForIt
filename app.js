@@ -84,22 +84,17 @@ db.getConnection((error) => {
 // Ping Deployed App
 const request = require('request');
 const ping = () => request('https://todolist-goforit.herokuapp.com/', (error, response, body) => {});
-var intervalisSet = false;
-setInterval(function () {
-    var offset = ((new Date().getTimezoneOffset())*-1)/60 // Server Offset
-    var shouroffset = Math.floor(offset);
-    var sminoffset = 60*(offset - shouroffset);
-    var serverDate = new Date();
-    serverDate.setHours(serverDate.getHours()-shouroffset+8); // Server to GMT+8 time
-    serverDate.setMinutes(serverDate.getMinutes()-sminoffset);
-    var localhour = serverDate.getHours();
-    if (localhour >= 7 && localhour <= 20 && !intervalisSet) { // 7am to 9pm
-        intervalisSet = true;
-        var pingweb = setInterval(ping, 5*60*1000); // Ping Website Interval 5 min
-    } else if(!(localhour >= 7 && localhour <= 20) && intervalisSet) {
-        intervalisSet = false;
-        clearInterval(pingweb);
-    }
-}, 60*1000); // Checks Date every Minute
+var offset = ((new Date().getTimezoneOffset())*-1)/60 // Server Offset
+var shouroffset = Math.floor(offset);
+var sminoffset = 60*(offset - shouroffset);
+var serverDate = new Date();
+serverDate.setHours(serverDate.getHours()-shouroffset+8); // Server to GMT+8 time
+serverDate.setMinutes(serverDate.getMinutes()-sminoffset);
+var localhour = serverDate.getHours();
+if (localhour >= 7 && localhour <= 20) { // 7am to 9pm
+    var pingweb = setInterval(ping, 5*60*1000); // Ping Website Interval 5 min
+} else {
+    clearInterval(pingweb);
+}
 
 module.exports = app;
