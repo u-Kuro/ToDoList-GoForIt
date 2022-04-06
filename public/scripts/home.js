@@ -360,7 +360,7 @@ window.addEventListener("resize", function(event) {
         const caticon = document.getElementById('category-icon');
         caticon.style.display = 'none';
         mainmenu.style.margin = '1em';
-        mainmenu.style.marginLeft = '15.5em';
+        mainmenu.style.marginLeft = '16.5em';
         mainmenu.style.paddingTop = '4em';
         return catmenu.style.display = 'block'
     } else if(document.body.clientWidth<785 && document.getElementById('categoriesMenu').style.display=='block') {
@@ -378,4 +378,13 @@ window.addEventListener("resize", function(event) {
         mainmenu.style.paddingTop = '3em';
         return catmenu.style.display = 'none'
     }
+});
+
+// Change Categories Scroll Max Height
+window.addEventListener('load', function(event) {
+    return document.getElementById('categoriesul').style.maxHeight = document.body.clientHeight-162+'px';
+});
+
+window.addEventListener('resize', function(event) {
+    return document.getElementById('categoriesul').style.maxHeight = document.body.clientHeight-162+'px';
 });

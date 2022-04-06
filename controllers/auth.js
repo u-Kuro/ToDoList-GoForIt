@@ -49,7 +49,7 @@ exports.register = (req, res) => {
 }
 
 exports.login = (req, res) => {
-    const {useremail, password} = req.body;
+    const {useremail, password, ctohour, ctomin} = req.body;
     db.query('SELECT password, id, username FROM users WHERE email = ?', [useremail], async (error, emres) => {
         if(error){
             console.log(error);
@@ -60,6 +60,8 @@ exports.login = (req, res) => {
                 req.session.isAuth = true; // Allows User Session
                 req.session.username = emres[0].username;
                 req.session.users_id = emres[0].id;
+                req.session.ctz_offsethour = parseFloat(ctohour); // Gets Clients Timezone Offset
+                req.session.ctz_offsetmin = parseFloat(ctomin);
                 req.session.categoryischosen = false;
                 return res.redirect('/home');
             } else {
@@ -79,6 +81,8 @@ exports.login = (req, res) => {
                         req.session.isAuth = true; // Allows User Session
                         req.session.username = useres[0].username;
                         req.session.users_id = useres[0].id;
+                        req.session.ctz_offsethour = parseFloat(ctohour); // Gets Clients Timezone Offset
+                        req.session.ctz_offsetmin = parseFloat(ctomin);
                         req.session.categoryischosen = false;
                         return res.redirect('/home');
                     } else {

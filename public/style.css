@@ -196,12 +196,13 @@
     list-style-type: none;
 }
 
+
 .home-contents .main-contents {
     display: flex;
     gap: 1em;
     margin: 1em;
     padding-top: 4em;
-    margin-left: 15.5em;
+    margin-left: 16.5em;
     min-width: 300px;
     flex-wrap: wrap;
     flex: 1 1 85%;
@@ -242,14 +243,8 @@
     padding: 0;
     margin-top: 1ch;
     margin-bottom: 0;
-    overflow-y: hidden;
-    max-height: 550px;
-}
-
-.categories ul:hover,
-.categories ul:active,
-.categories ul:focus {
     overflow-y: auto;
+    max-height: 550px;
 }
 
 .category {
@@ -258,6 +253,7 @@
     justify-content: space-between;
     align-items: center;
 }
+
 
 .category-empty {
     padding: 10px 10px;
@@ -280,9 +276,9 @@
     max-width: 13.9ch;
     min-height: 5ch;
     border: none;
-    color: rgb(73, 71, 71);
+    color: black;
+    font-size: 15px;
     font-weight: 100;
-    font-size: 14px;
     margin: 0 5px;
     outline: none;
     background-color: transparent;
@@ -306,8 +302,7 @@
     outline: none;
     height: 20px;
     border: 1px solid rgb(10,180,180);
-    font-weight: 100;
-    font-size: 14px;
+    font-size: 15px;
     color: black;
 }
 
@@ -594,13 +589,9 @@
     padding: 0;
     margin: 0;
     margin-bottom: 0;
-    overflow-y: hidden;
+    overflow-y: auto;
     max-height: 520px;
     flex-grow: 1;
-}
-
-.tasks ul:hover {
-    overflow-y: auto;
 }
 
 .task {
@@ -795,8 +786,7 @@
     outline: none;
     height: 20px;
     border: 1px solid rgb(10,180,180);
-    font-weight: 100;
-    font-size: 14px;
+    font-size: 15px;
     color: black;
 }
 
@@ -810,6 +800,8 @@
     border: 1px solid rgb(10,180,180);
     outline: none;
     flex: 1 1 100%;
+    font-size: 15px;
+    color: black;
 }
 
 .atpf-3 {
@@ -822,6 +814,8 @@
     border: 1px solid rgb(10,180,180);
     outline: none;
     flex: 1 1 100%;
+    font-size: 15px;
+    color: black;
 }
 
 .atpf-3 label {
@@ -838,9 +832,8 @@
     outline: none;
     flex: 1 1 100%;
     padding: 1ch;
-    font-weight: 100;
-    font-size: 14px;
-    color: rgb(73, 71, 71);
+    font-size: 15px;
+    color: black;
 }
 
 .atp-btns {
@@ -965,7 +958,7 @@
 }
 
 .reg-container {
-    background-color: rgb(240,242,245);
+    background-color: white;
     height: 350px;
     width: 250px;
     z-index: 3;
@@ -1049,7 +1042,7 @@
 }
 
 .log-container {
-    background-color: rgb(240,242,245);
+    background-color: white;
     height: 275px;
     width: 250px;
     z-index: 3;
@@ -1120,6 +1113,16 @@
 }
 
 @media screen and (max-height: 350px){
+
+    :root {
+        background-color: white;
+        font-family: Arial, sans-serif;
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        
+    }
+
     /* Register */
 
 .reg-log-bg{
@@ -1145,7 +1148,7 @@
 }
 
 .reg-container {
-    background-color: rgb(225,222,223);
+    background-color: white;
     height: 80%;
     width: 80%;
     z-index: 3;
@@ -1230,7 +1233,7 @@
 }
 
 .log-container {
-    background-color: rgb(225,222,223);
+    background-color: white;
     height: 100%;
     width: 80%;
     z-index: 3;

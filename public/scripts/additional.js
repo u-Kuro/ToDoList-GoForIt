@@ -12,18 +12,22 @@ function getMonth(month){
 
 function getTimeOffset(){
     var offset = ((new Date().getTimezoneOffset())*-1)/60
-    var houroffset = Math.floor(offset);
-    var minoffset = 60*(offset - houroffset);
-    return [houroffset, minoffset];
+    var shouroffset = Math.floor(offset);
+    var sminoffset = 60*(offset - shouroffset);
+    return [shouroffset, sminoffset];
 }
 
 module.exports = {
     // Time Converter Client
-    timeConverter: function timeConverter(time){
+    timeConverter: function timeConverter(time,chouroffset,cminoffset){
         var dt = new Date(time);
-        var offsets = getTimeOffset();
-        dt.setHours(dt.getHours()-offsets[0]+8);
-        dt.setMinutes(dt.getMinutes()+offsets[1])//Change to PH timeoffset
+        // Change Server Time to UTC
+        var stoffset = getTimeOffset()
+        dt.setHours(dt.getHours()-stoffset[0]);
+        dt.setMinutes(dt.getMinutes()-stoffset[1]);
+        // Change UTC to Client Time
+        dt.setHours(dt.getHours()+chouroffset);
+        dt.setMinutes(dt.getMinutes()+cminoffset);
         var y = dt.getFullYear().toString()
         var mo = getMonth(dt.getMonth());
         var d = fixdatetime(dt.getDate());
@@ -32,11 +36,15 @@ module.exports = {
         return mo+' '+d+', '+y+' - '+h+':'+m;
     },
     // Time Converter SQL to HTML
-    timeConverterSQLtoHTML: function timeConverterSQLtoHTML(time){   
+    timeConverterSQLtoHTML: function timeConverterSQLtoHTML(time,chouroffset,cminoffset){   
         var dt = new Date(time);
-        var offsets = getTimeOffset();
-        dt.setHours(dt.getHours()-offsets[0]+8);
-        dt.setMinutes(dt.getMinutes()+offsets[1])//Change to PH timeoffset
+        // Change Server Time to UTC
+        var stoffset = getTimeOffset();
+        dt.setHours(dt.getHours()-stoffset[0]);
+        dt.setMinutes(dt.getMinutes()-stoffset[1]);
+        // Change UTC to Client Time
+        dt.setHours(dt.getHours()+chouroffset);
+        dt.setMinutes(dt.getMinutes()+cminoffset);
         var y = dt.getFullYear().toString();
         var mo = fixdatetime(dt.getMonth()+1);
         var d = fixdatetime(dt.getDate());
@@ -45,7 +53,7 @@ module.exports = {
         return y+'-'+mo+'-'+d+'T'+h+':'+m;
     },
     // Time Converter HTML to SQL
-    timeConverterHTMLtoSQL: function timeConverterHTMLtoSQL(time){
+    timeConverterHTMLtoSQL: function timeConverterHTMLtoSQL(time,chouroffset,cminoffset){
         var y = time.substring(0,4);
         var mo = time.substring(5,7);
         var d = time.substring(8,10);
@@ -53,8 +61,9 @@ module.exports = {
         var m = time.substring(14,16);
         var localdate = y+'-'+mo+'-'+d+'T'+h+':'+m+':00.000Z';
         var utc = new Date(localdate);
-        var offsets = getTimeOffset();
-        utc.setHours(utc.getHours() - offsets[0] - (8-offsets[0])); //Change PH Local Time to UTC+0 
+        //Change Local Time to UTC+0 
+        utc.setHours(utc.getHours() - chouroffset); 
+        utc.setMinutes(utc.getMinutes() - cminoffset);
         return utc;
     },
     // Check Status

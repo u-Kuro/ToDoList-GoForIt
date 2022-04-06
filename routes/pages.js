@@ -74,32 +74,32 @@ router.get('/home', (req, res) => {
                                             }
                                             if(tasres.length>0){
                                                 for(let i=0; i<tasres.length; i++){
-                                                    tasres[i].start_date = timeConverter(tasres[i].start_date);
-                                                    tasres[i].end_date = timeConverter(tasres[i].end_date);
+                                                    tasres[i].start_date = timeConverter(tasres[i].start_date, req.session.ctz_offsethour, req.session.ctz_offsetmin);
+                                                    tasres[i].end_date = timeConverter(tasres[i].end_date, req.session.ctz_offsethour, req.session.ctz_offsetmin);
                                                 }
                                             }
                                             if(newtasres.length>0){
                                                 for(let i=0;i<newtasres.length; i++){
-                                                    newtasres[i].start_date = timeConverterSQLtoHTML(newtasres[i].start_date);
-                                                    newtasres[i].end_date = timeConverterSQLtoHTML(newtasres[i].end_date);
+                                                    newtasres[i].start_date = timeConverterSQLtoHTML(newtasres[i].start_date, req.session.ctz_offsethour, req.session.ctz_offsetmin);
+                                                    newtasres[i].end_date = timeConverterSQLtoHTML(newtasres[i].end_date, req.session.ctz_offsethour, req.session.ctz_offsetmin);
                                                 }
                                             }
                                             if(mistasres.length>0){
                                                 for(let i=0; i<mistasres.length; i++){
-                                                    mistasres[i].start_date = timeConverter(mistasres[i].start_date);
-                                                    mistasres[i].end_date = timeConverter(mistasres[i].end_date);
+                                                    mistasres[i].start_date = timeConverter(mistasres[i].start_date, req.session.ctz_offsethour, req.session.ctz_offsetmin);
+                                                    mistasres[i].end_date = timeConverter(mistasres[i].end_date, req.session.ctz_offsethour, req.session.ctz_offsetmin);
                                                 }
                                             }
                                             if(todtasres.length>0){
                                                 for(let i=0; i<todtasres.length; i++){
-                                                    todtasres[i].start_date = timeConverter(todtasres[i].start_date);
-                                                    todtasres[i].end_date = timeConverter(todtasres[i].end_date);
+                                                    todtasres[i].start_date = timeConverter(todtasres[i].start_date, req.session.ctz_offsethour, req.session.ctz_offsetmin);
+                                                    todtasres[i].end_date = timeConverter(todtasres[i].end_date, req.session.ctz_offsethour, req.session.ctz_offsetmin);
                                                 }
                                             }
                                             if(sootasres.length>0){
                                                 for(let i=0; i<sootasres.length; i++){
-                                                    sootasres[i].start_date = timeConverter(sootasres[i].start_date);
-                                                    sootasres[i].end_date = timeConverter(sootasres[i].end_date);
+                                                    sootasres[i].start_date = timeConverter(sootasres[i].start_date, req.session.ctz_offsethour, req.session.ctz_offsetmin);
+                                                    sootasres[i].end_date = timeConverter(sootasres[i].end_date, req.session.ctz_offsethour, req.session.ctz_offsetmin);
                                                 }
                                             }
                                             return res.render('home', {

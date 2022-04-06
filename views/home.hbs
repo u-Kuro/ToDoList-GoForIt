@@ -36,7 +36,7 @@
                 <img class="cur-point" onclick='addCategory()' src='/add button green.png' alt='add category'>
                 <input id='inputcategoryName' type='text' name="category_name" placeholder='Add Category' onkeydown="addCategoryEnter(event)" value="" maxlength="50" required>
             </form>
-            <ul>
+            <ul id="categoriesul">
             {{#if category.length}}
               {{#each category}} 
                 <form id="opencategory{{this.id}}" style="display:none" action="/category/opencategory" method="post">
