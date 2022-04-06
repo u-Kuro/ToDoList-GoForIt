@@ -80,4 +80,24 @@ db.connect((error) => {
     }
 });
 
+
+// Ping Deployed App
+const request = require('request');
+const ping = () => request('https://todolist-goforit.herokuapp.com/', (error, response, body) => {
+    console.log('error:', error); // Print the error if one occurred
+    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+    console.log('body:', body); // Print body of response received
+});
+var offset = ((new Date().getTimezoneOffset())*-1)/60// Server Offset
+var shouroffset = Math.floor(offset);
+var sminoffset = 60*(offset - shouroffset);
+var serverDate = new Date();
+serverDate.setHours(serverDate.getHours()-shouroffset+8);// Server to GMT+8 time
+serverDate.setMinutes(serverDate.getMinutes()-sminoffset);
+var localhour = serverDate.getHours();
+if (localhour >= 7 && localhour <= 21) {// 7am to 9pm
+    intervalisSet = true;
+    setInterval(ping, 20*60*1000); // Ping Interval 20 min
+}
+
 module.exports = app;
