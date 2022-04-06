@@ -84,9 +84,9 @@ db.connect((error) => {
 // Ping Deployed App
 const request = require('request');
 const ping = () => request('https://todolist-goforit.herokuapp.com/', (error, response, body) => {
-    console.log('error:', error); // Print the error if one occurred
-    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-    console.log('body:', body); // Print body of response received
+    console.log('error:', error);
+    console.log('statusCode:', response && response.statusCode);
+    console.log('body:', body);
 });
 var offset = ((new Date().getTimezoneOffset())*-1)/60// Server Offset
 var shouroffset = Math.floor(offset);
