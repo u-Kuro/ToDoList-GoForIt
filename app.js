@@ -88,11 +88,11 @@ var offset = ((new Date().getTimezoneOffset())*-1)/60 // Server Offset
 var shouroffset = Math.floor(offset);
 var sminoffset = 60*(offset - shouroffset);
 var serverDate = new Date();
-serverDate.setHours(serverDate.getHours()-shouroffset+8); // Server to GMT+8 time
+serverDate.setHours(serverDate.getHours()-shouroffset+8); // Server to GMT+8 PH
 serverDate.setMinutes(serverDate.getMinutes()-sminoffset);
 var localhour = serverDate.getHours();
-if (localhour >= 7 && localhour <= 20) { // 7am to 9pm
-    var pingweb = setInterval(ping, 5*60*1000); // Ping Website Interval 5 min
+if (localhour >= 7 && localhour <= 23) { // 7am to 12midnight
+    var pingweb = setInterval(ping, 5*60*1000); // Ping Website every 5 min
 } else {
     clearInterval(pingweb);
 }
