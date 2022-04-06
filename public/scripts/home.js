@@ -16,13 +16,15 @@ setInterval(function () {
         || TPSinuse
         || (document.body.clientWidth<785 && document.getElementById("categoriesMenu").style.display == 'block')
     if(!inuse){
-        return document.getElementById('refreshTask').submit();   
+        document.getElementById('refreshTask').submit();   
+        return document.getElementById('refreshTask').stopPropagation();
     }
 }, 60000);
 
 //Logout
 function logout(){
-    return document.getElementById("logout").submit();
+    document.getElementById("logout").submit();
+    return document.getElementById("logout").stopPropagation();
 }
 
 //Add Category
@@ -37,7 +39,8 @@ function addCategory(){
         return inputcatname.reportValidity();
     } else {
         inputcatname.setCustomValidity("")
-        return document.getElementById("addcategoryForm").submit();
+        document.getElementById("addcategoryForm").submit();
+        return document.getElementById("addcategoryForm").stopPropagation();
     }
 }
 
@@ -55,7 +58,8 @@ function addCategoryEnter(event){
             event.preventDefault();
             return inputcatname.reportValidity();
         } else {
-            return document.getElementById("addcategoryForm").submit();
+            document.getElementById("addcategoryForm").submit();
+            return document.getElementById("addcategoryForm").stopPropagation();
         }
     }
 }
@@ -125,7 +129,8 @@ function dontcloseCSPA(event){
 
 //Delete Category
 function deleteCategory(id){
-    return document.getElementById("deleteCategory"+id).submit();
+    document.getElementById("deleteCategory"+id).submit();
+    document.getElementById("deleteCategory"+id).stopPropagation();
 }
 
 //Edit Category
@@ -142,7 +147,8 @@ function saveCategoryEnter(id,event){
             return inputcatname.reportValidity();
         } else {
             inputcatname.setCustomValidity("");
-            return document.getElementById("editcategoryForm"+id).submit();
+            document.getElementById("editcategoryForm"+id).submit();
+            return document.getElementById("editcategoryForm"+id).stopPropagation();
         }
     }
 }
@@ -158,13 +164,15 @@ function saveCategory(id){
         return inputcatname.reportValidity();
     } else {
         inputcatname.setCustomValidity("");
-        return document.getElementById("editcategoryForm"+id).submit();
+        document.getElementById("editcategoryForm"+id).submit();
+        return document.getElementById("editcategoryForm"+id).stopPropagation();
     }
 }
 
 //Open Category
 function openCategory(id){
-    return document.getElementById("opencategory"+id).submit();
+    document.getElementById("opencategory"+id).submit();
+    return document.getElementById("opencategory"+id).stopPropagation();
 }
 
 //Open Task Settings Delete Validation
@@ -211,7 +219,8 @@ function addtask(){
     const description = document.getElementById('descriptions').value;
     if(startdate!='' && enddate!='' && taskname!='' && description!=''){
         if(startdate<enddate){
-            return document.getElementById('addtaskForm').submit();
+            document.getElementById('addtaskForm').submit();
+            return document.getElementById('addtaskForm').stopPropagation();
         }
     }
     return true;
@@ -314,24 +323,28 @@ function editTask(id){
     const description = document.getElementById('descriptions'+id).value;
     if(startdate!='' && enddate!='' && taskname!='' && description!=''){
         if(startdate<enddate){
-            return document.getElementById("editTask"+id).submit();
+            document.getElementById("editTask"+id).submit();
+            return document.getElementById("editTask"+id).stopPropagation();
         }
     }
     return true;
 }
 
 function deleteTask(id){
-    return document.getElementById("deleteTask"+id).submit();
+    document.getElementById("deleteTask"+id).submit();
+    return document.getElementById("deleteTask"+id).stopPropagation();
 }
 
 //Task Status by Checkbox 
 function checktaskStatus(id,event){
     if(event.target.checked){
         document.getElementById('taskcheckbox'+id).value = 1;
-        return document.getElementById('changetaskstatus'+id).submit();         
+        document.getElementById('changetaskstatus'+id).submit(); 
+        return document.getElementById('changetaskstatus'+id).stopPropagation();
     } else{
         document.getElementById('taskcheckbox'+id).value = 0;   
-        return document.getElementById('changetaskstatus'+id).submit();         
+        document.getElementById('changetaskstatus'+id).submit(); 
+        return document.getElementById('changetaskstatus'+id).stopPropagation();      
     }
 }
 
