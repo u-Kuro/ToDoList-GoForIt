@@ -13,5 +13,5 @@ module.exports = {
         user: process.env.database_user || 'root',
         password: process.env.database_password || '',
         database: process.env.database || 'gfi_v1'
-    }),
+    })
 }

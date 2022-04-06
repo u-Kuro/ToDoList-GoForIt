@@ -72,7 +72,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/category', require('./routes/category'));
 app.use('/task', require('./routes/task'));
 
-db.connect((error) => {
+db.getConnection((error) => {
     if(error){
         console.log(error)
     } else {
