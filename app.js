@@ -97,7 +97,7 @@ serverDate.setMinutes(serverDate.getMinutes()-sminoffset);
 var localhour = serverDate.getHours();
 if (localhour >= 7 && localhour <= 21) {// 7am to 9pm
     intervalisSet = true;
-    setInterval(ping, 20*60*1000); // Ping Interval 20 min
+    setInterval(ping, 60*1000); // Ping Interval 20 min
 }
 
 module.exports = app;
