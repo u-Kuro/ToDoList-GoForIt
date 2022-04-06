@@ -93,10 +93,10 @@ setInterval(function () {
     serverDate.setHours(serverDate.getHours()-shouroffset+8); // Server to GMT+8 time
     serverDate.setMinutes(serverDate.getMinutes()-sminoffset);
     var localhour = serverDate.getHours();
-    if (localhour >= 7 && localhour <= 21 && !intervalisSet) { // 7am to 9pm
+    if (localhour >= 7 && localhour <= 20 && !intervalisSet) { // 7am to 9pm
         intervalisSet = true;
         var pingweb = setInterval(ping, 5*60*1000); // Ping Website Interval 5 min
-    } else if(!(localhour >= 7 && localhour <= 21) && intervalisSet) {
+    } else if(!(localhour >= 7 && localhour <= 20) && intervalisSet) {
         intervalisSet = false;
         clearInterval(pingweb);
     }
