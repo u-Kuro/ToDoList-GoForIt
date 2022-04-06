@@ -3,6 +3,7 @@ var CSPAinuse;
 var TSPAinuse;
 var ATPinuse;
 var TPSinuse;
+var DFTPinuse;
 
 // Auto Reload Update Dates
 setInterval(function () {
@@ -14,6 +15,7 @@ setInterval(function () {
         || TSPAinuse
         || ATPinuse
         || TPSinuse
+        || DFTPinuse
         || (document.body.clientWidth<785 && document.getElementById("categoriesMenu").style.display == 'block')
     if(!inuse){
         document.getElementById('refreshTask').submit();   
@@ -126,7 +128,38 @@ function closeCSPA(id,event){
 function dontcloseCSPA(event){
     return event.stopPropagation();
 }
+/////////////
+//Open Delete All Finished Tasks Validation
+function openDFTP(){
+    DFTPinuse = true;
+    const DFTP = document.getElementById('DFTP');
+    DFTP.style.display = 'flex';
+    setTimeout(function () {
+        DFTP.style.visibility = '1';
+        return DFTP.style.opacity = '1';
+    }, 100);
+}
 
+//Closing Category Settings Delete Validation
+function closeDFTP(){
+    DFTPinuse = false;
+    const DFTP = document.getElementById('DFTP');
+    DFTP.style.visibility = '0';
+    DFTP.style.opacity = '0';
+    setTimeout(function () {
+        return DFTP.style.display = 'none';
+    }, 100);
+}
+
+function dontcloseDFTP(event){
+    return event.stopPropagation();
+}
+
+function deleteAFTasks(){
+    document.getElementById('deleteAllFinishedTask').submit();
+}
+
+/////////////
 //Delete Category
 function deleteCategory(id){
     document.getElementById("deleteCategory"+id).submit();

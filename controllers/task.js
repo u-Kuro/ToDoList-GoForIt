@@ -80,6 +80,16 @@ exports.changetaskstatus = (req, res) => {
     });
 }
 
+exports.deleteallfinishedtask = (req, res) => {
+    db.query("DELETE FROM tasks WHERE task_status = ?", 1, (error, results) => {
+        if(error){
+            console.log(error);
+        } else {
+            return res.redirect('/home');
+        }
+    });
+}
+
 exports.refreshtasks = (req, res) => {
     var date_status;
     db.query('SELECT * FROM tasks WHERE users_id = ?', [req.session.users_id], async (error, tasksres) => {  

@@ -83,11 +83,7 @@ db.getConnection((error) => {
 
 // Ping Deployed App
 const request = require('request');
-const ping = () => request('https://todolist-goforit.herokuapp.com/', (error, response, body) => {
-    console.log('error:', error);
-    console.log('statusCode:', response && response.statusCode);
-    console.log('body:', body);
-});
+const ping = () => request('https://todolist-goforit.herokuapp.com/', (error, response, body) => {});
 var offset = ((new Date().getTimezoneOffset())*-1)/60 // Server Offset
 var shouroffset = Math.floor(offset);
 var sminoffset = 60*(offset - shouroffset);

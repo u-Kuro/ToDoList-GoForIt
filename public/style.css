@@ -916,6 +916,13 @@
     padding: 1ch;
 }
 
+.trash-icon{
+    max-width: 25px;
+    max-height: 25px;
+    min-width: 25px;
+    min-height: 25px;
+}
+
 .dashboard .ts-header {
     display: flex;
     justify-content: space-between;
