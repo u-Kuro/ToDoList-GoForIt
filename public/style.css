@@ -2,7 +2,7 @@
 * {  
     /* For ruler (Comment out after finish) */  
     /* border: dotted 	rgba(230,230,250,0.75) 0.5px; */
-    transition:  width .4s, height .4s, transform .4s,  visibility 0.15s linear, opacity 0.15s linear;;
+    transition:  width .4s, height .4s, transform .4s,  visibility 0.15s linear, opacity 0.15s linear;
 }
 /* Don't Delete, Change, or Copy Class Name Backend is Affected This Section */
 .category-selected {
