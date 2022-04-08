@@ -81,7 +81,8 @@ exports.changetaskstatus = (req, res) => {
 }
 
 exports.deleteallfinishedtask = (req, res) => {
-    db.query("DELETE FROM tasks WHERE task_status = ?", 1, (error, results) => {
+    const sql = "DELETE FROM tasks WHERE task_status = ? AND users_id = '"+ req.session.users_id +"'";
+    db.query(sql, 1, (error, results) => {
         if(error){
             console.log(error);
         } else {
