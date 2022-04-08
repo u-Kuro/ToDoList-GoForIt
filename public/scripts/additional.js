@@ -73,7 +73,7 @@ module.exports = {
             return 'Missed'
         else if(start_date>current_date)
             return 'Soon'
-        else (start_date<=current_date && current_date<=end_date)
+        else
             return 'Today'
     }
 }
