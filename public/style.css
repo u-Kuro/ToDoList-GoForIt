@@ -834,6 +834,7 @@
     padding: 1ch;
     font-size: 15px;
     color: black;
+    resize: none;
 }
 
 .atp-btns {
