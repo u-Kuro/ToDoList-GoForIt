@@ -103,15 +103,10 @@ exports.login = (req, res) => {
 }
 
 exports.logout = (req, res) => {
-    const {tzisChanged} = req.body;
     const lastcategorychosen = "UPDATE category SET ? WHERE id = '"+ req.session.category_id +"' AND users_id = '"+ req.session.users_id +"'";
     db.query(lastcategorychosen,{user_chosen: 0});
     req.session.destroy();
     req.sessionStore.close();
     res.clearCookie(process.env.sess_key);
-    if(tzisChanged=="false") return res.redirect('/login');
-    return res.render('login', { 
-        messagecolor: 'red', 
-        message: 'Detected Changes in Timezone, Please Sign-in Again' 
-    });
+    return res.redirect('/login');
 }
