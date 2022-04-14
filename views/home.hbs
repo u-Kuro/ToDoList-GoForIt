@@ -16,7 +16,9 @@
         <div class='container'>
             <img class='logo' src='/logo white.png' alt='logo'>
             <img onclick="opencategoryMenu()" id="category-icon" class="cur-point category-icon" src="/hamburger.png" alt="categories menu small screen">
-            <form style="display: none;" id='logout' action='/auth/logout' method='post'></form>
+            <form style="display: none;" id='logout' action='/auth/logout' method='post'>
+               <input style="display:none" type="text" id="tzisChanged" name="tzisChanged" value="false"> 
+            </form>
             <img onclick='logout()' class='icon logout-icon cur-point' src='/logout white.png' alt='logo'>
         </div>
     </nav>
