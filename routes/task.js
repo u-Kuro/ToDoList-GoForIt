@@ -10,6 +10,6 @@ router.post('/deletetask', authController.deletetask);
 router.post('/changetaskstatus', authController.changetaskstatus);
 router.post('/refreshtasks', authController.refreshtasks);
 router.post('/deleteallfinishedtask', authController.deleteallfinishedtask);
-router.post('/tasktimezoneischanged', authController.tasktimezoneischanged);
+router.post('/timezoneischanged', authController.timezoneischanged);
 
 module.exports = router;
