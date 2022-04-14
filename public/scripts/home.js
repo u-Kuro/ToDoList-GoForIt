@@ -29,14 +29,20 @@ function logout(){
     return document.getElementById("logout").stopPropagation();
 }
 
-//Logout when Timezone Changed
+//Reload when Timezone Changes
 var postoffset = ((new Date().getTimezoneOffset())*-1)/60
 setInterval(function () {
     var preoffset = ((new Date().getTimezoneOffset())*-1)/60
     if(postoffset===preoffset) return;
-    document.getElementById("tzisChanged").value = "true";
-    return logout();
+    // Send Client's Timezone
+    var houroffset = Math.floor(preoffset);
+    var minoffset = 60*(preoffset - houroffset);
+    document.getElementById('ctoh').value = houroffset;
+    document.getElementById('ctom').value = minoffset;
+    return document.getElementById("tzisChanged").submit();
 }, 1000);
+
+
 
 //Add Category
 function addCategory(){
