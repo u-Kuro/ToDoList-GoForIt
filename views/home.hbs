@@ -16,9 +16,7 @@
         <div class='container'>
             <img class='logo' src='/logo white.png' alt='logo'>
             <img onclick="opencategoryMenu()" id="category-icon" class="cur-point category-icon" src="/hamburger.png" alt="categories menu small screen">
-            <form style="display: none;" id='logout' action='/auth/logout' method='post'>
-               <input style="display:none" type="text" id="tzisChanged" name="tzisChanged" value="false"> 
-            </form>
+            <form style="display: none;" id='logout' action='/auth/logout' method='post'></form>
             <img onclick='logout()' class='icon logout-icon cur-point' src='/logout white.png' alt='logo'>
         </div>
     </nav>
@@ -479,5 +477,10 @@
     </section>
     {{!-- Refresh Tasks Every Minute --}}
     <form id="refreshTask" style="display:none;" action="/task/refreshtasks" method="post"></form>
+    {{!-- Refresh Tasks Every Minute --}}
+    <form style="display: none;" id='tzisChanged' action='/tasktimezoneischanged' method='post'>
+        <input style="display:none;" type="number" name="ctohour" id="ctoh">
+        <input style="display:none;" type="number" name="ctomin" id="ctom">
+    </form>
 </body>
 </html>
