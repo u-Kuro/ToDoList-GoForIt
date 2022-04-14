@@ -1,7 +1,5 @@
 const express = require('express');
 const path = require('path');
-const livereload = require('livereload');
-const connectLivereload = require('connect-livereload');
 var db = require('./db').db;
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
@@ -17,15 +15,17 @@ app.listen(PORT, () => {
 
 const publicDirectory = path.join(__dirname, 'public');
 
-// Auto Reload Template (HTML/HBS) Changes
-const livereloadServer = livereload.createServer();
-livereloadServer.watch(publicDirectory);
-livereloadServer.server.once("connection", () => {
-  setTimeout(() => {
-    livereloadServer.refresh("/");
-  }, 100);
-});
-app.use(connectLivereload());
+// // Auto Reload Template (HTML/HBS) Changes
+// const livereload = require('livereload');
+// const connectLivereload = require('connect-livereload');
+// const livereloadServer = livereload.createServer();
+// livereloadServer.watch(publicDirectory);
+// livereloadServer.server.once("connection", () => {
+//   setTimeout(() => {
+//     livereloadServer.refresh("/");
+//   }, 100);
+// });
+// app.use(connectLivereload());
 
 // view engine setup uses hbs instead of html file
 app.set('views', path.join(__dirname, 'views'));
