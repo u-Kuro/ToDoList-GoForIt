@@ -32,8 +32,10 @@ function logout(){
 //Logout when Timezone Changed
 var postoffset = ((new Date().getTimezoneOffset())*-1)/60
 setInterval(function () {
+    var tzisChanged = document.getElementById("tzisChanged");
     var preoffset = ((new Date().getTimezoneOffset())*-1)/60
-    if(postoffset===preoffset) return;
+    if(postoffset===preoffset) return tzisChanged.value = "false";
+    tzisChanged.value = "true";
     logout();
 }, 1000);
 
