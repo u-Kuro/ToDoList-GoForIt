@@ -111,7 +111,7 @@ exports.refreshtasks = (req, res) => {
 }
 
 exports.timezoneischanged = (req, res) => {
-    const {ctohour, ctomin) = req.body;
+    const {ctohour, ctomin} = req.body;
     req.session.ctz_offsethour = parseFloat(ctohour); // Gets Clients Timezone Offset
     req.session.ctz_offsetmin = parseFloat(ctomin);
     return res.redirect('/home');
