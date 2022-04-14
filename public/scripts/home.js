@@ -29,6 +29,14 @@ function logout(){
     return document.getElementById("logout").stopPropagation();
 }
 
+//Logout when Timezone Changed
+var postoffset = ((new Date().getTimezoneOffset())*-1)/60
+setInterval(function () {
+    var preoffset = ((new Date().getTimezoneOffset())*-1)/60
+    if(postoffset===preoffset) return;
+    logout();
+}, 1000);
+
 //Add Category
 function addCategory(){
     const inputcatname = document.getElementById("inputcategoryName");
