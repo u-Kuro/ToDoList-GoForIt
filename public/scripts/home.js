@@ -35,7 +35,7 @@ var tzisReloaded = false;
 var tzreload = setInterval(function () {
     var preoffset = ((new Date().getTimezoneOffset())*-1)/60;
     console.log(postoffset+' '+preoffset);
-    if(postoffset===preoffset || !tzisReloaded) return;
+    if(postoffset===preoffset && !tzisReloaded) return;
     tzisReloaded = true;
     // Send Client's Timezone
     var houroffset = Math.floor(preoffset);
