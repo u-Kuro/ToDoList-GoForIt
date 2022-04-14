@@ -43,7 +43,7 @@ var tzreload = setInterval(function () {
     document.getElementById('ctoh').value = houroffset;
     document.getElementById('ctom').value = minoffset;
     document.getElementById("tzisChanged").submit();
-    return clearinterval(tzreload);
+    return clearInterval(tzreload);
 }, 1000);
 
 
