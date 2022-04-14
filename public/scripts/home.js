@@ -33,7 +33,6 @@ function logout(){
 var postoffset = ((new Date().getTimezoneOffset())*-1)/60;
 var tzreload = setInterval(function () {
     var preoffset = ((new Date().getTimezoneOffset())*-1)/60;
-    console.log(postoffset+' '+preoffset);
     if(postoffset===preoffset) return;
     // Send Client's Timezone
     var houroffset = Math.floor(preoffset);
