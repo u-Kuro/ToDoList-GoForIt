@@ -31,12 +31,10 @@ function logout(){
 
 //Reload when Timezone Changes
 var postoffset = ((new Date().getTimezoneOffset())*-1)/60;
-var tzisReloaded = false;
 var tzreload = setInterval(function () {
     var preoffset = ((new Date().getTimezoneOffset())*-1)/60;
     console.log(postoffset+' '+preoffset);
-    if(postoffset===preoffset && !tzisReloaded) return;
-    tzisReloaded = true;
+    if(postoffset===preoffset) return;
     // Send Client's Timezone
     var houroffset = Math.floor(preoffset);
     var minoffset = 60*(preoffset - houroffset);
