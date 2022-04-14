@@ -31,7 +31,7 @@ function logout(){
 
 //Reload when Timezone Changes
 var postoffset = ((new Date().getTimezoneOffset())*-1)/60;
-setInterval(function () {
+var tzreload = setInterval(function () {
     var preoffset = ((new Date().getTimezoneOffset())*-1)/60;
     console.log(postoffset+' '+preoffset);
     if(postoffset===preoffset) return;
@@ -40,7 +40,8 @@ setInterval(function () {
     var minoffset = 60*(preoffset - houroffset);
     document.getElementById('ctoh').value = houroffset;
     document.getElementById('ctom').value = minoffset;
-    return document.getElementById("tzisChanged").submit();
+    document.getElementById("tzisChanged").submit();
+    return clearinterval(tzreload);
 }, 1000);
 
 
