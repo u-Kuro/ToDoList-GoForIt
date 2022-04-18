@@ -15,7 +15,7 @@ app.listen(PORT, () => {
 
 const publicDirectory = path.join(__dirname, 'public');
 
-// // Auto Reload Template (HTML/HBS) Changes
+//// Auto Reload Template (HTML/HBS) Changes
 // const livereload = require('livereload');
 // const connectLivereload = require('connect-livereload');
 // const livereloadServer = livereload.createServer();

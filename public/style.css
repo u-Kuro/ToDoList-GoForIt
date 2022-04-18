@@ -26,17 +26,17 @@
 }
 
 .Missed {
-   border-left: 3px solid;
+   border-left: 5px solid;
    border-color: red;
 }
 
 .Today {
-   border-left: 3px solid;
+   border-left: 5px solid;
    border-color: green;
 }
 
 .Soon {
-   border-left: 3px solid;
+   border-left: 5px solid;
    border-color: gray;
 }
 /* Don't Delete, Change, or Copy Class Name Backend is Affected This Section */
@@ -603,7 +603,8 @@
     border-bottom: 1px solid rgb(225,222,223);
     padding: 1ch 0;
     padding: 1ch;
-    
+    margin: 2px;
+    box-shadow: 0px 0px 0px 1px rgb(221 216 216);
     border-radius: 5px;
 }
 
