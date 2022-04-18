@@ -60,7 +60,7 @@
 
 /* Whole Document */ 
 :root {
-    background-color: white;
+    background-color: #f0f2f5;
     font-family: Arial, sans-serif;
     z-index: 0;
     width: 100%;
@@ -324,7 +324,7 @@
 }
 
 .category-settings:hover {
-    background-color: rgba(221, 216, 216, 0.08);
+    background-color: rgba(221, 216, 216, 0.3);
 }
 
 .category-settings img{
