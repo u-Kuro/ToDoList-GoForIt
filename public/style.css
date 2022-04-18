@@ -6,7 +6,7 @@
 }
 /* Don't Delete, Change, or Copy Class Name Backend is Affected This Section */
 .category-selected {
-    background-color: rgb(221, 216, 216);
+    background-color: rgba(221, 216, 216, 0.8);
 }
 
 .alerts-red {
@@ -26,15 +26,18 @@
 }
 
 .Missed {
-    background-color: rgba(255,0,0,0.25);
+   border-left: 3px solid;
+   border-color: red;
 }
 
 .Today {
-    background-color: rgba(0,255,0,0.25);
+   border-left: 3px solid;
+   border-color: green;
 }
 
 .Soon {
-    background-color: rgba(192,192,192,0.25);
+   border-left: 3px solid;
+   border-color: gray;
 }
 /* Don't Delete, Change, or Copy Class Name Backend is Affected This Section */
 
@@ -57,7 +60,7 @@
 
 /* Whole Document */ 
 :root {
-    background-color: rgb(225,222,223);
+    background-color: white;
     font-family: Arial, sans-serif;
     z-index: 0;
     width: 100%;
@@ -109,7 +112,7 @@
     padding-left: 20px;
     padding-right: 20px;
     font-size: 200%;
-    color: rgb(73, 71, 71);
+    color: black;
     font-weight: 1000;
 }
 
@@ -118,13 +121,13 @@
     padding-left: 20px;
     padding-right: 20px;
     font-weight:normal;
-    color: rgb(73, 71, 71);
+    color: black;
     font-weight: 500;
 }
 
 .side-bar {
     position: fixed;
-    background-color: rgb(45,44,57);
+    background-color: black;
     width: 50px;
     height: 100%;
     z-index: 2;
@@ -181,7 +184,7 @@
 .categories h2 {
     margin-left: 1ch;
     margin-bottom: 7px;
-    color: rgb(73, 71, 71);
+    color: black;
     font-weight: 500;
 }
 
@@ -285,7 +288,7 @@
 }
 
 .category:hover {
-    background-color: rgb(0, 0, 0, 0.08);
+    background-color: rgba(0, 0, 0, 0.08);
 }
 
 .add-category {
@@ -321,7 +324,7 @@
 }
 
 .category-settings:hover {
-    background-color: rgb(221, 216, 216);
+    background-color: rgba(221, 216, 216, 0.8);
 }
 
 .category-settings img{
@@ -374,7 +377,7 @@
 }
 
 .cs-header .xclose-cspa:hover {
-    background-color: rgb(221, 216, 216);
+    background-color: rgba(221, 216, 216, 0.8);
 }
 
 .xclose-csp img {
@@ -392,7 +395,7 @@
     justify-self: left;
     align-self: center;
     margin: 1ch 0 0 2ch;
-    color: rgb(73, 71, 71);
+    color: black;
 }
 
 .category-settings-popup form {
@@ -409,9 +412,9 @@
     border: 1px solid rgb(7, 148, 148);
     border-radius: 5px;
     height: 20px;
-    color: rgb(73, 71, 71);
+    color: black;
     padding: 0.5ch 1ch;
-    background-color: rgba(244, 246, 248,0.3);
+    background-color:white;
     font-size: 15;
     font-weight: 750;
 }
@@ -446,7 +449,6 @@
 
 .cs-btns .green-btn {
     border: 1px solid rgb(10,180,180);
-
 }
 
 .green-btn:hover {
@@ -508,7 +510,7 @@
 .cspa-header h5{
     text-align: justify;
     margin: 0;
-    color: rgb(73, 71, 71);
+    color: black;
     font-size: 15;
     font-weight: 750;
     margin: 1ch 0.5ch 0;
@@ -1009,7 +1011,7 @@
 
 .register-form button{
     background-color: rgb(9, 157, 157);
-    color: rgb(240,242,245);
+    color: white;
     padding: 1ch;
     border-radius: 5px;
     border: 1px solid;
@@ -1018,7 +1020,7 @@
 
 .register-form button:hover{
     border: 1px solid rgb(9, 157, 157);
-    background-color: rgb(240,242,245);
+    background-color: white;
     color: black;
 }
 
@@ -1093,7 +1095,7 @@
 
 .login-form button{
     background-color: rgb(9, 157, 157);
-    color: rgb(240,242,245);
+    color: white;
     padding: 1ch;
     border-radius: 5px;
     border: 1px solid;
@@ -1102,7 +1104,7 @@
 
 .login-form button:hover{
     border: 1px solid rgb(9, 157, 157);
-    background-color: rgb(240,242,245);
+    background-color: white;
     color: black;
 }
 
@@ -1199,7 +1201,7 @@
 
 .register-form button{
     background-color: rgb(9, 157, 157);
-    color: rgb(240,242,245);
+    color: white;
     padding: 1ch;
     border-radius: 5px;
     border: 1px solid;
@@ -1208,7 +1210,7 @@
 
 .register-form button:hover{
     border: 1px solid rgb(9, 157, 157);
-    background-color: rgb(240,242,245);
+    background-color: white;
     color: black;
 }
 
@@ -1284,7 +1286,7 @@
 
 .login-form button{
     background-color: rgb(9, 157, 157);
-    color: rgb(240,242,245);
+    color: white;
     padding: 1ch;
     border-radius: 5px;
     border: 1px solid;
@@ -1293,7 +1295,7 @@
 
 .login-form button:hover{
     border: 1px solid rgb(9, 157, 157);
-    background-color: rgb(240,242,245);
+    background-color: white;
     color: black;
 }
 
