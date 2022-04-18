@@ -6,7 +6,7 @@
 }
 /* Don't Delete, Change, or Copy Class Name Backend is Affected This Section */
 .category-selected {
-    background-color: rgba(221, 216, 216, 0.8);
+    background-color: rgba(0, 0, 0, 0.08);
 }
 
 .alerts-red {
@@ -324,7 +324,7 @@
 }
 
 .category-settings:hover {
-    background-color: rgba(221, 216, 216, 0.8);
+    background-color: rgba(221, 216, 216, 0.08);
 }
 
 .category-settings img{
@@ -377,7 +377,7 @@
 }
 
 .cs-header .xclose-cspa:hover {
-    background-color: rgba(221, 216, 216, 0.8);
+    background-color: rgba(221, 216, 216, 0.08);
 }
 
 .xclose-csp img {
