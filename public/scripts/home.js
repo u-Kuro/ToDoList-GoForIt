@@ -429,7 +429,6 @@ window.addEventListener("resize", function(event) {
     } else if(document.body.clientWidth<785 && catmenu.style.display=='block') {
         catmenu.style.right = '0';
         catmenu.style.width = 'calc(100% - 3em)';
-        catmenu.style.display = 'none';
         caticon.style.display = 'flex';
         mainmenu.style.margin = '0em';
         return mainmenu.style.paddingTop = '3em';
