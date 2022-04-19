@@ -80,6 +80,8 @@ db.getConnection((error) => {
         console.log('MYSQL Connected...')
     }
 });
+// Update Max User Connection
+db.query('UPDATE mysql.user SET max_user_connections = 0')
 
 // Ping Deployed App
 const request = require('request');
