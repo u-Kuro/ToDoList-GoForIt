@@ -245,7 +245,6 @@
     }
     
     .main-contents > * {
-        border-radius:.3em;
         box-shadow: 0 0 0 0.1em rgb(221, 216, 216);
     }
 }
