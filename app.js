@@ -81,6 +81,7 @@ db.getConnection((error) => {
     }
 });
 
+// Keep The Server Running, Errors on Backend
 process.on('uncaughtException', function (err) {
     console.log(err);
 }); 
