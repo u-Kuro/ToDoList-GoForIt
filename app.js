@@ -81,6 +81,10 @@ db.getConnection((error) => {
     }
 });
 
+process.on('uncaughtException', function (err) {
+    console.log(err);
+}); 
+
 // Ping Deployed App
 const request = require('request');
 const ping = () => request('https://todolist-goforit.herokuapp.com/', (error, response, body) => {});
