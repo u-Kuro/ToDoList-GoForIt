@@ -416,27 +416,29 @@ function closecategoriesMenu(){
 
 //Fix Categories menu after resize 
 window.addEventListener("resize", function(event) {
+    const catmenu = document.getElementById('categoriesMenu');
+    const mainmenu = document.getElementById('main-contents');
+    const caticon = document.getElementById('category-icon');
     if(document.body.clientWidth>=785){
-        const catmenu = document.getElementById('categoriesMenu');
-        const mainmenu = document.getElementById('main-contents');
-        const caticon = document.getElementById('category-icon');
         caticon.style.display = 'none';
-        mainmenu.style.margin = '1em';
-        mainmenu.style.marginLeft = '16.5em';
-        mainmenu.style.paddingTop = '4em';
+        catmenu.style.removeProperty('width');
+        catmenu.style.removeProperty('right');
+        mainmenu.style.marginLeft = '15.5em';
+        mainmenu.style.paddingTop = '3em';
         return catmenu.style.display = 'block'
-    } else if(document.body.clientWidth<785 && document.getElementById('categoriesMenu').style.display=='block') {
-        const mainmenu = document.getElementById('main-contents');
-        const caticon = document.getElementById('category-icon');
+    } else if(document.body.clientWidth<785 && catmenu.style.display=='block') {
+        catmenu.style.right = '0';
+        catmenu.style.width = 'calc(100% - 50px)';
+        catmenu.style.display = 'none';
         caticon.style.display = 'flex';
-        mainmenu.style.margin = '0.25em';
+        mainmenu.style.margin = '0em';
         return mainmenu.style.paddingTop = '3em';
     } else {
-        const catmenu = document.getElementById('categoriesMenu');
-        const mainmenu = document.getElementById('main-contents');
-        const caticon = document.getElementById('category-icon');
+        catmenu.style.right = '0';
+        catmenu.style.width = 'calc(100% - 50px)';
+        catmenu.style.display = 'none';
         caticon.style.display = 'flex';
-        mainmenu.style.margin = '0.25em';
+        mainmenu.style.margin = '0em';
         mainmenu.style.paddingTop = '3em';
         return catmenu.style.display = 'none'
     }

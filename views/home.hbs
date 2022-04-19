@@ -34,7 +34,7 @@
             <h2 class="cur-def">Categories</h2>
             <form id='addcategoryForm' class='cur-def add-category' action='/category/addcategory' method='post'>
                 <img class="cur-point" onclick='addCategory()' src='/add button green.png' alt='add category'>
-                <input id='inputcategoryName' type='text' name="category_name" placeholder='Add Category' onkeydown="addCategoryEnter(event)" value="" maxlength="50" required>
+                <input id='inputcategoryName' type='text' name="category_name" placeholder='Add Category' onkeydown="addCategoryEnter(event)" value="" maxlength="35" required>
             </form>
             <ul id="categoriesul">
             {{#if category.length}}
@@ -70,7 +70,13 @@
         <div onclick="closecategoriesMenu()" id="main-contents" class='main-contents'>
             <div class='tasks'>
                 <div class="ts-header">
-                    <h2 class="cur-def">Tasks</h2>
+                {{#if category.length}}
+                  {{#each category}}
+                    {{#if this.user_chosen}}
+                    <h2 class="cur-def">Tasks: {{this.category_name}}</h2>
+                    {{/if}}
+                  {{/each}}
+                {{/if}}
                     <img class="cur-point" onclick="openATP()" src="/add button green.png" alt="add task">
                 </div>
                 <ul>
@@ -341,7 +347,7 @@
             </div>
             <form id="editcategoryForm{{this.id}}" action="/category/updatecategory" method="post">
                 <input style="display: none;" type="text" name="category_id" value="{{this.id}}">
-                <input id="editcategory{{this.id}}" onkeydown="saveCategoryEnter({{this.id}},event)" type="text" name="category_name" placeholder="New Category Name" value="{{this.category_name}}" maxlength="50" required>
+                <input id="editcategory{{this.id}}" onkeydown="saveCategoryEnter({{this.id}},event)" type="text" name="category_name" placeholder="New Category Name" value="{{this.category_name}}" maxlength="35" required>
             </form>
             <div class="cs-btns">
                 <button onclick="openCSPA({{this.id}})" class="cur-point red-btn">Delete</button>

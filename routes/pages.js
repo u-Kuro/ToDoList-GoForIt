@@ -102,14 +102,17 @@ router.get('/home', (req, res) => {
                                                     sootasres[i].end_date = timeConverter(sootasres[i].end_date, req.session.ctz_offsethour, req.session.ctz_offsetmin);
                                                 }
                                             }
-                                            return res.render('home', {
-                                                category: catres,
-                                                tasks: tasres,
-                                                newtasks: newtasres,
-                                                missedtasks: mistasres,
-                                                todaytasks: todtasres,
-                                                soontasks: sootasres,
-                                                username: req.session.username
+                                            db.query("SELECT * FROM category WHERE users_id = '"+ req.session.users_id +"' AND user_chosen = '1'",(error, rescatchosen) => {
+                                                return res.render('home', {
+                                                    category: catres,
+                                                    catchosen: rescatchosen[0].category_name,
+                                                    tasks: tasres,
+                                                    newtasks: newtasres,
+                                                    missedtasks: mistasres,
+                                                    todaytasks: todtasres,
+                                                    soontasks: sootasres,
+                                                    username: req.session.username
+                                                });
                                             });
                                         });
                                     });
