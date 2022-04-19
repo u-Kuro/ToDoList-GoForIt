@@ -423,19 +423,19 @@ window.addEventListener("resize", function(event) {
         caticon.style.display = 'none';
         catmenu.style.removeProperty('width');
         catmenu.style.removeProperty('right');
-        mainmenu.style.marginLeft = '15.5em';
+        mainmenu.style.marginLeft = '14em';
         mainmenu.style.paddingTop = '3em';
         return catmenu.style.display = 'block'
     } else if(document.body.clientWidth<785 && catmenu.style.display=='block') {
         catmenu.style.right = '0';
-        catmenu.style.width = 'calc(100% - 50px)';
+        catmenu.style.width = 'calc(100% - 3em)';
         catmenu.style.display = 'none';
         caticon.style.display = 'flex';
         mainmenu.style.margin = '0em';
         return mainmenu.style.paddingTop = '3em';
     } else {
         catmenu.style.right = '0';
-        catmenu.style.width = 'calc(100% - 50px)';
+        catmenu.style.width = 'calc(100% - 3em)';
         catmenu.style.display = 'none';
         caticon.style.display = 'flex';
         mainmenu.style.margin = '0em';
