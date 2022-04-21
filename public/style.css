@@ -811,12 +811,16 @@
 }
 
 .atpf-2 input {
-    max-width: 11.5em;
     border: 0.06em solid rgb(10,180,180);
     outline: none;
-    flex: 1 1 100%;
+    flex: 1 1 70%;
     font-size: 0.9em;
     color: black;
+}
+
+.atpf-2 label{
+    margin-right: 0.5em;
+    flex: 1 1 30%;
 }
 
 .atpf-3 {
@@ -825,16 +829,16 @@
 }
 
 .atpf-3 input {
-    max-width: 11.5em;
     border: 0.06em solid rgb(10,180,180);
     outline: none;
-    flex: 1 1 100%;
+    flex: 1 1 70%;
     font-size: 0.9em;
     color: black;
 }
 
 .atpf-3 label {
     margin-right: 0.5em;
+    flex: 1 1 30%;
 }
 
 .atpf-4 {
