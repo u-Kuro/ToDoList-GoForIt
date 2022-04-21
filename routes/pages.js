@@ -36,8 +36,7 @@ router.get('/login', (req, res) => {
 });
 
 router.get('/home', (req, res) => {
-    if(!req.session.isAuth){
-        req.session.users_id = 1
+    if(req.session.isAuth){
         db.query('SELECT * FROM category WHERE users_id = ?', [req.session.users_id], (error, catres) => {  
                 if(error){
                     console.log(error);
