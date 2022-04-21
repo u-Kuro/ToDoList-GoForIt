@@ -6,6 +6,7 @@ exports.addtask = (req, res) => {
     db.query('SELECT * FROM category WHERE users_id = ?', [req.session.users_id], async (error, catres) => {  
         if(error){
             console.log(error);
+            return res.redirect('/home');
         }
         if(catres.length>0){
             const { task_name, start_date, end_date, description } = req.body;
@@ -23,6 +24,7 @@ exports.addtask = (req, res) => {
                 task_status: 0}, (error, results) => {
                 if(error){
                     console.log(error);
+                    return res.redirect('/home');
                 } else {
                     return res.redirect('/home');
                 }
@@ -51,6 +53,7 @@ exports.updatetask = (req, res) => {
         date_status: date_status}, (error, results) => {
         if(error){
             console.log(error);
+            return res.redirect('/home');
         } else {
             return res.redirect('/home');
         }
@@ -59,9 +62,10 @@ exports.updatetask = (req, res) => {
 
 exports.deletetask = (req, res) => {
     const { task_id } = req.body;
-    db.query("DELETE FROM tasks WHERE ?", {id: task_id}, (error, results) => {
+    db.query("DELETE FROM tasks WHERE ? AND users_id = '"+req.session.users_id+"'", {id: task_id}, (error, results) => {
         if(error){
             console.log(error);
+            return res.redirect('/home');
         } else {
             return res.redirect('/home');
         }
@@ -74,6 +78,7 @@ exports.changetaskstatus = (req, res) => {
     db.query(sql, {task_status: task_status }, (error, results) => {
         if(error){
             console.log(error);
+            return res.redirect('/home');
         } else {
             return res.redirect('/home');
         }

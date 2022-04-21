@@ -46,19 +46,23 @@ router.get('/home', (req, res) => {
         db.query('SELECT * FROM category WHERE users_id = ?', [req.session.users_id], async (error, catres) => {  
                 if(error){
                     console.log(error);
+                    return res.render('login', {
+                        messagecolor: 'red',
+                        message: 'Something went wrong, Please Try Again Later'
+                    });
                 }
                 if(catres.length>0){
                     if(req.session.categoryischosen){
                         // Select User's Database
                         var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
-                        db.query(sql, 'Missed', async (error, mistasres) => {  if(error){console.log(error);}
+                        db.query(sql, 'Missed', async (error, mistasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
                             var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
-                            db.query(sql, 'Today', async (error, todtasres) => {  if(error){console.log(error);}
+                            db.query(sql, 'Today', async (error, todtasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
                                 var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
-                                db.query(sql, 'Soon', async (error, sootasres) => {  if(error){console.log(error);}
+                                db.query(sql, 'Soon', async (error, sootasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
                                     var sql = "SELECT * FROM tasks WHERE category_id = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
-                                    db.query(sql, req.session.category_id, async (error, tasres) => {  if(error){console.log(error);}
-                                        db.query('SELECT * FROM tasks WHERE users_id = ? ORDER BY end_date', req.session.users_id, async (error, newtasres) => {  if(error){console.log(error);}
+                                    db.query(sql, req.session.category_id, async (error, tasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
+                                        db.query('SELECT * FROM tasks WHERE users_id = ? ORDER BY end_date', req.session.users_id, async (error, newtasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
                                             // Reload Task Status
                                             var date_status;
                                             if(newtasres.length>0){    
@@ -68,6 +72,10 @@ router.get('/home', (req, res) => {
                                                     db.query(sql, {date_status: date_status}, (error, results) => {
                                                         if(error){
                                                             console.log(error);
+                                                            return res.render('login', {
+                                                                messagecolor: 'red',
+                                                                message: 'Something went wrong, Please Try Again Later'
+                                                            });
                                                         }
                                                     });
                                                 }
@@ -118,7 +126,15 @@ router.get('/home', (req, res) => {
                         });
                     } else {
                         const resetcategorychosen = "UPDATE category SET ? WHERE id = '"+ catres[0].id +"' AND users_id = '"+ req.session.users_id +"'";
-                        db.query(resetcategorychosen,{user_chosen: 1});
+                        db.query(resetcategorychosen,{user_chosen: 1}, (error, results) => {
+                            if(error){
+                                console.log(error);
+                                return res.render('login', {
+                                    messagecolor: 'red',
+                                    message: 'Something went wrong, Please Try Again Later'
+                                });
+                            }
+                        });
                         req.session.category_id = catres[0].id
                         req.session.categoryischosen = true;
                         return res.redirect('/home')

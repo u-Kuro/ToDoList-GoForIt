@@ -18,6 +18,10 @@ exports.register = (req, res) => {
             db.query('SELECT username FROM users WHERE username = ?', [username], async (error, useres) => {
                 if(error){
                     console.log(error);
+                    return res.render('register', {
+                        messagecolor: 'red',
+                        message: 'Something went Wrong, Try again later'
+                    });
                 } 
                 if(useres.length>0) {
                     return res.render('register', {
@@ -33,6 +37,10 @@ exports.register = (req, res) => {
                         db.query('INSERT INTO users SET ? ', {username: username, email: email, password: hashedPassword}, (error, results) => {
                             if(error){
                                 console.log(error);
+                                return res.render('register', {
+                                    messagecolor: 'red',
+                                    message: 'Something went Wrong, Try again later'
+                                });
                             } else {
                                 return res.render('login',{
                                     message: 'Account is Registered, you may Sign-in',
@@ -53,6 +61,10 @@ exports.login = (req, res) => {
     db.query('SELECT password, id, username FROM users WHERE email = ?', [useremail], async (error, emres) => {
         if(error){
             console.log(error);
+            return res.render('login', {
+                messagecolor: 'red',
+                message: 'Something went Wrong, Try again later'
+            });
         }
         if(emres.length>0){
             const accountisValid = await bcryptjs.compare(password, emres[0].password);
@@ -74,6 +86,10 @@ exports.login = (req, res) => {
             db.query('SELECT password, id, username FROM users WHERE username = ?', [useremail], async (error, useres) => {
                 if(error){
                     console.log(error);
+                    return res.render('login', {
+                        messagecolor: 'red',
+                        message: 'Something went Wrong, Try again later'
+                    });
                 }
                 if(useres.length>0){
                     const accountisValid = await bcryptjs.compare(password, useres[0].password);
@@ -104,7 +120,13 @@ exports.login = (req, res) => {
 
 exports.logout = (req, res) => {
     const lastcategorychosen = "UPDATE category SET ? WHERE id = '"+ req.session.category_id +"' AND users_id = '"+ req.session.users_id +"'";
-    db.query(lastcategorychosen,{user_chosen: 0});
+    db.query(lastcategorychosen,{user_chosen: 0}, (err, res) => {
+        if(err){
+            console.log(err)
+            return res.redirect('/home');
+        }
+    });
+    req.session.isNotLogged = false;
     req.session.destroy();
     req.sessionStore.close();
     res.clearCookie(process.env.sess_key);
