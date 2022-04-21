@@ -106,6 +106,7 @@ exports.refreshtasks = (req, res) => {
                 db.query(sql, {date_status: date_status}, (error, results) => {
                     if(error){
                         console.log(error);
+                        return res.redirect('/home');
                     }
                 });
             } return res.redirect('/home');
@@ -113,6 +114,7 @@ exports.refreshtasks = (req, res) => {
             return res.redirect('/home');
         }
     });
+    return res.redirect('/home');
 }
 
 exports.timezoneischanged = (req, res) => {
