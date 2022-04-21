@@ -6,7 +6,7 @@ exports.register = (req, res) => {
     
     const {username, email, password, cpassword} = req.body;
 
-    db.query('SELECT email FROM users WHERE email = ?', [email], async (error, emres) => {
+    db.query('SELECT email FROM users WHERE email = ?', [email], (error, emres) => {
         if(error){
             console.log(error);
         } 
@@ -15,7 +15,7 @@ exports.register = (req, res) => {
                 message: 'Email is already in use'
             });
         } else {
-            db.query('SELECT username FROM users WHERE username = ?', [username], (error, useres) => {
+            db.query('SELECT username FROM users WHERE username = ?', [username], async (error, useres) => {
                 if(error){
                     console.log(error);
                     return res.render('register', {
@@ -83,7 +83,7 @@ exports.login = (req, res) => {
                 });
             }
         } else {
-            db.query('SELECT password, id, username FROM users WHERE username = ?', [useremail], (error, useres) => {
+            db.query('SELECT password, id, username FROM users WHERE username = ?', [useremail], async (error, useres) => {
                 if(error){
                     console.log(error);
                     return res.render('login', {
