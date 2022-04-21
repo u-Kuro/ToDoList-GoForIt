@@ -17,27 +17,22 @@ router.get('/', (req, res) => {
 router.get('/register', (req, res) => {
     if(req.session.isAuth){
         return res.redirect('/home');
-    } if(havemessage){
-        return res.render('register',{
-            message: message
-        });
     }
     return res.render('register');
 });
 
 router.get('/login', (req, res) => {
+    if(req.session.isNotLogged) {
+        req.session.isNotLogged = false;
+        return res.render('login', {
+            messagecolor: 'red',
+            message: 'Unauthorized, Login First'
+        });
+    }
     if(req.session.isAuth){
         return res.redirect('/home');
-    } else {
-        if(req.session.isNotLogged) {
-            req.session.isNotLogged = false;
-            return res.render('login', {
-                messagecolor: 'red',
-                message: 'Unauthorized, Login First'
-            });
-        }
-        return res.render('login');
     }
+    return res.render('login');
 });
 
 router.get('/home', (req, res) => {
