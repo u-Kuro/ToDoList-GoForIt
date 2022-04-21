@@ -3,7 +3,7 @@ const timeConverterHTMLtoSQL = require('../public/scripts/additional').timeConve
 const checktasktimeStatus = require('../public/scripts/additional').checktasktimeStatus;
 
 exports.addtask = (req, res) => {
-    db.query('SELECT * FROM category WHERE users_id = ?', [req.session.users_id], async (error, catres) => {  
+    db.query('SELECT * FROM category WHERE users_id = ?', [req.session.users_id], (error, catres) => {  
         if(error){
             console.log(error);
             return res.redirect('/home');
@@ -98,7 +98,7 @@ exports.deleteallfinishedtask = (req, res) => {
 
 exports.refreshtasks = (req, res) => {
     var date_status;
-    db.query('SELECT * FROM tasks WHERE users_id = ?', [req.session.users_id], async (error, tasksres) => {  
+    db.query('SELECT * FROM tasks WHERE users_id = ?', [req.session.users_id], (error, tasksres) => {  
         if(tasksres.length>0){    
             for(let i=0;i<tasksres.length;i++){
                 date_status = checktasktimeStatus(tasksres[i].start_date,tasksres[i].end_date)

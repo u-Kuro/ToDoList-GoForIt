@@ -3,7 +3,6 @@ const db = require('../db').db;
 const timeConverter = require('../public/scripts/additional').timeConverter;
 const timeConverterSQLtoHTML = require('../public/scripts/additional').timeConverterSQLtoHTML;
 const checktasktimeStatus = require('../public/scripts/additional').checktasktimeStatus;
-const updateTaskDate = require('../public/scripts/additional').updateTaskDate;
 const router = express.Router();
 var havemessage = require('../controllers/auth').havemessage;
 var message = require('../controllers/auth').message;
@@ -43,7 +42,7 @@ router.get('/login', (req, res) => {
 
 router.get('/home', (req, res) => {
     if(req.session.isAuth){
-        db.query('SELECT * FROM category WHERE users_id = ?', [req.session.users_id], async (error, catres) => {  
+        db.query('SELECT * FROM category WHERE users_id = ?', [req.session.users_id], (error, catres) => {  
                 if(error){
                     console.log(error);
                     return res.render('login', {
@@ -55,14 +54,14 @@ router.get('/home', (req, res) => {
                     if(req.session.categoryischosen){
                         // Select User's Database
                         var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
-                        db.query(sql, 'Missed', async (error, mistasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
+                        db.query(sql, 'Missed', (error, mistasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
                             var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
-                            db.query(sql, 'Today', async (error, todtasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
+                            db.query(sql, 'Today', (error, todtasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
                                 var sql = "SELECT * FROM tasks WHERE date_status = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
-                                db.query(sql, 'Soon', async (error, sootasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
+                                db.query(sql, 'Soon', (error, sootasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
                                     var sql = "SELECT * FROM tasks WHERE category_id = ? AND users_id = '"+req.session.users_id+"' ORDER BY end_date";
-                                    db.query(sql, req.session.category_id, async (error, tasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
-                                        db.query('SELECT * FROM tasks WHERE users_id = ? ORDER BY end_date', req.session.users_id, async (error, newtasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
+                                    db.query(sql, req.session.category_id, (error, tasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
+                                        db.query('SELECT * FROM tasks WHERE users_id = ? ORDER BY end_date', req.session.users_id, (error, newtasres) => {  if(error){console.log(error); return res.render('login', {messagecolor: 'red', message: 'Something went wrong, Please Try Again Later'});}
                                             // Reload Task Status
                                             var date_status;
                                             if(newtasres.length>0){    
