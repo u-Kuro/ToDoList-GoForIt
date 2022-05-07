@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
-    "prestart": "next build",
+    "build": "next build",
+    "postinstall": "npm run build",
     "start": "next start -p ${PORT} ./_client//"
   },
   "keywords": [],
