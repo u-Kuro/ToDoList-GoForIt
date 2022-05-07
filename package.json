@@ -24,7 +24,6 @@
     "nodemon": "^2.0.15",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "request": "^2.88.2",
-    "set-interval-async": "^2.0.3"
+    "request": "^2.88.2"
   }
 }
