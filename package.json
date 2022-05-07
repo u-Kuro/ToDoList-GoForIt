@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
     "prestart": "next build",
-    "start": "next start -p ${PORT} ./_client/",
-    "heroku-postbuild": "cd _client && npm install --only=dev && npm install && npm run build"
+    "heroku-postbuild": "cd _client && npm install --only=dev && npm install && npm run build",
+    "start": "next start -p ${PORT} ./_client/"
   },
   "keywords": [],
   "author": "",
