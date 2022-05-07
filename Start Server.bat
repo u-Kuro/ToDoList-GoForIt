@@ -1,4 +1,4 @@
 @echo off 
 start http://localhost:5500
-npm start
+npm run dev
 pause
