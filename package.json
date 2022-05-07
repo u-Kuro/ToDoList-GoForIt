@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js",
-    "heroku-postbuild": "cd _client && npm install --only=dev && npm install && npm run build",
-    "start": "next start -p ${PORT}"
+    "dev": "nodemon app.js /_client/",
+    "prestart": "next build /_client/",
+    "start": "next start -p ${PORT} /_client/"
   },
   "keywords": [],
   "author": "",
