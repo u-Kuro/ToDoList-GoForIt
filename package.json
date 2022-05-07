@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "build": "next build",
+    "start": "next start"
   },
   "keywords": [],
   "author": "",
@@ -16,10 +18,13 @@
     "express": "^4.17.3",
     "express-mysql-session": "^2.1.7",
     "express-session": "^1.17.2",
-    "handlebars": "^4.7.7",
-    "hbs": "^4.2.0",
+    "jquery": "^3.6.0",
     "mysql": "^2.18.1",
+    "next": "^12.1.5",
     "nodemon": "^2.0.15",
-    "request": "^2.88.2"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "request": "^2.88.2",
+    "set-interval-async": "^2.0.3"
   }
 }
