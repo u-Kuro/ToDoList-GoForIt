@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
-    "build": "next build ./_client",
-    "start": "next start ./_client"
+    "build": "next build ./_client/",
+    "start": "next start ./_client/"
   },
   "keywords": [],
   "author": "",
