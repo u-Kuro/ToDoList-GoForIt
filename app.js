@@ -23,7 +23,7 @@ app
     });
 
     // Set Directories
-    const publicdir = path.join(__dirname, "/_client/static");
+    const publicdir = path.join(__dirname, "/public/static");
 
     // Use Static and Json
     server.use(express.json());
