@@ -88,7 +88,7 @@ app
       console.log(err);
     });
 
-    // Ping Deployed App
+    /// Ping Deployed App
     const ping = () =>
       request(
         "https://todolist-goforit.herokuapp.com/",
