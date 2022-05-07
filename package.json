@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js /_client/",
+    "dev": "nodemon app.js",
     "prestart": "next build /_client/",
-    "start": "next start -p ${PORT} /_client/"
+    "start": "next start -p ${PORT}"
   },
   "keywords": [],
   "author": "",
