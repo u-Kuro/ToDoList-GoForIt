@@ -2,10 +2,10 @@
   "name": "goforit-v1",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "home.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js ./_client/",
+    "dev": "nodemon app.js",
     "prestart": "next build",
     "start": "next start -p ${PORT} ./_client/",
     "heroku-postbuild": "cd _client && npm install --only=dev && npm install && npm run build"

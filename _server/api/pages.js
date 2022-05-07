@@ -3,12 +3,12 @@ const app = require("../../app.js");
 const router = express.Router();
 const db = require("../db").db;
 
-router.get("/", (req, res) => {
-  if (req.session.isAuth) {
-    return res.redirect("/home");
-  }
-  return res.redirect("/login");
-});
+// router.get("/", (req, res) => {
+//   if (req.session.isAuth) {
+//     return res.redirect("/home");
+//   }
+//   return res.redirect("/login");
+// });
 
 router.get("/register", (req, res) => {
   if (req.session.isAuth) {

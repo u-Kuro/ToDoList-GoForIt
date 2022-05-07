@@ -8,6 +8,7 @@ const db = require("./_server/db").db;
 require("dotenv").config();
 
 const dev = process.env.NODE_ENV !== "production";
+const PORT = process.env.PORT || "5500"
 const app = next({ dev });
 const server = express();
 const handle = app.getRequestHandler();
@@ -16,7 +17,7 @@ app
   .prepare()
   .then(() => {
     // Create Server
-    let PORT = process.env.PORT || "5500";
+    
     server.listen(PORT, (err) => {
       if (err) throw err;
       console.log("Server started on port " + PORT);

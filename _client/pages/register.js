@@ -13,121 +13,93 @@ export default function Register() {
     e.preventDefault();
     if (!running) {
       // Check Inputs
-      if (El("#username").value == "") {
-        El("#username").get(0).setCustomValidity("");
-        return El("#username").get(0).reportValidity();
+      if (Nulled(El("username").value)) {
+        El("username").setCustomValidity("");
+        return El("username").reportValidity();
       }
-      if (El("#email").value == "") {
-        El("#email").get(0).setCustomValidity("");
-        return El("#email").get(0).reportValidity();
+      if (Nulled(El("email").value)) {
+        El("email").setCustomValidity("");
+        return El("email").reportValidity();
       }
-      if (
-        !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-          El("#email").value
-        )
-      ) {
-        El("#email")
-          .get(0)
-          .setCustomValidity("Please include an '@' in an email address.");
-        return El("#email").get(0).reportValidity();
+      if (!/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        .test(El("email").value)) {
+        El("email").setCustomValidity("Please include an '@' in an email address.");
+        return El("email").reportValidity();
       }
-      if (El("#password").value == "") {
-        El("#password").get(0).setCustomValidity("");
-        return El("#password").get(0).reportValidity();
+      if (Nulled(El("password").value)) {
+        El("password").setCustomValidity("");
+        return El("password").reportValidity();
       }
-      if (El("#cpassword").value == "") {
-        El("#cpassword").get(0).setCustomValidity("");
-        return El("#cpassword").get(0).reportValidity();
+      if(Nulled(El("cpassword").value)) {
+        El("cpassword").setCustomValidity("");
+        return El("cpassword").reportValidity();
       }
-      if (El("#cpassword").value != $("#password").val()) {
-        El("#cpassword").val("");
-        El("#cpassword").get(0).setCustomValidity("Passwords do not Match");
-        return El("#cpassword").get(0).reportValidity();
+      if(El("cpassword").value!==El("password").value) {
+        El("cpassword").value = "";
+        El("cpassword").setCustomValidity("Passwords do not Match");
+        return El("cpassword").reportValidity();
       }
       // Load Request
       $("#register").children("p").fadeTo(300, 0, () => {
           $("#register").children("p").hide();
-          $("#register")
-            .children("img")
-            .show()
-            .fadeTo(300, 1, () => {
-              // Send Request
-              $.ajax({
-                type: "POST",
-                url: "/auth/register",
-                data: {
-                  username: $("#username").val(),
-                  email: $("#email").val(),
-                  password: $("#password").val(),
-                  cpassword: $("#cpassword").val(),
-                },
-                success: (data) => {
-                  $("#register")
-                    .children("img")
-                    .fadeTo(300, 0, () => {
-                      $("#register").children("img").hide();
-                      $("#register")
-                        .children("p")
-                        .show()
-                        .fadeTo(300, 1, () => {
-                          if (
-                            data.message ===
-                            "Please include an '@' in an email address."
-                          ) {
-                            $("#email").get(0).setCustomValidity(data.message);
-                            $("#email").get(0).reportValidity();
-                          } else if (
-                            data.message == "Username is already in use"
-                          ) {
-                            $("#username").val("");
-                            $("#username")
-                              .get(0)
-                              .setCustomValidity(data.message);
-                            $("#username").get(0).reportValidity();
-                          } else if (
-                            data.message == "Email is already in use"
-                          ) {
-                            $("#email").val("");
-                            $("#email").get(0).setCustomValidity(data.message);
-                            $("#email").get(0).reportValidity();
-                          } else if (
-                            data.message ==
-                            "Username and Email is already in use"
-                          ) {
-                            $("#username").val("");
-                            $("#email").val("");
-                            $("#username")
-                              .get(0)
-                              .setCustomValidity(data.message);
-                            $("#username").get(0).reportValidity();
-                          } else if (data.message == "Passwords do not Match") {
-                            $("#cpassword").val("");
-                            $("#cpassword")
-                              .get(0)
-                              .setCustomValidity(data.message);
-                            $("#cpassword").get(0).reportValidity();
-                          } else if (
-                            data.message ==
-                            "Account is Registered, you may Sign-in"
-                          ) {
-                            if (window.confirm(data.message)) {
-                              Router.push(
-                                {
-                                  pathname: "/login",
-                                  query: { username: data.username },
-                                },
-                                "/login",
-                                { shallow: true }
-                              );
-                            }
-                          }
-                        });
+          $("#register").children("img").show().fadeTo(300, 1, () => {
+            // Send Request
+            $.ajax({
+              type: "POST",
+              url: "/auth/register",
+              data: {
+                username: El("username").value,
+                email: El("email").value,
+                password: El("password").value,
+                cpassword: El("cpassword").value,
+              },
+              success: (data) => {
+                $("#register").children("img").fadeTo(300, 0, () => {
+                  $("#register").children("img").hide();
+                  $("#register").children("p").show().fadeTo(300, 1, () => {
+                      if (data.message==="Please include an '@' in an email address.") {
+                        El("email").setCustomValidity(data.message);
+                        El("email").reportValidity();
+                      } 
+                      else if (data.message==="Username is already in use") {
+                        El("username").value="";
+                        El("username").setCustomValidity(data.message);
+                        El("username").reportValidity();
+                      } 
+                      else if (data.message==="Email is already in use") {
+                        El("email").value="";
+                        El("email").setCustomValidity(data.message);
+                        El("email").reportValidity();
+                      } 
+                      else if (data.message==="Username and Email is already in use") {
+                        El("username").value;
+                        El("email").value;
+                        El("username").setCustomValidity(data.message);
+                        El("username").reportValidity();
+                      } 
+                      else if (data.message==="Passwords do not Match") {
+                        El("cpassword").value="";
+                        El("cpassword").setCustomValidity(data.message);
+                        El("cpassword").reportValidity();
+                      } 
+                      else if (data.message==="Account is Registered, you may Sign-in") {
+                        if (window.confirm(data.message)) {
+                          Router.push({
+                              pathname: "/login",
+                              query: { username: data.username },
+                            },
+                            "/login",
+                            { shallow: true }
+                          );
+                        }
+                      }
                     });
-                  setRunning(false);
-                },
               });
-            });
+              setRunning(false);
+            },
+          });
         });
+      });
     }
   };
 

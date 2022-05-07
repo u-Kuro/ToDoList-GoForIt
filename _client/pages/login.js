@@ -26,7 +26,7 @@ export default function Login({ data }) {
       // Check Inputs
       if (Nulled(El("useremail").value)) {
         El("useremail").setCustomValidity("");
-        return El("#useremail").reportValidity();
+        return El("useremail").reportValidity();
       }
       if (Nulled("password").value) {
         El("password").setCustomValidity("");
@@ -41,8 +41,8 @@ export default function Login({ data }) {
             type: "POST",
             url: "/auth/login",
             data: {
-              useremail: El("#useremail").value,
-              password: El("#password").value,
+              useremail: El("useremail").value,
+              password: El("password").value,
             },
             success: (data) => {
               $("#login").children("img").fadeTo(300, 0, () => {
@@ -52,14 +52,14 @@ export default function Login({ data }) {
                     Router.push("/home", undefined, { shallow: true });
                   } else {
                     if (data.message === "Password is Incorrect") {
-                      El("#password").value = "";
-                      El("#password").setCustomValidity(data.message);
-                      El("#password").reportValidity();
+                      El("password").value = "";
+                      El("password").setCustomValidity(data.message);
+                      El("password").reportValidity();
                     } else if (data.message === "Account is Not Registered") {
-                      El("#useremail").value = "";
-                      El("#password").value = "";
-                      El("#useremail").setCustomValidity(data.message);
-                      El("#useremail").reportValidity();
+                      El("useremail").value = "";
+                      El("password").value = "";
+                      El("useremail").setCustomValidity(data.message);
+                      El("useremail").reportValidity();
                     }
                   }
                 });
