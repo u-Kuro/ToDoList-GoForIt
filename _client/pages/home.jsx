@@ -20,7 +20,7 @@ export default function Home() {
   const [categories, setCategories] = useState([])
   const [tasks, setTasks] = useState([])
   const [clientTimezoneOffset, setclientTimezoneOffset] = useState(new Date().getTimezoneOffset())
-//
+
   //=interactive
     //Category
     const [openedCategory, setopenedCategory] = useState('')
@@ -62,14 +62,14 @@ export default function Home() {
       url: "/auth/userdata",
       success: (result) => {
         if (!result.isAuth) {
-          Router.push({
-              haveAlert: result.haveAlert,
-              message: "Unauthorized, Please Login first!",
-            },"/login",{ shallow: true })
+          alert("Unauthorized, Please Login first!")
+          Router.push({pathname: "/login"},"/login",{ shallow: true })
         }
-        setData(result)
-        Nulled(result.categories) ? null : setopenedCategory(result.categories[0].id)
-        return
+        else {
+          setData(result)
+          Nulled(result.categories) ? null : setopenedCategory(result.categories[0].id)
+          return
+        }
       },
     })
   }, [])
@@ -82,6 +82,7 @@ export default function Home() {
 
   //=CheckDateStatus
   useUpdateEffectInterval(()=>{ 
+    if(Nulled(tasks)) return
     tasks.map((task)=>{
       var currentTaskDateStatus = CheckTimeStatus(new Date(new Date().toISOString()),new Date(new Date(task.start_date).toISOString()), new Date(new Date(task.end_date).toISOString()))
       if(currentTaskDateStatus!==task.date_status){
@@ -160,7 +161,7 @@ export default function Home() {
           category_name: El("add-category_name").value,
         },
         success: (result) => {
-          El("add-category_name").value = "";
+          El("add-category_name").value = ""
           setRunning(false)
           setopenedCategory(result.categories[0].id)
           return setCategories(result.categories)
@@ -273,10 +274,10 @@ export default function Home() {
           setRunning(false)
           if (!Nulled(result.message)) return alert(result.message)
           setCategories(result.categories)
-          if (Nulled(result.tasks)) return setTasks([])
-            setTasks(result.tasks)
           if (result.noCategory)
             setopenedCategory(result.categories[0].id)
+          if (Nulled(result.tasks)) return setTasks([])
+            setTasks(result.tasks)
         },error: ()=>{return setRunning(false)}
       })
     }
@@ -887,7 +888,7 @@ export default function Home() {
 
 if (typeof window !== "undefined") {
   //Fix Categories menu after resize
-  window.addEventListener("resize", function (event) {
+  window.addEventListener("resize", function () {
     const catmenu = document.getElementById("categoriesMenu")
     // const mainmenu = document.getElementById("main-contents")
     const caticon = document.getElementById("category-icon")
@@ -897,10 +898,7 @@ if (typeof window !== "undefined") {
       catmenu.style.removeProperty("right")
       catmenu.style.removeProperty("position")
       return (catmenu.style.display = "block")
-    } else if (
-      document.body.clientWidth < 785 &&
-      catmenu.style.display == "block"
-    ) {
+    } else if (document.body.clientWidth < 785 && catmenu.style.display == "block") {
       catmenu.style.right = "0"
       catmenu.style.width = "calc(100% - 3em)"
       catmenu.style.position = "fixed"
@@ -915,13 +913,11 @@ if (typeof window !== "undefined") {
   })
 
   // Change Categories Scroll Max Height
-  window.addEventListener("load", function (event) {
-    return (document.getElementById("categoriesul").style.maxHeight =
-      document.body.clientHeight - 162 + "px")
+  window.addEventListener("load", function () {
+    return (document.getElementById("categoriesul").style.maxHeight = document.body.clientHeight - 162 + "px")
   })
 
-  window.addEventListener("resize", function (event) {
-    return (document.getElementById("categoriesul").style.maxHeight =
-      document.body.clientHeight - 162 + "px")
+  window.addEventListener("resize", function () {
+    return (document.getElementById("categoriesul").style.maxHeight = document.body.clientHeight - 162 + "px")
   })
 }

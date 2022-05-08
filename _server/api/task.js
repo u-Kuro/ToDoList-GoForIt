@@ -5,11 +5,8 @@ const router = express.Router()
 const db = require("../db").db
 
 const {
-  UTCSQLtoLocal,
-  UTCSQLtoLocalHTML,
   LocalHTMLtoServerUTCSQL,
   CheckTimeStatus,
-  TimezoneOffset,
 } = require("../../helpers/time")
 
 router.post("/addtask", (req, res) => {
@@ -120,7 +117,7 @@ router.post("/updatetask", (req, res) => {
           if(error)console.log(error)
           db.query("SELECT * FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC LIMIT 1", 
           (error, newtask) => {
-            if (error) {console.log(error)}
+            if(error) console.log(error)
             return res.json({
               newtask: newtask[0],
               tasks: tasres,
@@ -145,7 +142,8 @@ router.post("/deletetask", (req, res) => {
         if(error) console.log(error)
         db.query("DELETE FROM tasks WHERE ? AND users_id = '"+req.session.users_id+"'",
           { id: task_id },
-          (error)=>{if(error) console.log(error)
+          (error)=>{
+            if(error) console.log(error)
             resolve()
           })
         }
@@ -178,7 +176,7 @@ router.post("/deleteallfinishedtask", (req, res) => {
         resolve()
       })
     })
-    .then(()=>[
+    .then(()=>{
       db.query("SELECT * FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC", 
       (error, catres)=>{
         if(error)console.log(error)
@@ -191,7 +189,7 @@ router.post("/deleteallfinishedtask", (req, res) => {
           })
         })
       })
-    ])
+    })
   }
   else return handle(req, res)
 })
@@ -251,7 +249,6 @@ router.post("/changetaskdatestatus", (req, res) => {
       { date_status: date_status }, 
       (error) => {
         if(error)console.log(error)
-        console.log("inserted")
         resolve()
       })
     })
@@ -259,7 +256,6 @@ router.post("/changetaskdatestatus", (req, res) => {
       db.query("SELECT * FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC",
       (error, tasres)=>{
         if(error)console.log(error)
-        console.log("selected")
         return res.json({
           tasks: tasres
         })

@@ -30,10 +30,11 @@ router.post("/updatecategory", (req, res) => {
     db.query("UPDATE category SET ? WHERE id = '"+category_id+"' AND users_id = '"+req.session.users_id+"'",{
       category_name: category_name, 
       recent_update: current_server_date },
-      (error)=>
-      {if(error) console.log(error)
+      (error)=>{
+        if(error) console.log(error)
         db.query("SELECT * FROM category WHERE users_id = '"+req.session.users_id +"' ORDER BY recent_update DESC",
-          (error, catres)=>{if(error) console.log(error)
+          (error, catres)=>{
+            if(error) console.log(error)
             return res.json({ categories: catres })
           }
         )
@@ -48,13 +49,15 @@ router.post("/deletecategory", (req, res) => {
     const { category_id } = req.body
     db.query("DELETE FROM category WHERE ? AND users_id = '"+req.session.users_id+"'",{
       id: category_id },
-      (error)=>{if(error) console.log(error)
+      (error)=>{
+        if(error) console.log(error)
         db.query("DELETE FROM tasks WHERE ?",{
           category_id: category_id },
-          (error)=>
-          {if (error) console.log(error)
+          (error)=>{
+            if (error) console.log(error)
             db.query("SELECT * FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC",
-              (error, catres)=>{if (error) console.log(error)
+              (error, catres)=> {
+                if (error) console.log(error)
                 return res.json({ categories: catres })
               }
             )

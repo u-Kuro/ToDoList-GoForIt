@@ -1,40 +1,42 @@
-import Head from "next/head";
-import Link from "next/link";
-import Router from "next/router";
-import $ from "jquery";
-import { useState } from "react";
+import Head from "next/head"
+import Link from "next/link"
+import Router from "next/router"
+import $ from "jquery"
+import { useState, useEffect } from "react"
 
 export default function Login({ data }) {
   const Nulled=(v)=>{return typeof v === "undefined" ? true : v === null ? true : v.length === 0}
   const El=(id)=>{return document.getElementById(id)}
 
-  const [running, setRunning] = useState(false);
+  const [running, setRunning] = useState(false)
 
   // On Window Load
-  if (typeof window !== "undefined") {
-    $(window).on("load", () => {
-      Nulled(data.haveAlert)? null :
-        !data.haveAlert?  null :
+  if(typeof window!=="undefined"){
+    $(window).on("load", ()=>{
+      if(Nulled(data.haveAlert)) return
+      else if(data.haveAlert) {
         alert(data.message)
-    });
+        Router.push({},"/login",{shallow:true})
+      }
+    })      
   }
 
   let login = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!running) {
-      setRunning(true);
+      setRunning(true)
       // Check Inputs
       if (Nulled(El("useremail").value)) {
-        El("useremail").setCustomValidity("");
-        return El("useremail").reportValidity();
+        El("useremail").setCustomValidity("")
+        return El("useremail").reportValidity()
       }
       if (Nulled("password").value) {
-        El("password").setCustomValidity("");
-        return El("password").reportValidity();
+        El("password").setCustomValidity("")
+        return El("password").reportValidity()
       }
       // Loading
       $("#login").children("p").fadeTo(300, 0, () => {
-        $("#login").children("p").hide();
+        $("#login").children("p").hide()
         $("#login").children("img").show().fadeTo(300, 1, () => {
         // Send Request
           $.ajax({
@@ -46,31 +48,30 @@ export default function Login({ data }) {
             },
             success: (data) => {
               $("#login").children("img").fadeTo(300, 0, () => {
-                $("#login").children("img").hide();
+                $("#login").children("img").hide()
                 $("#login").children("p").show().fadeTo(300, 1, () => {
-                  if (data.valid) {
-                    Router.push("/home", undefined, { shallow: true });
-                  } else {
+                  if (data.valid) return Router.push("/home", undefined, { shallow: true })
+                  else {
                     if (data.message === "Password is Incorrect") {
-                      El("password").value = "";
-                      El("password").setCustomValidity(data.message);
-                      El("password").reportValidity();
+                      El("password").value = ""
+                      El("password").setCustomValidity(data.message)
+                      El("password").reportValidity()
                     } else if (data.message === "Account is Not Registered") {
-                      El("useremail").value = "";
-                      El("password").value = "";
-                      El("useremail").setCustomValidity(data.message);
-                      El("useremail").reportValidity();
+                      El("useremail").value = ""
+                      El("password").value = ""
+                      El("useremail").setCustomValidity(data.message)
+                      El("useremail").reportValidity()
                     }
                   }
-                });
-              });
-            setRunning(false);
+                })
+              })
+            setRunning(false)
             },
-          });
-        });
-      });
+          })
+        })
+      })
     }
-  };
+  }
 
   return (
     <>
@@ -96,10 +97,10 @@ export default function Login({ data }) {
         </section>
       </div>
     </>
-  );
+  )
 }
 
 Login.getInitialProps = ({ query }) => {
-  var data = query;
-  return { data };
-};
+  var data = query
+  return { data }
+}

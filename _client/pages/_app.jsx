@@ -1,4 +1,4 @@
-import Head from "next/head";
+import Head from "next/head"
 import '../static/styles/style.css'
 
 function MyApp({ Component, pageProps }) {
@@ -11,7 +11,7 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <Component {...pageProps} />
     </>
-  );
+  )
 }
 
-export default MyApp;
+export default MyApp

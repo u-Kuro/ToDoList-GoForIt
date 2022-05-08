@@ -1,4 +1,4 @@
-const $ = require("jquery");
+// const $ = require("jquery");
 
-if (typeof window !== "undefined") {
-}
+// if (typeof window !== "undefined") {
+// }
