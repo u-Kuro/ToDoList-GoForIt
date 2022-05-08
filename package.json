@@ -5,10 +5,9 @@
   "main": "home.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js ./_client/",
+    "dev": "nodemon app.js",
     "prestart": "next build",
     "start": "nodemon app.js"
-    
   },
   "keywords": [],
   "author": "",
