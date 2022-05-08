@@ -12,5 +12,3 @@ Local
 Deployed
 https://todolist-goforit.herokuapp.com
 
-note: used hbs instead of html
-
