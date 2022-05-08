@@ -8,7 +8,7 @@ const db = require("./_server/db").db
 require("dotenv").config()
 
 const dev = process.env.node_env !== "production"
-const port = process.env.server_port || "5500"
+const port = process.env.PORT || "5500"
 const app = next({ dev })
 const server = express()
 const handle = app.getRequestHandler()
