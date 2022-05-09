@@ -1,5 +1,3 @@
-const production = true
-
 const FixDateTypes = (time) => {
   if (time < 10) return "0" + time.toString()
   else return time.toString()
@@ -24,44 +22,33 @@ const TimezoneOffset = () => {
 }
 
 const UTCtoLocal = (time) => {
+  const ctoffset = TimezoneOffset()
   const dt = new Date(time)
-  if(production){
-    const ctoffset = TimezoneOffset()
-    dt.setHours(dt.getHours() + ctoffset[0])
-    dt.setMinutes(dt.getMinutes() + ctoffset[1])
-  }
+  dt.setHours(dt.getHours() + ctoffset[0])
+  dt.setMinutes(dt.getMinutes() + ctoffset[1])
   return dt
 }
 
 const LocaltoUTC = (time) => {
+  const ctoffset = TimezoneOffset()
   const dt = new Date(time)
-  if(production){
-    const ctoffset = TimezoneOffset()
-    dt.setHours(dt.getHours() - ctoffset[0])
-    dt.setMinutes(dt.getMinutes() - ctoffset[1])
-  }
+  dt.setHours(dt.getHours() - ctoffset[0])
+  dt.setMinutes(dt.getMinutes() - ctoffset[1])
   return dt
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 const UTCSQLtoLocal = (time) => {
   const dt = (new Date(time))
-  if(production){
-    const ctoffset = TimezoneOffset()
-    dt.setHours(dt.getHours() - ctoffset[0])
-    dt.setMinutes(dt.getMinutes() - ctoffset[1])
-  }
   const ndt = dt.toLocaleString()
   return ndt.substring(0, ndt.length-6)+ndt.substring(ndt.length-3, ndt.length)
 }
 
 const UTCSQLtoLocalHTML = (time) => {
+  const ctoffset = TimezoneOffset()
   const dt = new Date(time)
-  if(!production){
-    const ctoffset = TimezoneOffset()
-    dt.setHours(dt.getHours() + ctoffset[0])
-    dt.setMinutes(dt.getMinutes() + ctoffset[1])
-  }
+  dt.setHours(dt.getHours()+ctoffset[0])
+  dt.setMinutes(dt.getMinutes()+ctoffset[1])
   const ndt = dt.toJSON()
   return ndt.substring(0, ndt.length-8)
 }

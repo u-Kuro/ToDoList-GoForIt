@@ -37,7 +37,6 @@ router.post("/addtask", (req, res) => {
         new Promise((resolve)=>{
           db.query("SELECT id FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC LIMIT 1",
           (error, newcatres) => {
-            console.log(noCategory?newcatres[0].id:category_id)
             if (error) console.log(error)
             if(noCategory) return resolve(newcatres[0].id)
             else return resolve(category_id)
