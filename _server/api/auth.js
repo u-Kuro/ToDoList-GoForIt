@@ -13,7 +13,10 @@ router.post("/register", (req, res) => {
     return res.json({
       message: "Please include an '@' in an email address.",
     })
-  db.query("SELECT username, email FROM users WHERE username = '"+username+"' OR email = '"+email+"' LIMIT 2",
+  db.query(
+  "SELECT email, "+
+  "username "+
+  "FROM users WHERE username = '"+username+"' OR email = '"+email+"' LIMIT 2",
   async (error, usemres) => {
   if (error) console.log(error)
     if (usemres.length > 0) {
@@ -55,14 +58,17 @@ router.post("/register", (req, res) => {
 router.post("/login", (req, res) => {
   const { useremail, password } = req.body
   if(useremail===''&&password==='') return handle(req, res)
-  db.query("SELECT password, id, username FROM users WHERE email = '"+useremail+"' OR username = '"+useremail+"' LIMIT 1",
+  db.query(
+  "SELECT id, "+
+  "password, "+
+  "username "+
+  "FROM users WHERE email = '"+useremail+"' OR username = '"+useremail+"' LIMIT 1",
   async (error, usemres) => {
     if (error) console.log(error)
     if (usemres.length > 0) {
       const accountisValid = await bcryptjs.compare(password,usemres[0].password)
       if (accountisValid) {
         req.session.isAuth = true // Allows User Session
-        req.session.username = usemres[0].username
         req.session.users_id = usemres[0].id
         return res.json({ valid: true })
       } else
@@ -92,10 +98,24 @@ router.get("/logout", (req, res) => {
 
 router.get("/userdata", (req, res) => {
   if (req.session.isAuth) {
-    db.query("SELECT * FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC",
+    db.query(
+      "SELECT id, "+
+      "category_name, "+
+      "recent_update "+
+      "FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC",
       (error, catres) => {
         if (error)console.log(error)
-        db.query("SELECT * FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC",
+        db.query(
+          "SELECT id, "+
+          "category_id, "+
+          "task_name, "+
+          "start_date, "+
+          "end_date, "+
+          "description, "+
+          "date_status, "+
+          "taskisfinished, "+
+          "recent_update "+
+          "FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC, id DESC",
           (error, tasres) => {
             if (error) console.log(error)
             return res.send({

@@ -8,6 +8,11 @@ const GetMonth = (month) => {
   return mts[month]
 }
 
+const GetDay = (day) => {
+  let dyts = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+  return dyts[day]
+}
+
 const TimezoneOffset = () => {
   const timezoneoffset = new Date().getTimezoneOffset()
   const offset = (-(timezoneoffset / 60)).toString().split(".")
@@ -16,59 +21,44 @@ const TimezoneOffset = () => {
   return [houroffset, minoffset]
 }
 
-const FixUTCtoServertoClientTimezoneOffset = (time,chouroffset,cminoffset) => {
-  var dt = new Date(time)
-  // Change Server Time to UTC
-  var stoffset = TimezoneOffset()
-  dt.setHours(dt.getHours() - stoffset[0])
-  dt.setMinutes(dt.getMinutes() - stoffset[1])
-  // Change UTC to Client Time
-  dt.setHours(dt.getHours() + chouroffset)
-  dt.setMinutes(dt.getMinutes() + cminoffset)
-  return dt
-}
-
-const FixUTCtoClientTimezoneOffset = (time) => {
-  var dt = new Date(time)
-  var ctoffset = TimezoneOffset()
-  // Change UTC to Client Time
+const UTCtoLocal = (time) => {
+  const ctoffset = TimezoneOffset()
+  const dt = new Date(time)
   dt.setHours(dt.getHours() + ctoffset[0])
   dt.setMinutes(dt.getMinutes() + ctoffset[1])
   return dt
 }
 
+const LocaltoUTC = (time) => {
+  const ctoffset = TimezoneOffset()
+  const dt = new Date(time)
+  dt.setHours(dt.getHours() - ctoffset[0])
+  dt.setMinutes(dt.getMinutes() - ctoffset[1])
+  return dt
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 const UTCSQLtoLocal = (time) => {
-  var dt = new Date(time)
-  const y = dt.getFullYear().toString()
-  const mo = GetMonth(dt.getMonth())
-  const d = FixDateTypes(dt.getDate())
-  const h = FixDateTypes(dt.getHours())
-  const m = FixDateTypes(dt.getMinutes())
-  return mo + " " + d + ", " + y + " - " + h + ":" + m
+  const dt = (new Date(time))
+  const ndt = dt.toLocaleString()
+  return ndt.substring(0, ndt.length-6)+ndt.substring(ndt.length-3, ndt.length)
 }
+
 const UTCSQLtoLocalHTML = (time) => {
-  var dt = new Date(time)
-  const y = dt.getFullYear().toString()
-  const mo = FixDateTypes(dt.getMonth() + 1)
-  const d = FixDateTypes(dt.getDate())
-  const h = FixDateTypes(dt.getHours())
-  const m = FixDateTypes(dt.getMinutes())
-  return y + "-" + mo + "-" + d + "T" + h + ":" + m
+  const ctoffset = TimezoneOffset()
+  const dt = new Date(time)
+  dt.setHours(dt.getHours()+ctoffset[0])
+  dt.setMinutes(dt.getMinutes()+ctoffset[1])
+  const ndt = dt.toJSON()
+  return ndt.substring(0, ndt.length-8)
 }
 // Time Converter HTML to SQL (timeConverterHTMLtoSQL)
-const LocalHTMLtoServerUTCSQL = (time, chouroffset, cminoffset) => {
-  const y = time.substring(0, 4)
-  const mo = time.substring(5, 7)
-  const d = time.substring(8, 10)
-  const h = time.substring(11, 13)
-  const m = time.substring(14, 16)
-  const localdate = y + "-" + mo + "-" + d + "T" + h + ":" + m + ":00.000Z"
-  var utc = new Date(localdate)
-  // Local to UTC
-  utc.setHours(utc.getHours() - parseInt(chouroffset))
-  utc.setMinutes(utc.getMinutes() - parseInt(cminoffset))
-  return utc
+const LocalHTMLtoSQL = (time) => {
+  const ctoffset = TimezoneOffset()
+  const dt = new Date(time)
+  dt.setHours(dt.getHours()+ctoffset[0])
+  dt.setMinutes(dt.getMinutes()+ctoffset[1])
+  return dt.toJSON()
 }
 // Check Status (checktasktimeStatus)
 const CheckTimeStatus = (current_date, start_date, end_date) => {
@@ -78,9 +68,11 @@ const CheckTimeStatus = (current_date, start_date, end_date) => {
 }
 
 module.exports = {
+  UTCtoLocal,
+  LocaltoUTC,
   UTCSQLtoLocal,
   UTCSQLtoLocalHTML,
-  LocalHTMLtoServerUTCSQL,
+  LocalHTMLtoSQL,
   CheckTimeStatus,
   TimezoneOffset,
 }

@@ -5,19 +5,16 @@ const router = express.Router()
 const db = require("../db").db
 
 const {
-  LocalHTMLtoServerUTCSQL,
+  LocalHTMLtoUTCSQL,
   CheckTimeStatus,
 } = require("../../helpers/time")
 
 router.post("/addtask", (req, res) => {
   if (req.session.isAuth) {
     var noCategory = false
-    const { task_name, start_date, end_date, current_date, description, category_id, ctz_offsethour, ctz_offsetmin} = req.body
-    const newstartdate = LocalHTMLtoServerUTCSQL(start_date, ctz_offsethour, ctz_offsetmin ) // Client's Local Time to SQL UTC
-    const newenddate = LocalHTMLtoServerUTCSQL(end_date, ctz_offsethour, ctz_offsetmin )
-    const newcurrentdate = new Date((new Date(current_date)).toISOString())
-    const date_status = CheckTimeStatus(newcurrentdate, newstartdate, newenddate)
-    db.query("SELECT * FROM category WHERE users_id = ? LIMIT 1",[req.session.users_id],
+    const { task_name, start_date, end_date, description, date_status, category_id} = req.body
+    // console.log(date_status)
+    db.query("SELECT 1 FROM category WHERE users_id = ? LIMIT 1",[req.session.users_id],
     (error, catres)=>{
       if(error)console.log(error)
       new Promise((resolve)=>{
@@ -32,7 +29,7 @@ router.post("/addtask", (req, res) => {
             }
           )
         } else{
-          db.query("UPDATE category SET ? WHERE id = '"+category_id+"' AND users_id = '"+req.session.users_id+"'",{
+          db.query("UPDATE category SET ? WHERE id = '"+category_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",{
             recent_update: new Date()},
             (error)=>{
               if (error)console.log(error)
@@ -42,25 +39,39 @@ router.post("/addtask", (req, res) => {
         return resolve() 
       })
       .then(()=>{
-        db.query("SELECT id FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC LIMIT 1",
+        db.query("SELECT id FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC LIMIT 1",
         (error, newcatres) => {
           if (error) console.log(error)
           db.query("INSERT INTO tasks SET ? ", {
             users_id: req.session.users_id,
             category_id: noCategory?newcatres[0].id:category_id,
             task_name: task_name,
-            start_date: newstartdate,
-            end_date: newenddate,
+            start_date: start_date,
+            end_date: end_date,
             description: description,
             date_status: date_status,
             taskisfinished: 0,
             recent_update: new Date()},
             (error)=>{
               if(error)console.log(error)    
-              db.query("SELECT * FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC", 
+              db.query(
+              "SELECT id, "+
+              "category_name, "+
+              "recent_update "+
+              "FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC", 
               (error, catres)=>{
                 if(error)console.log(error)
-                db.query("SELECT * FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC",
+                db.query(
+                "SELECT id, "+
+                "category_id, "+
+                "task_name, "+
+                "start_date, "+
+                "end_date, "+
+                "description, "+
+                "date_status, "+
+                "taskisfinished, "+
+                "recent_update "+
+                "FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC, id DESC",
                 (error, tasres)=>{
                   if(error)console.log(error)
                   return res.json({
@@ -81,26 +92,24 @@ router.post("/addtask", (req, res) => {
 
 router.post("/updatetask", (req, res) => {
   if (req.session.isAuth) {
-    const { task_id, category_id, task_name, start_date, end_date, current_date, description, ctz_offsethour, ctz_offsetmin} = req.body
-    const newstartdate = LocalHTMLtoServerUTCSQL(start_date, ctz_offsethour, ctz_offsetmin ) // Client's Local Time to SQL UTC
-    const newenddate = LocalHTMLtoServerUTCSQL(end_date, ctz_offsethour, ctz_offsetmin )
-    const newcurrentdate = new Date((new Date(current_date)).toISOString())
-    const date_status = CheckTimeStatus(newcurrentdate, newstartdate, newenddate)
+    const { task_id, category_id, task_name, start_date, end_date, date_status, description } = req.body
+    console.log("\n\n\n\n"+
+    "taskid:"+task_id, "categoryid:"+category_id, "taskname:"+task_name, "startdate:"+start_date, "enddate:"+end_date, "datestatus"+date_status, "desription"+description+"\n\n\n\n")
     const current_server_date = new Date()
     new Promise((resolve) => {
-      db.query("UPDATE category SET ? WHERE id = '"+category_id+"' AND users_id = '"+req.session.users_id+"'",{
+      db.query("UPDATE category SET ? WHERE id = '"+category_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",{
       recent_update: current_server_date },
       (error)=>{
         if(error) console.log(error)
-        db.query("UPDATE tasks SET ? WHERE id = '"+task_id+"' AND users_id = '" +req.session.users_id+"'",{
+        db.query("UPDATE tasks SET ? WHERE id = '"+task_id+"' AND users_id = '" +req.session.users_id+"' LIMIT 1",{
           users_id: req.session.users_id,
           category_id: category_id,
           task_name: task_name,
-          start_date: newstartdate,
-          end_date: newenddate,
+          start_date: start_date,
+          end_date: end_date,
           description: description,
           date_status: date_status,
-          recent_update: new Date()},
+          recent_update: current_server_date},
           (error)=>{
             if(error)console.log(error) 
             resolve()
@@ -109,13 +118,37 @@ router.post("/updatetask", (req, res) => {
       })
     })
     .then(()=>{
-      db.query("SELECT * FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC", 
+      db.query(
+      "SELECT id, "+
+      "category_name, "+
+      "recent_update "+
+      "FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC", 
       (error, catres)=>{
         if(error)console.log(error)
-        db.query("SELECT * FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC",
+        db.query(
+        "SELECT id, "+
+        "category_id, "+
+        "task_name, "+
+        "start_date, "+
+        "end_date, "+
+        "description, "+
+        "date_status, "+
+        "taskisfinished, "+
+        "recent_update "+
+        "FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC, id DESC",
         (error, tasres)=>{
           if(error)console.log(error)
-          db.query("SELECT * FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC LIMIT 1", 
+          db.query(
+          "SELECT id, "+
+          "category_id, "+
+          "task_name, "+
+          "start_date, "+
+          "end_date, "+
+          "description, "+
+          "date_status, "+
+          "taskisfinished, "+
+          "recent_update "+
+          "FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC LIMIT 1", 
           (error, newtask) => {
             if(error) console.log(error)
             return res.json({
@@ -136,11 +169,11 @@ router.post("/deletetask", (req, res) => {
     const { task_id, category_id } = req.body
     new Promise((resolve) => {
       const current_server_date = new Date()
-      db.query("UPDATE category SET ? WHERE id = '"+category_id+"' AND users_id = '"+req.session.users_id+"'",{
+      db.query("UPDATE category SET ? WHERE id = '"+category_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",{
       recent_update: current_server_date },
       (error)=>{
         if(error) console.log(error)
-        db.query("DELETE FROM tasks WHERE ? AND users_id = '"+req.session.users_id+"'",
+        db.query("DELETE FROM tasks WHERE ? AND users_id = '"+req.session.users_id+"' LIMIT 1",
           { id: task_id },
           (error)=>{
             if(error) console.log(error)
@@ -150,10 +183,24 @@ router.post("/deletetask", (req, res) => {
       )
     })
     .then(()=>{   
-      db.query("SELECT * FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC", 
+      db.query(
+      "SELECT id, "+
+      "category_name, "+
+      "recent_update "+
+      "FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC", 
       (error, catres)=>{
         if(error)console.log(error)
-        db.query("SELECT * FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC",
+        db.query(
+        "SELECT id, "+
+        "category_id, "+
+        "task_name, "+
+        "start_date, "+
+        "end_date, "+
+        "description, "+
+        "date_status, "+
+        "taskisfinished, "+
+        "recent_update "+
+        "from tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC, id DESC",
         (error, tasres)=>{
           if(error)console.log(error)
           return res.json({
@@ -177,10 +224,24 @@ router.post("/deleteallfinishedtask", (req, res) => {
       })
     })
     .then(()=>{
-      db.query("SELECT * FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC", 
+      db.query(
+      "SELECT id, "+
+      "category_name, "+
+      "recent_update "+
+      "FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC", 
       (error, catres)=>{
         if(error)console.log(error)
-        db.query("SELECT * FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC",
+        db.query(
+        "SELECT id, "+
+        "category_id, "+
+        "task_name, "+
+        "start_date, "+
+        "end_date, "+
+        "description, "+
+        "date_status, "+
+        "taskisfinished, "+
+        "recent_update "+
+        "FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC, id DESC",
         (error, tasres)=>{
           if(error)console.log(error)
           return res.json({
@@ -198,7 +259,10 @@ router.post("/changetaskcompletionstatus", (req, res) => {
   if (req.session.isAuth) {
     const { task_id } = req.body
     new Promise((resolve)=>{
-      db.query("SELECT category_id, taskisfinished FROM tasks WHERE id = '"+task_id+"' AND users_id = '"+req.session.users_id+"'",
+      db.query(
+      "SELECT category_id,"+
+      "taskisfinished "+
+      "FROM tasks WHERE id = '"+task_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",
       (error, results)=>{
         if(error)console.log(error)
         resolve(results)
@@ -207,12 +271,12 @@ router.post("/changetaskcompletionstatus", (req, res) => {
     .then((task)=>{
       new Promise((resolve)=>{
         const current_server_date = new Date()
-        db.query("UPDATE category SET ? WHERE id = '"+task[0].category_id+"' AND users_id = '"+req.session.users_id+"'",
+        db.query("UPDATE category SET ? WHERE id = '"+task[0].category_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",
         {recent_update: current_server_date},
         (error)=>{
           if(error)console.log(error)
           const taskisfinished = !task[0].taskisfinished
-          db.query("UPDATE tasks SET ? WHERE id = '"+task_id+"' AND users_id = '"+req.session.users_id+"'",
+          db.query("UPDATE tasks SET ? WHERE id = '"+task_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",
           { taskisfinished: taskisfinished }, 
           (error) => {
             if(error)console.log(error)
@@ -221,10 +285,24 @@ router.post("/changetaskcompletionstatus", (req, res) => {
         })
       })
       .then(()=>{
-        db.query("SELECT * FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC", 
+        db.query(
+        "SELECT id, "+
+        "category_name, "+
+        "recent_update "+
+        "FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC", 
         (error, catres)=>{
           if(error)console.log(error)
-          db.query("SELECT * FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC",
+          db.query(
+          "SELECT id, "+
+          "category_id, "+
+          "task_name, "+
+          "start_date, "+
+          "end_date, "+
+          "description, "+
+          "date_status, "+
+          "taskisfinished, "+
+          "recent_update "+
+          "FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC, id DESC",
           (error, tasres)=>{
             if(error)console.log(error)
             return res.json({
@@ -245,7 +323,7 @@ router.post("/changetaskdatestatus", (req, res) => {
     new Promise((resolve)=>{
       console.log(date_status)
       console.log(task_id)
-      db.query("UPDATE tasks SET ? WHERE id = '"+task_id+"' AND users_id = '"+req.session.users_id+"'",
+      db.query("UPDATE tasks SET ? WHERE id = '"+task_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",
       { date_status: date_status }, 
       (error) => {
         if(error)console.log(error)
@@ -253,7 +331,17 @@ router.post("/changetaskdatestatus", (req, res) => {
       })
     })
     .then(()=>{
-      db.query("SELECT * FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC",
+      db.query(
+      "SELECT id, "+
+      "category_id, "+
+      "task_name, "+
+      "start_date, "+
+      "end_date, "+
+      "description, "+
+      "date_status, "+
+      "taskisfinished, "+
+      "recent_update "+
+      "FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC, id DESC",
       (error, tasres)=>{
         if(error)console.log(error)
         return res.json({

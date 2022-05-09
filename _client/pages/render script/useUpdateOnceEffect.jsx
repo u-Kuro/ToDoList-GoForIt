@@ -6,7 +6,7 @@ const useUpdateOnceEffect = (fun, deps) => {
   if(typeof deps === "undefined" ? true : deps === null ? true : deps.length === 0) return
   else {
     useEffect(() => {
-      if (didMount.current==1) fun();
+      if (didMount.current===1) fun();
       didMount.current = didMount.current+1;
     }, deps);
   }
