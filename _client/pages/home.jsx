@@ -103,7 +103,6 @@ export default function Home() {
     if(Nulled(tasks)) return
     tasks.map((task)=>{
       var currentTaskDateStatus = CheckTimeStatus(new Date(), new Date(task.start_date), new Date(task.end_date))
-      // console.log(new Date(), UTCtoLocal(task.start_date), UTCtoLocal(task.end_date))
       if(currentTaskDateStatus!==task.date_status){
         $.ajax({
           type: "POST",
@@ -447,17 +446,8 @@ export default function Home() {
     }
   }
 
-  useUpdateEffect(()=>{
-    console.log(tasks)
-  },[tasks])
-
-  // useUpdateEffect(()=>{
-  //   console.log(categories)
-  // },[categories])
-
   const checkTaskStatus = (e,task) => {
     e.preventDefault()
-    console.log(task)
     if (!isRunning.current) {
       isRunning.current=true
       setCategories([

@@ -4,16 +4,10 @@ const handle = app.getRequestHandler()
 const router = express.Router()
 const db = require("../db").db
 
-const {
-  LocalHTMLtoUTCSQL,
-  CheckTimeStatus,
-} = require("../../helpers/time")
-
 router.post("/addtask", (req, res) => {
   if (req.session.isAuth) {
     var noCategory = false
     const { task_name, start_date, end_date, description, date_status, category_id} = req.body
-    // console.log(date_status)
     db.query("SELECT 1 FROM category WHERE users_id = ? LIMIT 1",[req.session.users_id],
     (error, catres)=>{
       if(error)console.log(error)
@@ -93,8 +87,6 @@ router.post("/addtask", (req, res) => {
 router.post("/updatetask", (req, res) => {
   if (req.session.isAuth) {
     const { task_id, category_id, task_name, start_date, end_date, date_status, description } = req.body
-    console.log("\n\n\n\n"+
-    "taskid:"+task_id, "categoryid:"+category_id, "taskname:"+task_name, "startdate:"+start_date, "enddate:"+end_date, "datestatus"+date_status, "desription"+description+"\n\n\n\n")
     const current_server_date = new Date()
     new Promise((resolve) => {
       db.query("UPDATE category SET ? WHERE id = '"+category_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",{
@@ -321,8 +313,6 @@ router.post("/changetaskdatestatus", (req, res) => {
   if (req.session.isAuth) {
     const { task_id, date_status } = req.body
     new Promise((resolve)=>{
-      console.log(date_status)
-      console.log(task_id)
       db.query("UPDATE tasks SET ? WHERE id = '"+task_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",
       { date_status: date_status }, 
       (error) => {
