@@ -302,6 +302,24 @@ export default function Home() {
 
   //=task form
   const addTask = (e) => {
+    if(Nulled(addTaskName)){
+      return El("add-task_name").reportValidity()
+    }
+    if(Nulled(addTaskStartDate)){
+      El("add-start_date").setCustomValidity("")
+      return El("add-start_date").reportValidity()
+    }
+    if(Nulled(addTaskEndDate)){
+      El("add-end_date").setCustomValidity("")
+      return El("add-end_date").reportValidity()
+    }
+    if(Nulled(addTaskDescription)){
+      return El("add-description").reportValidity()
+    }
+    if(addTaskStartDate>=addTaskEndDate){
+      El("add-end_date").setCustomValidity("Start Date should be set before the End Date")
+      return El("add-end_date").reportValidity()
+    }
     e.preventDefault()
     if (!isRunning.current) {
       isRunning.current=true
@@ -360,6 +378,24 @@ export default function Home() {
   }
 
   const updateTask = (e) => {
+    if(El("update-task_name").value===""){
+      return El("update-task_name").reportValidity()
+    }
+    if(El("update-start_date").value===""){
+      El("update-start_date").setCustomValidity("")
+      return El("update-start_date").reportValidity()
+    }
+    if(El("update-end_date").value===""){
+      El("update-end_date").setCustomValidity("")
+      return El("update-end_date").reportValidity()
+    }
+    if(El("update-description").value===""){
+      return El("update-description").reportValidity()
+    }
+    if(El("update-start_date").value>=El("update-end_date").value){
+      El("update-end_date").setCustomValidity("Start Date should be set before the End Date")
+      return El("update-end_date").reportValidity()
+    }
     e.preventDefault()
     if (!isRunning.current) {      
       isRunning.current=true
@@ -833,7 +869,7 @@ export default function Home() {
               <input 
                 onChange={e=>{setupdateCategoryName(e.target.value)}}
                 onKeyDown={e => {e.key === "Enter" && updateCategory(e)}} 
-                value={chosenUpdateCategory.category_name} id="update-category_name" type="text" placeholder="New Category Name" maxLength="35" required />
+                defaultValue={chosenUpdateCategory.category_name} id="update-category_name" type="text" placeholder="New Category Name" maxLength="35" required />
             </div>
             <div className="cs-btns">
               <button onClick={openUpdateCategoryAlert} className="cur-point red-btn">
