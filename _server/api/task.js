@@ -20,6 +20,7 @@ router.post("/addtask", (req, res) => {
             recent_update: new Date()},
             (error)=>{
               if (error)console.log(error)
+              return resolve()
             }
           )
         } else{
@@ -27,28 +28,38 @@ router.post("/addtask", (req, res) => {
             recent_update: new Date()},
             (error)=>{
               if (error)console.log(error)
+              return resolve()
             }
           )
-        }
-        return resolve() 
+        } 
       })
       .then(()=>{
-        db.query("SELECT id FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC LIMIT 1",
-        (error, newcatres) => {
-          if (error) console.log(error)
-          db.query("INSERT INTO tasks SET ? ", {
-            users_id: req.session.users_id,
-            category_id: noCategory?newcatres[0].id:category_id,
-            task_name: task_name,
-            start_date: start_date.replace('Z', ''),
-            end_date: end_date.replace('Z', ''),
-            description: description,
-            date_status: date_status,
-            taskisfinished: 0,
-            recent_update: new Date()},
-            (error)=>{
-              if(error)console.log(error)    
-              db.query(
+        new Promise((resolve)=>{
+          db.query("SELECT id FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC LIMIT 1",
+          (error, newcatres) => {
+            console.log(noCategory?newcatres[0].id:category_id)
+            if (error) console.log(error)
+            if(noCategory) return resolve(newcatres[0].id)
+            else return resolve(category_id)
+          })
+        }).then((categoryid)=>{
+          new Promise((resolve)=>{
+            db.query("INSERT INTO tasks SET ? ", {
+              users_id: req.session.users_id,
+              category_id: categoryid,
+              task_name: task_name,
+              start_date: start_date.replace('Z', ''),
+              end_date: end_date.replace('Z', ''),
+              description: description,
+              date_status: date_status,
+              taskisfinished: 0,
+              recent_update: new Date()},
+              (error)=>{
+                if(error)console.log(error)  
+                resolve()  
+              })
+          }).then(()=>{
+            db.query(
               "SELECT id, "+
               "category_name, "+
               "recent_update "+
@@ -75,9 +86,9 @@ router.post("/addtask", (req, res) => {
                   })
                 })
               })
-            }
-          )
-        })
+            })    
+          }
+        )
       })
     })
   } 
