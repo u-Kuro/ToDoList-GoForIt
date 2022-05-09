@@ -666,7 +666,7 @@ export default function Home() {
               <img className="cur-point" onClick={openAddTask} src="/icons/add button green.png" alt="add task" />
             </div>
             <ul>
-              {Nulled(categories) || Nulled(tasks) ? (
+              {Nulled(categories) || (tasks.filter((task)=>task.category_id===openedCategory.id).length===0)? (
                 <li className="category-empty">
                   <img src="/icons/empty.png" alt="empty task" />
                   <h5>...Whew Empty...</h5>
