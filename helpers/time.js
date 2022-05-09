@@ -34,7 +34,6 @@ const UTCtoLocal = (time) => {
 }
 
 const LocaltoUTC = (time) => {
-  const ctoffset = TimezoneOffset()
   const dt = new Date(time)
   if(production){
     const ctoffset = TimezoneOffset()
@@ -47,13 +46,18 @@ const LocaltoUTC = (time) => {
 /////////////////////////////////////////////////////////////////////////////////////////
 const UTCSQLtoLocal = (time) => {
   const dt = (new Date(time))
+  if(production){
+    const ctoffset = TimezoneOffset()
+    dt.setHours(dt.getHours() - ctoffset[0])
+    dt.setMinutes(dt.getMinutes() - ctoffset[1])
+  }
   const ndt = dt.toLocaleString()
   return ndt.substring(0, ndt.length-6)+ndt.substring(ndt.length-3, ndt.length)
 }
 
 const UTCSQLtoLocalHTML = (time) => {
   const dt = new Date(time)
-  if(production){
+  if(!production){
     const ctoffset = TimezoneOffset()
     dt.setHours(dt.getHours() + ctoffset[0])
     dt.setMinutes(dt.getMinutes() + ctoffset[1])
