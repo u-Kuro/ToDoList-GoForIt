@@ -307,7 +307,7 @@ body.loading .loading {
 @media screen and (max-width: 400px) {
   
   .atp-container{
-    width: 15em;
+    width: 16em;
   }
   
 }
@@ -317,9 +317,6 @@ body.loading .loading {
     padding-right: 0em;
   }
 
-  .atp-container{
-    width: 15em;
-  }
 }
 
 .categories ul {
