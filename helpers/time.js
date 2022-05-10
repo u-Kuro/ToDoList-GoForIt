@@ -1,3 +1,5 @@
+const production = true
+
 const FixDateTypes = (time) => {
   if (time < 10) return "0" + time.toString()
   else return time.toString()
@@ -56,8 +58,10 @@ const UTCSQLtoLocalHTML = (time) => {
 const LocalHTMLtoSQL = (time) => {
   const ctoffset = TimezoneOffset()
   const dt = new Date(time)
-  dt.setHours(dt.getHours()+ctoffset[0])
-  dt.setMinutes(dt.getMinutes()+ctoffset[1])
+  if(!production){
+    dt.setHours(dt.getHours()+ctoffset[0])
+    dt.setMinutes(dt.getMinutes()+ctoffset[1])
+  }
   return dt.toJSON()
 }
 // Check Status (checktasktimeStatus)
