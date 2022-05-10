@@ -225,6 +225,7 @@ export default function Home() {
       setupdateCategoryAlertIsOpen(false)
       if(openedCategory === chosenUpdateCategory)
         setopenedCategory(val(categories[0]))
+      setTasks(tasks.filter((task)=>{return task.category_id!==chosenUpdateCategory.id}))
       setCategories(categories.filter((category)=>{return category!==chosenUpdateCategory}))
       $.ajax({
         type: "POST",
@@ -237,6 +238,7 @@ export default function Home() {
           if(Nulled(result.categories)) return setopenedCategory([])
           else if(openedCategory === chosenUpdateCategory)
             setopenedCategory(result.categories[0])
+          setTasks(result.tasks)
           return setCategories(result.categories)
         },error: ()=>{return isRunning.current=false}
       })

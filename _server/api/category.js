@@ -71,7 +71,25 @@ router.post("/deletecategory", (req, res) => {
               "FROM category WHERE users_id = '"+req.session.users_id+"' ORDER BY recent_update DESC, id DESC",
               (error, catres)=> {
                 if (error) console.log(error)
-                return res.json({ categories: catres })
+                db.query(
+                  "SELECT id, "+
+                  "category_id, "+
+                  "task_name, "+
+                  "start_date, "+
+                  "end_date, "+
+                  "description, "+
+                  "date_status, "+
+                  "taskisfinished, "+
+                  "recent_update "+
+                  "FROM tasks WHERE users_id = '"+req.session.users_id+"' ORDER BY end_date ASC, id DESC",
+                  (error, tasres) => {
+                    if (error) console.log(error)
+                    return res.json({
+                      categories: catres,
+                      tasks: tasres
+                    })
+                  }
+                )
               }
             )
           }
