@@ -1,7 +1,10 @@
 /* Reset, Change Default */
-* {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 h1,
 h2,
@@ -12,6 +15,9 @@ h6,
 p,
 pre {
   cursor: default;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 a,
 a *,
@@ -21,6 +27,9 @@ button * {
 }
 dialog {
   border: 0;
+}
+img{
+  max-width: 100%;
 }
 
 /* Don't Delete, Change, or Copy Class Name Backend is Affected This Section */
@@ -239,7 +248,6 @@ body.loading .loading {
 }
 
 .home-contents .categories {
-  flex: 1 1 15%;
   min-height: 100%;
   padding-top: 3em;
   background-color: white;
@@ -351,9 +359,9 @@ body.loading .loading {
   margin: 0;
 }
 
-.category input {
+.category h5 {
   max-width: 7em;
-  min-height: 2.5em;
+  max-height: 1.5em;
   border: none;
   color: black;
   font-size: 0.9em;
@@ -376,7 +384,8 @@ body.loading .loading {
 
 .add-category input {
   flex-grow: 1;
-  min-height: 1.5em;
+  width: 95%;
+  min-height: 1.75em;
   padding: 0 0.5em;
   outline: none;
   height: 1.25em;
@@ -431,6 +440,9 @@ body.loading .loading {
   box-shadow: 0 0 0 0.06em rgb(221, 216, 216);
   display: flex;
   flex-wrap: wrap;
+}
+.cs-container div input {
+  padding: 1em 0.5em;
 }
 
 .cs-container .cs-header {
@@ -702,6 +714,7 @@ body.loading .loading {
   outline: none;
   font-size: 0.9em;
   max-width: 27.5em;
+  max-height: 1.5em;
   flex: 1 1 100%;
   background-color: transparent;
 }
@@ -738,6 +751,7 @@ body.loading .loading {
   font-weight: 500;
   text-align: justify;
   overflow: hidden;
+  max-height: 3.5em;
 }
 
 .ts-date-container {
@@ -855,7 +869,7 @@ body.loading .loading {
   justify-self: center;
   flex: 1 1 100%;
   border-radius: 0.3em;
-  padding: 0.5em;
+  padding: 1em 0.5em;
   outline: none;
   height: 1.25em;
   border: 0.06em solid rgb(10, 180, 180);

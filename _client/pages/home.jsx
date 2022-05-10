@@ -849,8 +849,11 @@ export default function Home() {
       </section>
 
       {!updateCategoryIsOpen || Nulled(chosenUpdateCategory) ? null : (
-        <dialog id="CSP" className="category-settings-popup">
-          <div id="CSPcontainer" className="cs-container">
+        <dialog 
+          onClick={()=>{
+            Nulled(updateCategoryName)? closeUpdateCategory:null}}
+          id="CSP" className="category-settings-popup">
+          <div onClick={e=>e.stopPropagation()} id="CSPcontainer" className="cs-container">
             <div className="cs-header">
               <h2>Edit Category</h2>
               <div onClick={closeUpdateCategory} className="cur-point xclose-csp">
@@ -901,8 +904,14 @@ export default function Home() {
       )}
 
       {!addTaskIsOpen ? null : (
-        <dialog id="ATP" className="add-task-popup">
-          <div className="atp-container">
+        <dialog 
+          onClick={()=>{
+            Nulled(addTaskName)&&
+            Nulled(addTaskStartDate)&&
+            Nulled(addTaskEndDate)&&
+            Nulled(addTaskDescription)? closeAddTask:null}}
+          id="ATP" className="add-task-popup">
+          <div onClick={e=>e.stopPropagation()} className="atp-container">
             <div className="atp-header">
               <h2>Add Task</h2>
               <div onClick={closeAddTask} className="cur-point xclose-atp">
@@ -948,8 +957,14 @@ export default function Home() {
       )}
 
       {!updateTaskIsOpen ? null : (
-        <dialog id="TPS" className="add-task-popup">
-          <div className="atp-container">
+        <dialog 
+        onClick={()=>{
+          Nulled(updateTaskName)&&
+          Nulled(updateTaskStartDate)&&
+          Nulled(updateTaskStartDate)&&
+          Nulled(updateTaskDescription)? closeUpdateTask: null}}
+        id="TPS" className="add-task-popup">
+          <div onClick={e=>e.stopPropagation()} className="atp-container">
             <div className="atp-header">
               <h2 className="cur-def">Edit Task</h2>
               <div onClick={closeUpdateTask} className="cur-point xclose-atp">
@@ -1069,7 +1084,7 @@ if (typeof window !== "undefined") {
       catmenu.style.removeProperty("right")
       catmenu.style.removeProperty("position")
       return (catmenu.style.display = "block")
-    } else if (document.body.clientWidth < 785 && (cataddinput === document.activeElement || cataddinput.value !== "" || catupdateinput === document.activeElement || catupdateinput.value !== "")) {
+    } else if (document.body.clientWidth < 785 && (cataddinput === document.activeElement || cataddinput.value !== "" || catupdateinput!==null? catupdateinput === document.activeElement || catupdateinput.value !== "":false)) {
       catmenu.style.right = "0"
       catmenu.style.width = "calc(100% - 3em)"
       catmenu.style.position = "fixed"
