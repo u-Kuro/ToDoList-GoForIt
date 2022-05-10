@@ -172,6 +172,7 @@ export default function Home() {
     if(Nulled(addCategoryName)) return El("add-category_name").reportValidity()
     if (!isRunning.current) {
       isRunning.current=true
+      setaddCategoryName([])
       setCategories([{
         category_name:addCategoryName,
       },...categories])
@@ -182,7 +183,6 @@ export default function Home() {
           category_name: addCategoryName
         },
         success: (result) => {
-          setaddCategoryName([])
           setCategories(result.categories)
           setopenedCategory(result.categories[0])
           return isRunning.current=false
@@ -1061,6 +1061,7 @@ if (typeof window !== "undefined") {
     const catmenu = document.getElementById("categoriesMenu")
     const caticon = document.getElementById("category-icon")
     const cataddinput = document.getElementById("add-category_name")
+    const catupdateinput = document.getElementById("update-category_name")
     if (document.body.clientWidth >= 785) {
       caticon.style.display = "none"
       catmenu.style.removeProperty("width")
@@ -1068,7 +1069,7 @@ if (typeof window !== "undefined") {
       catmenu.style.removeProperty("right")
       catmenu.style.removeProperty("position")
       return (catmenu.style.display = "block")
-    } else if (document.body.clientWidth < 785 && (cataddinput == document.activeElement || cataddinput.value !== "")) {
+    } else if (document.body.clientWidth < 785 && (cataddinput == document.activeElement || cataddinput.value !== "" || catupdateinput.value !== "")) {
       catmenu.style.right = "0"
       catmenu.style.width = "calc(100% - 3em)"
       catmenu.style.position = "fixed"
