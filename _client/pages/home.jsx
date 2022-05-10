@@ -1069,7 +1069,7 @@ if (typeof window !== "undefined") {
       catmenu.style.removeProperty("right")
       catmenu.style.removeProperty("position")
       return (catmenu.style.display = "block")
-    } else if (document.body.clientWidth < 785 && (cataddinput == document.activeElement || cataddinput.value !== "" || catupdateinput.value !== "")) {
+    } else if (document.body.clientWidth < 785 && (cataddinput === document.activeElement || cataddinput.value !== "" || catupdateinput === document.activeElement || catupdateinput.value !== "")) {
       catmenu.style.right = "0"
       catmenu.style.width = "calc(100% - 3em)"
       catmenu.style.position = "fixed"
