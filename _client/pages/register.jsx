@@ -101,74 +101,72 @@ export default function Register() {
   }
 
   return (
-    <div>
+    <>
       <Head>
         <title>Signup | GoForIt</title>
       </Head>
       <div className="reg-log-bg">
-        <section className="reg">
-          <div className="reg-container">
-            <form className="register-form">
-              <h1 className="cur-def">Register</h1>
-              <input
-                type="text"
-                onKeyPress={(e) => {
-                  e.key === "Enter" && registered(e)
-                }}
-                id="username"
-                placeholder="Username"
-                maxLength="255"
-                required
+        <div className="reg-container">
+          <form className="register-form">
+            <h1 className="cur-def">Register</h1>
+            <input
+              type="text"
+              onKeyPress={(e) => {
+                e.key === "Enter" && registered(e)
+              }}
+              id="username"
+              placeholder="Username"
+              maxLength="255"
+              required
+            />
+            <input
+              type="email"
+              onKeyPress={(e) => {
+                e.key === "Enter" && registered(e)
+              }}
+              id="email"
+              placeholder="Email"
+              maxLength="255"
+              required
+            />
+            <input
+              type="password"
+              onKeyPress={(e) => {
+                e.key === "Enter" && registered(e)
+              }}
+              id="password"
+              placeholder="Password"
+              maxLength="255"
+              required
+            />
+            <input
+              type="password"
+              onKeyPress={(e) => {
+                e.key === "Enter" && registered(e)
+              }}
+              id="cpassword"
+              placeholder="Confirm Password"
+              maxLength="255"
+              required
+            />
+            <button
+              id="register"
+              className="cur-point"
+              onClick={(e) => registered(e)}
+            >
+              <p>Register</p>
+              <img
+                className="none"
+                style={{ opacity: "0", width: "0.9em", height: "0.9em" }}
+                src="/icons/loading.svg"
               />
-              <input
-                type="email"
-                onKeyPress={(e) => {
-                  e.key === "Enter" && registered(e)
-                }}
-                id="email"
-                placeholder="Email"
-                maxLength="255"
-                required
-              />
-              <input
-                type="password"
-                onKeyPress={(e) => {
-                  e.key === "Enter" && registered(e)
-                }}
-                id="password"
-                placeholder="Password"
-                maxLength="255"
-                required
-              />
-              <input
-                type="password"
-                onKeyPress={(e) => {
-                  e.key === "Enter" && registered(e)
-                }}
-                id="cpassword"
-                placeholder="Confirm Password"
-                maxLength="255"
-                required
-              />
-              <button
-                id="register"
-                className="cur-point"
-                onClick={(e) => registered(e)}
-              >
-                <p>Register</p>
-                <img
-                  className="none"
-                  style={{ opacity: "0", width: "0.9em", height: "0.9em" }}
-                  src="/icons/loading.svg"
-                />
-              </button>
-              <Link href="login">
-                <h5 className="cur-point">Already Have an Account?</h5>
-              </Link>
-            </form>
-          </div>
-        </section>
+            </button>
+            <Link href="login">
+              <h5 className="cur-point">Already Have an Account?</h5>
+            </Link>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   )
 }

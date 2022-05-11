@@ -79,22 +79,20 @@ export default function Login({ data }) {
         <title>Signin | GoForIt</title>
       </Head>
       <div className="reg-log-bg">
-        <section className="log">
-          <div className="log-container">
-            <div className="login-form">
-              <h1 className="cur-def">Login</h1>
-              <input defaultValue={Nulled(data.username) ? "" : data.username} onKeyPress={(e) => {e.key === "Enter" && login(e)}} id="useremail" placeholder="Username or Email" maxLength="255" type="text" required />
-              <input onKeyPress={(e) => {e.key === "Enter" && login(e)}} id="password" placeholder="Password" maxLength="255" required type="password" />
-              <button onClick={(e) => login(e)} id="login" className="cur-point" >
-                <p>Login</p>
-                <img className="none" style={{ opacity: "0", width: "0.9em", height: "0.9em" }} src="/icons/loading.svg"/>
-              </button>
-              <Link href="register">
-                <h5 className="cur-point">Don't have an account?</h5>
-              </Link>
-            </div>
+        <div className="log-container">
+          <div className="login-form">
+            <h1 className="cur-def">Login</h1>
+            <input defaultValue={Nulled(data.username) ? "" : data.username} onKeyPress={(e) => {e.key === "Enter" && login(e)}} id="useremail" placeholder="Username or Email" maxLength="255" type="text" required />
+            <input onKeyPress={(e) => {e.key === "Enter" && login(e)}} id="password" placeholder="Password" maxLength="255" required type="password" />
+            <button onClick={(e) => login(e)} id="login" className="cur-point" >
+              <p>Login</p>
+              <img className="none" style={{ opacity: "0", width: "0.9em", height: "0.9em" }} src="/icons/loading.svg"/>
+            </button>
+            <Link href="register">
+              <h5 className="cur-point">Don't have an account?</h5>
+            </Link>
           </div>
-        </section>
+        </div>
       </div>
     </>
   )

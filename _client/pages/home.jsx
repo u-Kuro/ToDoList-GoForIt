@@ -585,9 +585,8 @@ export default function Home() {
       }
     }
   }
-
   return (
-    <div>
+    <>
       <Head>
         <title>GoForIt</title>
       </Head>
@@ -602,15 +601,15 @@ export default function Home() {
         <div className="top-bar-container">
           <nav className="top-bar">
             <h1>GoForIt</h1>
-            <h3>
-              ⠀{Nulled(data.username)? "" : "Hello, "+data.username}
-            </h3>
+            <h5>
+              {Nulled(data.username)? "" : "Hello, "+data.username}
+            </h5>
           </nav>
         </div>
       </div>
       <section className="home-contents">
         <div id="categoriesMenu" className="categories">
-          <h2>Categories</h2>
+          <h3>Categories</h3>
           <div className="cur-def add-category">
             <img className="cur-point" onClick={e => {addCategory(e)}} src="/icons/add button green.png" alt="add category" />
             <input 
@@ -623,7 +622,7 @@ export default function Home() {
             {Nulled(categories) ? (
               <li className="category-empty">
                 <img src="/icons/empty.png" alt="empty category" />
-                <h5>...Whew Empty...</h5>
+                <p>...Whew Empty...</p>
               </li>
             ) : (
               categories.map((category, idx) => {
@@ -635,7 +634,7 @@ export default function Home() {
                       openCategory(category)
                     }}
                   >
-                    <h5 className="cur-point" type="text">
+                    <h5 className="cur-point break-word" type="text">
                       {category.category_name}⠀
                     </h5>
                     <div className="cur-point category-settings" onClick={e => {openUpdateCategory(category.id, e)}}>
@@ -651,9 +650,9 @@ export default function Home() {
           <div className="tasks">
             <div className="ts-header">
               {Nulled(categories) ? (
-                <h2>Tasks</h2>
+                <h3>Tasks</h3>
               ) : (
-                <h2>Tasks: {val(openedCategory.category_name)}</h2>
+                <h3 className="break-word">Tasks: {val(openedCategory.category_name)}</h3>
               )}
               <img className="cur-point" onClick={openAddTask} src="/icons/add button green.png" alt="add task" />
             </div>
@@ -661,7 +660,7 @@ export default function Home() {
               {Nulled(categories) || (tasks.filter((task)=>task.category_id===openedCategory.id).length===0)? (
                 <li className="category-empty">
                   <img src="/icons/empty.png" alt="empty task" />
-                  <h5>...Whew Empty...</h5>
+                  <p>...Whew Empty...</p>
                 </li>
               ) : (
                 tasks.map((task) => {
@@ -678,23 +677,23 @@ export default function Home() {
                               className="cur-point ts-checkbox" type="checkbox" 
                             />
                           }
-                          <h3 className="cur-def ts-name">⠀{task.task_name}</h3>
+                          <h5 className="cur-def ts-name break-word">⠀{task.task_name}</h5>
                         </div>
                         <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
                           <img src="/icons/three dots black.png" alt="task settings" />
                         </div>
                       </div>
                       <div className="cur-def ts-description">
-                        <h5>{task.description}</h5>
+                        <p className="break-word">{task.description}</p>
                       </div>
                       <div className="ts-date-container">
                         <div className="ts-date">
-                          <h5>
+                          <p>
                             {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
-                          </h5>
-                          <h5>
+                          </p>
+                          <p>
                             {"⠀End: "+UTCSQLtoLocal(task.end_date)}
-                          </h5>
+                          </p>
                         </div>
                       </div>
                     </li>
@@ -706,10 +705,10 @@ export default function Home() {
           {/* {{!-- Dashboard --}} */}
           <div className="dashboard">
             <div className="ts-header">
-              <h2>Dashboard</h2>
+              <h3>Dashboard</h3>
               <img onClick={e=>setdeleteFinishedTasksAlertIsOpen(true)} className="cur-point trash-icon" src="/icons/trash green.png" alt="delete finished tasks" />
             </div>
-            <h4>Missed Tasks</h4>
+            <h5>Missed Tasks</h5>
             <ul className="dashboardul">
               {Nulled(tasks)
                 ? null
@@ -733,25 +732,25 @@ export default function Home() {
                                 className="cur-point ts-checkbox" type="checkbox" 
                               />
                             }
-                            <h3 className="cur-def ts-name">
+                            <h5 className="cur-def ts-name break-word">
                               ⠀{task.task_name}
-                            </h3>
+                            </h5>
                           </div>
                           <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
                             <img src="/icons/three dots black.png" alt="task settings" />
                           </div>
                         </div>
                         <div className="cur-def ts-description">
-                          <h5>{task.description}</h5>
+                          <p className="break-word">{task.description}</p>
                         </div>
                         <div className="ts-date-container">
                           <div className="ts-date">
-                            <h5>
+                            <p>
                               {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
-                            </h5>
-                            <h5>
+                            </p>
+                            <p>
                               {"⠀End: "+UTCSQLtoLocal(task.end_date)}
-                            </h5>
+                            </p>
                           </div>
                         </div>
                       </li>
@@ -759,7 +758,7 @@ export default function Home() {
                   })}
             </ul>
 
-            <h4>Ongoing Tasks</h4>
+            <h5>Ongoing Tasks</h5>
             <ul className="dashboardul">
               {Nulled(tasks)
                 ? null
@@ -776,25 +775,25 @@ export default function Home() {
                                 className="cur-point ts-checkbox" type="checkbox" 
                               />
                             }
-                            <h3 className="cur-def ts-name">
+                            <h5 className="cur-def ts-name break-word">
                               ⠀{task.task_name}
-                            </h3>
+                            </h5>
                           </div>
                           <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
                             <img src="/icons/three dots black.png" alt="task settings" />
                           </div>
                         </div>
                         <div className="cur-def ts-description">
-                          <h5>{task.description}</h5>
+                          <p className="break-word">{task.description}</p>
                         </div>
                         <div className="ts-date-container">
                           <div className="ts-date">
-                            <h5>
+                            <p>
                               {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
-                            </h5>
-                            <h5>
+                            </p>
+                            <p>
                               {"⠀End: "+UTCSQLtoLocal(task.end_date)}
-                            </h5>
+                            </p>
                           </div>
                         </div>
                       </li>
@@ -802,7 +801,7 @@ export default function Home() {
                   })}
             </ul>
 
-            <h4>Tasks Soon</h4>
+            <h5>Tasks Soon</h5>
             <ul className="dashboardul">
               {Nulled(tasks)
                 ? null
@@ -819,25 +818,25 @@ export default function Home() {
                                 className="cur-point ts-checkbox" type="checkbox" 
                               />
                             }
-                            <h3 className="cur-def ts-name">
+                            <h5 className="cur-def ts-name break-word">
                               ⠀{task.task_name}
-                            </h3>
+                            </h5>
                           </div>
                           <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
                             <img src="/icons/three dots black.png" alt="task settings" />
                           </div>
                         </div>
                         <div className="cur-def ts-description">
-                          <h5>{task.description}</h5>
+                          <p className="break-word">{task.description}</p>
                         </div>
                         <div className="ts-date-container">
                           <div className="ts-date">
-                            <h5>
+                            <p>
                               {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
-                            </h5>
-                            <h5>
+                            </p>
+                            <p>
                               {"⠀End: "+UTCSQLtoLocal(task.end_date)}
-                            </h5>
+                            </p>
                           </div>
                         </div>
                       </li>
@@ -855,7 +854,7 @@ export default function Home() {
           id="CSP" className="category-settings-popup">
           <div onClick={e=>e.stopPropagation()} id="CSPcontainer" className="cs-container">
             <div className="cs-header">
-              <h2>Edit Category</h2>
+              <h3>Edit Category</h3>
               <div onClick={closeUpdateCategory} className="cur-point xclose-csp">
                 <img src="/icons/xclose black.png" alt="close settings" />
               </div>
@@ -910,10 +909,10 @@ export default function Home() {
             Nulled(addTaskStartDate)&&
             Nulled(addTaskEndDate)&&
             Nulled(addTaskDescription)? closeAddTask:null}}
-          id="ATP" className="add-task-popup">
+          id="ATP" className="add-edit-popup">
           <div onClick={e=>e.stopPropagation()} className="atp-container">
             <div className="atp-header">
-              <h2>Add Task</h2>
+              <h3>Add Task</h3>
               <div onClick={closeAddTask} className="cur-point xclose-atp">
                 <img src="/icons/xclose black.png" alt="close add task popup" />
               </div>
@@ -943,7 +942,7 @@ export default function Home() {
                 <textarea 
                   onChange={e=>setaddTaskDescription(e.target.value)}   
                   value={addTaskDescription}
-                  id="add-description" rows="5" placeholder="Task Description" required >
+                  id="add-description" rows="4" placeholder="Task Description" required >
                 </textarea>
               </div>
               <div className="atp-btns">
@@ -963,10 +962,10 @@ export default function Home() {
           Nulled(updateTaskStartDate)&&
           Nulled(updateTaskStartDate)&&
           Nulled(updateTaskDescription)? closeUpdateTask: null}}
-        id="TPS" className="add-task-popup">
+        id="TPS" className="add-edit-popup">
           <div onClick={e=>e.stopPropagation()} className="atp-container">
             <div className="atp-header">
-              <h2 className="cur-def">Edit Task</h2>
+              <h3 className="cur-def">Edit Task</h3>
               <div onClick={closeUpdateTask} className="cur-point xclose-atp">
                 <img src="/icons/xclose black.png" alt="close add task popup" />
               </div>
@@ -1006,7 +1005,7 @@ export default function Home() {
                 <textarea 
                   onChange={e=>setupdateTaskDescription(e.target.value)}
                   defaultValue={chosenUpdateTask.description}
-                  id="update-description" placeholder="Task Description" rows="5" required >
+                  id="update-description" placeholder="Task Description" rows="4" required >
                 </textarea>
               </div>
             </div>
@@ -1045,7 +1044,7 @@ export default function Home() {
       )}
 
       {!deleteFinishedTasksAlertIsOpen ? null : (  
-        <section className="csp-alert">
+        <dialog className="csp-alert">
           <div className="cspa-container">
             <div className="cspa-header">
               <h5 className="cur-def">
@@ -1064,9 +1063,9 @@ export default function Home() {
               </button>
             </div>
           </div>
-        </section>
+        </dialog>
       )}
-    </div>
+    </>
   )
 }
 
@@ -1077,14 +1076,16 @@ if (typeof window !== "undefined") {
     const caticon = document.getElementById("category-icon")
     const cataddinput = document.getElementById("add-category_name")
     const catupdateinput = document.getElementById("update-category_name")
+    const active = (cataddinput!==null?(cataddinput === document.activeElement || cataddinput.value !== ""):false) || (catupdateinput!==null? (catupdateinput === document.activeElement || catupdateinput.value !== ""):false)
+    console.log(catupdateinput)
     if (document.body.clientWidth >= 785) {
       caticon.style.display = "none"
       catmenu.style.removeProperty("width")
       catmenu.style.removeProperty("top")
       catmenu.style.removeProperty("right")
       catmenu.style.removeProperty("position")
-      return (catmenu.style.display = "block")
-    } else if (document.body.clientWidth < 785 && (cataddinput === document.activeElement || cataddinput.value !== "" || catupdateinput!==null? catupdateinput === document.activeElement || catupdateinput.value !== "":false)) {
+      return (catmenu.style.display = "flex")
+    } else if (document.body.clientWidth < 785 && active) {
       catmenu.style.right = "0"
       catmenu.style.width = "calc(100% - 3em)"
       catmenu.style.position = "fixed"
@@ -1099,10 +1100,10 @@ if (typeof window !== "undefined") {
 
   // Change Categories Scroll Max Height
   window.addEventListener("load", function () {
-    return (document.getElementById("categoriesul").style.maxHeight = document.body.clientHeight - 162 + "px")
+    return (document.getElementById("categoriesul").style.maxHeight = document.body.clientHeight - 136 + "px")
   })
 
   window.addEventListener("resize", function () {
-    return (document.getElementById("categoriesul").style.maxHeight = document.body.clientHeight - 162 + "px")
+    return (document.getElementById("categoriesul").style.maxHeight = document.body.clientHeight - 136 + "px")
   })
 }

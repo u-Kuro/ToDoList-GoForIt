@@ -70,6 +70,7 @@ router.post("/login", (req, res) => {
       if (accountisValid) {
         req.session.isAuth = true // Allows User Session
         req.session.users_id = usemres[0].id
+        req.session.username = usemres[0].username
         return res.json({ valid: true })
       } else
         return res.json({
