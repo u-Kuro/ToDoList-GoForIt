@@ -155,14 +155,16 @@ export default function Home() {
     e.preventDefault()
     if (!isRunning.current) {
       isRunning.current=true
-      $.ajax({
-        type: "GET",
-        url: "/auth/logout",
-        success: () => {
-          Router.push("/login", undefined, { shallow: true })
-          return isRunning.current=false
-        },error: ()=>{return isRunning.current.current=false}
-      })
+      if (window.confirm("Are you sure you want to logout?")) {
+        $.ajax({
+          type: "GET",
+          url: "/auth/logout",
+          success: () => {
+            Router.push("/login", undefined, { shallow: true })
+            return isRunning.current=false
+          },error: ()=>{return isRunning.current=false}
+        })               
+      } else return isRunning.current=false
     }
   }
 

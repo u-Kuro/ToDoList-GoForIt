@@ -188,7 +188,7 @@ body.loading .loading {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1em;
+  gap: 4em;
 }
 
 .category-icon {
@@ -206,6 +206,7 @@ body.loading .loading {
 }
 
 .logout-icon {
+  align-self: flex-end;
   max-width: 1.8em;
   min-height: 1.8em;
 }
@@ -678,7 +679,7 @@ body.loading .loading {
 .atpf-1 input {
   flex: 1 1 100%;
   border-radius: 0.3em;
-  padding: 0.25em;
+  padding: 0.5em;
   border: 0.05em solid rgb(10, 180, 180);
   color: black;
 }
@@ -842,7 +843,7 @@ body.loading .loading {
 .register-form input {
   border-radius: 0.3em;
   border: 0.05em solid gray;
-  padding: 0.5em;
+  padding: 0.75em;
 }
 
 .register-form button {
@@ -850,7 +851,7 @@ body.loading .loading {
   color: white;
   border-radius: 0.3em;
   border: 0.05em solid;
-  padding: 0.5em;
+  padding: 0.75em;
 }
 
 .register-form button:hover {
@@ -895,7 +896,7 @@ body.loading .loading {
 .login-form input {
   border-radius: 0.3em;
   border: 0.05em solid gray;
-  padding: 0.5em;
+  padding: 0.75em;
 }
 
 .login-form button {
@@ -903,7 +904,7 @@ body.loading .loading {
   color: white;
   border-radius: 0.3em;
   border: 0.05em solid;
-  padding: 0.5em;
+  padding: 0.75em;
 }
 
 .login-form button:hover {
