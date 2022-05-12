@@ -1,11 +1,9 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
- "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="30.000000pt" height="30.000000pt" viewBox="0 0 30.000000 30.000000"
- preserveAspectRatio="xMidYMid meet">
-
-<g transform="translate(0.000000,30.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
-</g>
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50" height="50">
+	<title>icons8-menu-rounded-50 (1)</title>
+	<defs>
+		<image  width="44" height="34" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAiAQMAAAAeQKkyAAAAAXNSR0IB2cksfwAAAAZQTFRF////AAAAVcLTfgAAAAJ0Uk5T/wDltzBKAAAAFElEQVR4nGNgwAP+g8AHKlGDwSIAjOmCMzRhAPsAAAAASUVORK5CYII="/>
+	</defs>
+	<style>
+	</style>
+	<use id="Background" href="#img1" x="3" y="8"/>
 </svg>
