@@ -1,0 +1,13 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 66 66" width="66" height="66">
+	<title>logout black-svg</title>
+	<defs>
+		<image  width="26" height="52" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAA0AQMAAACuIrrLAAAAAXNSR0IB2cksfwAAAAZQTFRFAAAA////pdmf3QAAAAJ0Uk5TAP9bkSK1AAAAQklEQVR4nGPg//+AgUH+/x8GBvv//xkY6qFEA8P///8PIBH1cMIeTsiDCAb2gSb4UV2FcCmmFxogHgR7FexpdqD3AR+tepPYSXa3AAAAAElFTkSuQmCC"/>
+		<image  width="33" height="24" id="img2" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAYAQMAAABOXwZJAAAAAXNSR0IB2cksfwAAAAZQTFRFAAAA////pdmf3QAAAAJ0Uk5TAP9bkSK1AAAAQ0lEQVR4nGNgYG9gAAJ5MGkPJv+DSEYwyQwm+f//B9LyYNIeTNaDyf84yHoklRBdEBOY//8Hm3wAbAuYtD+AsB3kEgArCj28bj35+wAAAABJRU5ErkJggg=="/>
+	</defs>
+	<style>
+	</style>
+	<g id="Layer">
+		<use id="Layer" href="#img1" x="33" y="7"/>
+		<use id="Layer" href="#img2" x="7" y="21"/>
+	</g>
+</svg>

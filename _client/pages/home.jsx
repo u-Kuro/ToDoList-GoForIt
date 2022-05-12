@@ -33,7 +33,9 @@ export default function Home() {
     const [chosenUpdateTask, setchosenUpdateTask] = useState([])
     const [updateTaskIsOpen, setupdateTaskIsOpen] = useState(false)
     const [updateTaskAlertIsOpen, setupdateTaskAlertIsOpen] = useState(false)
+    const [deleteFinishedTasksIsOpen, setdeleteFinishedTasksIsOpen] = useState(false)
     const [deleteFinishedTasksAlertIsOpen, setdeleteFinishedTasksAlertIsOpen] = useState(false)
+    const [openUpdateTaskIsFromdeleteFinishedTasks, setopenUpdateTaskIsFromdeleteFinishedTasks] = useState(false)
 
   //=input values
     //category
@@ -251,22 +253,25 @@ export default function Home() {
   const openCategory = (category) => {
     if (!isRunning.current) {
       isRunning.current=true
-      if ($("#categoriesMenu").css("position") == "fixed"){
+      if ($("#category-icon").css("display") !== "none") {
         setopenedCategory(category)
-        if ($("#categoriesMenu").css("display") == "none") {
-        $("#categoriesMenu").css({
-          top: "-" + $("#categoriesMenu").css("height"),
-        })
-        $("#categoriesMenu").show().animate({
-          top: "+=" + $("#categoriesMenu").css("height"),
-        },100,() => {
-          return isRunning.current=false
-        })
+        if ($("#categoriesMenu").css("display") === "none") {
+          $("#categoriesMenu").css({
+            top: "-" + $("#categoriesMenu").css("height"),
+          })
+          $("#categoriesMenu").show().animate({
+            top: "+=" + $("#categoriesMenu").css("height"),
+          },100,() => {
+            return isRunning.current=false
+          })
         } else {
           $("#categoriesMenu").animate({
             top: "-=" + $("#categoriesMenu").css("height"),
           },100,() => {
             $("#categoriesMenu").hide(() => {
+              El("tasks").scrollIntoView(true);
+              var scrolledY = window.scrollY;
+              if(scrolledY) window.scroll(0, scrolledY - El("top-bar").clientHeight);
               return isRunning.current=false
             })
           })
@@ -542,8 +547,8 @@ export default function Home() {
   }
 
   const openUpdateTask = (task, e) => {
-    e.stopPropagation()
-    if (Nulled(tasks)||Nulled(categories)) return
+    // e.stopPropagation()
+    if (Nulled(tasks)||Nulled(categories)) return setopenUpdateTaskIsFromdeleteFinishedTasks(false)
     setchosenUpdateTask(task)
     setupdateTaskIsOpen(true)
   }
@@ -561,6 +566,28 @@ export default function Home() {
   const closeUpdateTaskAlert = () => {
     setupdateTaskIsOpen(true)
     setupdateTaskAlertIsOpen(false)
+  }
+
+  const opendeleteFinishedTasks = () => {
+    setdeleteFinishedTasksIsOpen(true)
+  }
+
+  const closedeleteAllFinishedTasks = () => {
+    if(openUpdateTaskIsFromdeleteFinishedTasks){
+      setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+    }
+    setdeleteFinishedTasksIsOpen(false)
+  }
+
+  const closedeleteAllFinishedTasksAlert = () => {
+    setdeleteFinishedTasksAlertIsOpen(false)
+    setdeleteFinishedTasksIsOpen(true)
+  }
+
+  const openUpdateTaskFromdeleteFinishedTasks = (task, e) => {
+    setdeleteFinishedTasksIsOpen(false)
+    setopenUpdateTaskIsFromdeleteFinishedTasks(true);
+    openUpdateTask(task, e)
   }
 
   //=animation
@@ -592,325 +619,321 @@ export default function Home() {
       <Head>
         <title>GoForIt</title>
       </Head>
-      <nav className="side-bar">
-        <div className="container">
-          <img className="logo" src="/icons/favicon.ico" alt="logo" />
-          <img onClick={() => {categoryMenuIcon()}} id="category-icon" className="cur-point category-icon" src="/icons/hamburger.png" alt="categories menu small screen" />
-          <img onClick={e => {logout(e)}} className="icon logout-icon cur-point" src="/icons/logout white.png" alt="logout"/>
-        </div>
-      </nav>
-      <div className="fixed-top-bar">
-        <div className="top-bar-container">
-          <nav className="top-bar">
-            <h1>GoForIt</h1>
-            <h5>
-              {Nulled(data.username)? "" : "Hello, "+data.username}
-            </h5>
-          </nav>
-        </div>
-      </div>
-      <section className="home-contents">
-        <div id="categoriesMenu" className="categories">
-          <h3>Categories</h3>
-          <div className="cur-def add-category">
-            <img className="cur-point" onClick={e => {addCategory(e)}} src="/icons/add button green.png" alt="add category" />
-            <input 
-              id="add-category_name"
-              value={addCategoryName}
-              onChange={e=>setaddCategoryName(e.target.value)} 
-              onKeyDown={e => {e.key === "Enter" && addCategory(e)}} placeholder="Add Category" maxLength="35" type="text" required />
+      <div className="page">
+        <nav className="side-bar">
+          <div className="container">
+            <img className="logo" src="/icons/favicon.ico" alt="logo" />
+            <img onClick={() => {categoryMenuIcon()}} id="category-icon" className="cur-point category-icon" src="/icons/hamburger.png" alt="categories menu small screen" />
+            <img onClick={e => {logout(e)}} className="icon logout-icon cur-point" src="/icons/logout white.svg" alt="logout"/>
           </div>
-          <ul id="categoriesul">
-            {Nulled(categories) ? (
-              <li className="category-empty">
-                <img src="/icons/empty.png" alt="empty category" />
-                <p>...Whew Empty...</p>
-              </li>
-            ) : (
-              categories.map((category, idx) => {
-                return (
-                  <li
-                    key={idx}
-                    className={"category cur-point " + (openedCategory === category? "category-selected": "")}
-                    onClick={() => {
-                      openCategory(category)
-                    }}
-                  >
-                    <h5 className="cur-point break-word" type="text">
-                      {category.category_name}⠀
-                    </h5>
-                    <div className="cur-point category-settings" onClick={e => {openUpdateCategory(category.id, e)}}>
-                      <img src="/icons/three dots black.png" alt="category settings" />
-                    </div>
-                  </li>
-                )
-              })
-            )}
-          </ul>
+        </nav>
+        <div className="fixed-top-bar">
+          <div className="top-bar-container">
+            <nav id="top-bar" className="top-bar">
+              <h1>GoForIt</h1>
+              <h5>
+                {Nulled(data.username)? "" : "Hello, "+data.username}
+              </h5>
+            </nav>
+          </div>
         </div>
-        <div id="main-contents" className="main-contents">
-          <div className="tasks">
-            <div className="ts-header">
-              {Nulled(categories) ? (
-                <h3>Tasks</h3>
-              ) : (
-                <h3 className="break-word">Tasks: {val(openedCategory.category_name)}</h3>
-              )}
-              <img className="cur-point" onClick={openAddTask} src="/icons/add button green.png" alt="add task" />
+          <div id="categoriesMenu" className="categories">
+            <div className="cur-def add-category">
+              <h3>Categories</h3>
+              <div className="icon-container-dark">
+                <img className="cur-point" onClick={e => {addCategory(e)}} src="/icons/add button black.svg" alt="add category" />
+              </div>
             </div>
-            <ul>
-              {Nulled(categories) || (tasks.filter((task)=>task.category_id===openedCategory.id).length===0)? (
+              <input 
+                id="add-category_name"
+                value={addCategoryName}
+                onChange={e=>setaddCategoryName(e.target.value)} 
+                onKeyDown={e => {e.key === "Enter" && addCategory(e)}} placeholder="Add Category" maxLength="35" type="text" required />
+            <ul id="categoriesul">
+              {Nulled(categories) ? (
                 <li className="category-empty">
-                  <img src="/icons/empty.png" alt="empty task" />
+                  <img src="/icons/empty.svg" alt="empty category" />
                   <p>...Whew Empty...</p>
                 </li>
               ) : (
-                tasks.map((task) => {
-                  return openedCategory.id === task.category_id ? (
-                    <li className={"task "+task.date_status+(task.taskisfinished ? " task-finished" : "")} 
-                      key={task.id}>
-                      <div className="cur-def ts-title">
-                        <div className="cur-def ts-title-1">
-                          {taskStatusIsChanging? null: 
-                            <input 
-                              key={task.id} 
-                              defaultChecked={task.taskisfinished} 
-                              onChange={e=>checkTaskStatus(e,task)}
-                              className="cur-point ts-checkbox" type="checkbox" 
-                            />
-                          }
-                          <h5 className="cur-def ts-name break-word">⠀{task.task_name}</h5>
-                        </div>
-                        <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
-                          <img src="/icons/three dots black.png" alt="task settings" />
-                        </div>
-                      </div>
-                      <div className="cur-def ts-description">
-                        <p className="break-word">{task.description}</p>
-                      </div>
-                      <div className="ts-date-container">
-                        <div className="ts-date">
-                          <p>
-                            {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
-                          </p>
-                          <p>
-                            {"⠀End: "+UTCSQLtoLocal(task.end_date)}
-                          </p>
-                        </div>
+                categories.map((category, idx) => {
+                  return (
+                    <li
+                      key={idx}
+                      className={"category cur-point " + (openedCategory === category? "category-selected": "")}
+                      onClick={() => {
+                        openCategory(category)
+                      }}
+                    >
+                      <h5 className="cur-point break-word" type="text">
+                        {category.category_name}⠀
+                      </h5>
+                      <div className="cur-point category-settings" onClick={e => {openUpdateCategory(category.id, e)}}>
+                        <img src="/icons/settings black.svg" alt="category settings" />
                       </div>
                     </li>
-                  ) : null
+                  )
                 })
               )}
             </ul>
           </div>
-          {/* {{!-- Dashboard --}} */}
-          <div className="dashboard">
-            <div className="ts-header">
-              <h3>Dashboard</h3>
-              <img onClick={e=>setdeleteFinishedTasksAlertIsOpen(true)} className="cur-point trash-icon" src="/icons/trash green.png" alt="delete finished tasks" />
+          <div className="main-contents">
+            <div id="tasks" className="tasks">
+              <div className="ts-header">
+                {Nulled(categories) ? (
+                  <h3>Tasks</h3>
+                ) : (
+                  <h3 className="break-word">Tasks: {val(openedCategory.category_name)}</h3>
+                )}
+                <div className="icon-container-dark">
+                  <img className="cur-point" onClick={openAddTask} src="/icons/add button black.svg" alt="add task" />
+                </div>
+              </div>
+              <ul>
+                {Nulled(categories) || (tasks.filter((task)=>task.category_id===openedCategory.id).length===0)? (
+                  <li className="category-empty">
+                    <img src="/icons/empty.svg" alt="empty task" />
+                    <p>...Whew Empty...</p>
+                  </li>
+                ) : (
+                  tasks.map((task) => {
+                    return openedCategory.id === task.category_id ? (
+                      <li className={"task "+task.date_status+(task.taskisfinished ? " task-finished" : "")} 
+                        key={task.id}>
+                        <div className="cur-def ts-title">
+                          <div className="cur-def ts-title-1">
+                            {taskStatusIsChanging? null: 
+                              <input 
+                                key={task.id} 
+                                defaultChecked={task.taskisfinished} 
+                                onChange={e=>checkTaskStatus(e,task)}
+                                className="cur-point ts-checkbox" type="checkbox" 
+                              />
+                            }
+                            <h5 className="cur-def ts-name break-word">⠀{task.task_name}</h5>
+                          </div>
+                          <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
+                            <img src="/icons/settings black.svg" alt="task settings" />
+                          </div>
+                        </div>
+                        <div className="cur-def ts-description">
+                          <p className="break-word">{task.description}</p>
+                        </div>
+                        <div className="ts-date-container">
+                          <div className="ts-date">
+                            <p>
+                              {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
+                            </p>
+                            <p>
+                              {"⠀End: "+UTCSQLtoLocal(task.end_date)}
+                            </p>
+                          </div>
+                        </div>
+                      </li>
+                    ) : null
+                  })
+                )}
+              </ul>
             </div>
-            <h5>Missed Tasks</h5>
-            <ul className="dashboardul">
-              {Nulled(tasks)
-                ? null
-                : tasks.map((task, idx) => {
-                    return task.date_status === "Missed" ? (
-                      <li
-                        key={idx}
-                        className={
-                          "task " +
-                          task.date_status +
-                          (task.taskisfinished ? " task-finished" : "")
-                        }
-                      >
-                        <div className="ts-title">
-                          <div className="ts-title-1">
-                            {taskStatusIsChanging? null: 
-                              <input 
-                                key={task.id} 
-                                defaultChecked={task.taskisfinished} 
-                                onChange={e=>checkTaskStatus(e,task)}
-                                className="cur-point ts-checkbox" type="checkbox" 
-                              />
-                            }
-                            <h5 className="cur-def ts-name break-word">
-                              ⠀{task.task_name}
-                            </h5>
+            {/* {{!-- Dashboard --}} */}
+            <div className="dashboard">
+              <div className="ts-header">
+                <h3>Dashboard</h3>
+                <div className="icon-container-dark">
+                  <img onClick={()=>setdeleteFinishedTasksIsOpen(true)} className="cur-point trash-icon" src="/icons/trash black.svg" alt="delete finished tasks" />
+                </div>
+              </div>
+              <h5>Missed Tasks</h5>
+              <ul className="dashboardul">
+                {Nulled(tasks)
+                  ? null
+                  : tasks.map((task, idx) => {
+                      return task.date_status === "Missed" ? (
+                        <li
+                          key={idx}
+                          className={
+                            "task " +
+                            task.date_status +
+                            (task.taskisfinished ? " task-finished" : "")
+                          }
+                        >
+                          <div className="ts-title">
+                            <div className="ts-title-1">
+                              {taskStatusIsChanging? null: 
+                                <input 
+                                  key={task.id} 
+                                  defaultChecked={task.taskisfinished} 
+                                  onChange={e=>checkTaskStatus(e,task)}
+                                  className="cur-point ts-checkbox" type="checkbox" 
+                                />
+                              }
+                              <h5 className="cur-def ts-name break-word">
+                                ⠀{task.task_name}
+                              </h5>
+                            </div>
+                            <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
+                              <img src="/icons/settings black.svg" alt="task settings" />
+                            </div>
                           </div>
-                          <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
-                            <img src="/icons/three dots black.png" alt="task settings" />
+                          <div className="cur-def ts-description">
+                            <p className="break-word">{task.description}</p>
                           </div>
-                        </div>
-                        <div className="cur-def ts-description">
-                          <p className="break-word">{task.description}</p>
-                        </div>
-                        <div className="ts-date-container">
-                          <div className="ts-date">
-                            <p>
-                              {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
-                            </p>
-                            <p>
-                              {"⠀End: "+UTCSQLtoLocal(task.end_date)}
-                            </p>
+                          <div className="ts-date-container">
+                            <div className="ts-date">
+                              <p>
+                                {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
+                              </p>
+                              <p>
+                                {"⠀End: "+UTCSQLtoLocal(task.end_date)}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    ) : null
-                  })}
-            </ul>
+                        </li>
+                      ) : null
+                    })}
+              </ul>
 
-            <h5>Ongoing Tasks</h5>
-            <ul className="dashboardul">
-              {Nulled(tasks)
-                ? null
-                : tasks.map((task, idx) => {
-                    return task.date_status === "Ongoing" ? (
-                      <li key={idx} className={"task "+task.date_status+(task.taskisfinished? " task-finished":"")}>
-                        <div className="ts-title">
-                          <div className="ts-title-1">
-                            {taskStatusIsChanging? null: 
-                              <input 
-                                key={task.id} 
-                                defaultChecked={task.taskisfinished} 
-                                onChange={e=>checkTaskStatus(e,task)}
-                                className="cur-point ts-checkbox" type="checkbox" 
-                              />
-                            }
-                            <h5 className="cur-def ts-name break-word">
-                              ⠀{task.task_name}
-                            </h5>
+              <h5>Ongoing Tasks</h5>
+              <ul className="dashboardul">
+                {Nulled(tasks)
+                  ? null
+                  : tasks.map((task, idx) => {
+                      return task.date_status === "Ongoing" ? (
+                        <li key={idx} className={"task "+task.date_status+(task.taskisfinished? " task-finished":"")}>
+                          <div className="ts-title">
+                            <div className="ts-title-1">
+                              {taskStatusIsChanging? null: 
+                                <input 
+                                  key={task.id} 
+                                  defaultChecked={task.taskisfinished} 
+                                  onChange={e=>checkTaskStatus(e,task)}
+                                  className="cur-point ts-checkbox" type="checkbox" 
+                                />
+                              }
+                              <h5 className="cur-def ts-name break-word">
+                                ⠀{task.task_name}
+                              </h5>
+                            </div>
+                            <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
+                              <img src="/icons/settings black.svg" alt="task settings" />
+                            </div>
                           </div>
-                          <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
-                            <img src="/icons/three dots black.png" alt="task settings" />
+                          <div className="cur-def ts-description">
+                            <p className="break-word">{task.description}</p>
                           </div>
-                        </div>
-                        <div className="cur-def ts-description">
-                          <p className="break-word">{task.description}</p>
-                        </div>
-                        <div className="ts-date-container">
-                          <div className="ts-date">
-                            <p>
-                              {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
-                            </p>
-                            <p>
-                              {"⠀End: "+UTCSQLtoLocal(task.end_date)}
-                            </p>
+                          <div className="ts-date-container">
+                            <div className="ts-date">
+                              <p>
+                                {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
+                              </p>
+                              <p>
+                                {"⠀End: "+UTCSQLtoLocal(task.end_date)}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    ) : null
-                  })}
-            </ul>
+                        </li>
+                      ) : null
+                    })}
+              </ul>
 
-            <h5>Tasks Soon</h5>
-            <ul className="dashboardul">
-              {Nulled(tasks)
-                ? null
-                : tasks.map((task, idx) => {
-                    return task.date_status === "Soon" ? (
-                      <li key={idx} className={"task "+task.date_status+(task.taskisfinished? " task-finished":"")}>
-                        <div className="ts-title">
-                          <div className="ts-title-1">
-                            {taskStatusIsChanging? null: 
-                              <input 
-                                key={task.id} 
-                                defaultChecked={task.taskisfinished} 
-                                onChange={e=>checkTaskStatus(e,task)}
-                                className="cur-point ts-checkbox" type="checkbox" 
-                              />
-                            }
-                            <h5 className="cur-def ts-name break-word">
-                              ⠀{task.task_name}
-                            </h5>
+              <h5>Tasks Soon</h5>
+              <ul className="dashboardul">
+                {Nulled(tasks)
+                  ? null
+                  : tasks.map((task, idx) => {
+                      return task.date_status === "Soon" ? (
+                        <li key={idx} className={"task "+task.date_status+(task.taskisfinished? " task-finished":"")}>
+                          <div className="ts-title">
+                            <div className="ts-title-1">
+                              {taskStatusIsChanging? null: 
+                                <input 
+                                  key={task.id} 
+                                  defaultChecked={task.taskisfinished} 
+                                  onChange={e=>checkTaskStatus(e,task)}
+                                  className="cur-point ts-checkbox" type="checkbox" 
+                                />
+                              }
+                              <h5 className="cur-def ts-name break-word">
+                                ⠀{task.task_name}
+                              </h5>
+                            </div>
+                            <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
+                              <img src="/icons/settings black.svg" alt="task settings" />
+                            </div>
                           </div>
-                          <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
-                            <img src="/icons/three dots black.png" alt="task settings" />
+                          <div className="cur-def ts-description">
+                            <p className="break-word">{task.description}</p>
                           </div>
-                        </div>
-                        <div className="cur-def ts-description">
-                          <p className="break-word">{task.description}</p>
-                        </div>
-                        <div className="ts-date-container">
-                          <div className="ts-date">
-                            <p>
-                              {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
-                            </p>
-                            <p>
-                              {"⠀End: "+UTCSQLtoLocal(task.end_date)}
-                            </p>
+                          <div className="ts-date-container">
+                            <div className="ts-date">
+                              <p>
+                                {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
+                              </p>
+                              <p>
+                                {"⠀End: "+UTCSQLtoLocal(task.end_date)}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    ) : null
-                  })}
-            </ul>
+                        </li>
+                      ) : null
+                    })}
+              </ul>
+            </div>
           </div>
-        </div>
-      </section>
+      </div>
 
-      {!updateCategoryIsOpen || Nulled(chosenUpdateCategory) ? null : (
-        <dialog 
-          onClick={()=>{
-            Nulled(updateCategoryName)? closeUpdateCategory:null}}
-          id="CSP" className="category-settings-popup">
-          <div onClick={e=>e.stopPropagation()} id="CSPcontainer" className="cs-container">
-            <div className="cs-header">
-              <h3>Edit Category</h3>
-              <div onClick={closeUpdateCategory} className="cur-point xclose-csp">
-                <img src="/icons/xclose black.png" alt="close settings" />
+      {(!updateCategoryIsOpen && !updateCategoryAlertIsOpen) || Nulled(chosenUpdateCategory) ? null : (
+        <dialog onClick={updateCategoryIsOpen?closeUpdateCategory:closeUpdateCategoryAlert} id="TPS" className="add-edit-popup">
+          <div onClick={e=>e.stopPropagation()} className="atp-container">
+            <div className="atp-header">
+              <h3 className="cur-def">{"Edit Category ("+chosenUpdateCategory.category_name+")"}</h3>
+              <div onClick={updateCategoryIsOpen?closeUpdateCategory:closeUpdateCategoryAlert} className="cur-point xclose-atp">
+                <img src="/icons/xclose black.png" alt="close add task popup" />
               </div>
             </div>
-            <div>
-              <input 
-                onChange={e=>{setupdateCategoryName(e.target.value)}}
-                onKeyDown={e => {e.key === "Enter" && updateCategory(e)}} 
-                defaultValue={chosenUpdateCategory.category_name} id="update-category_name" type="text" placeholder="New Category Name" maxLength="35" required />
-            </div>
-            <div className="cs-btns">
-              <button onClick={openUpdateCategoryAlert} className="cur-point red-btn">
-                Delete
-              </button>
-              <button onClick={e => {updateCategory(e)}} className="cur-point green-btn">
-                Save
-              </button>
-            </div>
-          </div>
-        </dialog>
-      )}
-
-      {!updateCategoryAlertIsOpen || Nulled(chosenUpdateCategory) ? null : (
-        <dialog className="csp-alert">
-          <div className="cspa-container">
-            <div className="cspa-header">
-              <h5>
-                Are you sure you want to delete the category 
-                <span style={{ color: "#bd0303" }}>
-                {" "+chosenUpdateCategory.category_name}</span>
-                ? This will permanently
-                <span style={{ color: "#bd0303" }}> delete </span>
-                the tasks that it contains.
-              </h5>
-            </div>
-            <div className="cspa-btns">
-              <button onClick={closeUpdateCategoryAlert} className="cur-point cancel-btn">
-                Cancel
-              </button>
-              <button onClick={e => {deleteCategory(e)}} className="cur-point delete-btn">
-                Delete
-              </button>
-            </div>
+            {!updateCategoryAlertIsOpen ? (
+            <>
+              <div className="atp-form">
+                <div>
+                  <label htmlFor="update-category_name">Category Name</label>
+                  <input 
+                    onChange={e=>{setupdateCategoryName(e.target.value)}}
+                    onKeyDown={e => {e.key === "Enter" && updateCategory(e)}} 
+                    defaultValue={chosenUpdateCategory.category_name} id="update-category_name" type="text" placeholder="New Category Name" maxLength="35" required />
+                </div>
+              </div>
+              <div className="tps-btns">
+                <button onClick={openUpdateCategoryAlert} className="cur-point tp-btn-delete">Delete</button>
+                <button onClick={e=>{updateCategory(e)}}     
+                className="cur-point tp-btn-save">Save</button>
+              </div>
+            </>
+            ) : (
+            <>
+              <div className="atp-form">
+                <h5>
+                  Are you sure you want to delete the category 
+                  <span style={{ color: "#bd0303" }}>
+                  {" "+chosenUpdateCategory.category_name}</span>
+                  ? This will permanently
+                  <span style={{ color: "#bd0303" }}> delete </span>
+                  the tasks that it contains.
+                </h5>
+              </div>
+              <div className="tps-btns">
+                <button onClick={closeUpdateCategoryAlert} className="cur-point tp-btn-cancel">Cancel</button>
+                <button onClick={e=>{deleteCategory(e)}}className="cur-point tp-btn-delete">Delete</button>
+              </div>
+            </>
+              )
+            }
           </div>
         </dialog>
       )}
 
       {!addTaskIsOpen ? null : (
         <dialog 
-          onClick={()=>{
-            Nulled(addTaskName)&&
-            Nulled(addTaskStartDate)&&
-            Nulled(addTaskEndDate)&&
-            Nulled(addTaskDescription)? closeAddTask:null}}
+          onClick={closeAddTask}
           id="ATP" className="add-edit-popup">
           <div onClick={e=>e.stopPropagation()} className="atp-container">
             <div className="atp-header">
@@ -920,152 +943,277 @@ export default function Home() {
               </div>
             </div>
             <div className="atp-form">
-              <div className="atpf-1">
+              <div>
+                <label htmlFor="add-task_name">Task Name</label>
                 <input 
                   onChange={e=>setaddTaskName(e.target.value)}
                   value={addTaskName}
                   onKeyDown={e => {e.key === "Enter" && addTask(e)}} type="text" id="add-task_name" placeholder="Task Name" required />
               </div>
-              <div className="atpf-2">
+              <div>
                 <label htmlFor="add-start_date">Start Date</label>
                 <input 
                   onChange={e=>setaddTaskStartDate(e.target.value)}
                   value={addTaskStartDate}
                   onKeyDown={e => {e.key === "Enter" && addTask(e)}} type="datetime-local" id="add-start_date" required />
               </div>
-              <div className="atpf-3">
+              <div>
                 <label htmlFor="add-end_date">End Date</label>
                 <input 
                   onChange={e=>setaddTaskEndDate(e.target.value)}
                   value={addTaskEndDate}
                   onKeyDown={e => {e.key === "Enter" && addTask(e)}} type="datetime-local" id="add-end_date" required />
               </div>
-              <div className="atpf-4">
+              <div>
+                <label htmlFor="add-description">Description</label>
                 <textarea 
                   onChange={e=>setaddTaskDescription(e.target.value)}   
                   value={addTaskDescription}
-                  id="add-description" rows="4" placeholder="Task Description" required >
+                  id="add-description" rows="10" placeholder="Task Description" required >
                 </textarea>
               </div>
-              <div className="atp-btns">
-                <button onClick={e=>addTask(e)} className="cur-point atp-btn" >
-                  Add Task
-                </button>
-              </div>
+            </div>
+            <div className="atp-btns">
+              <button onClick={e=>addTask(e)} className="cur-point atp-btn" >
+                Add Task
+              </button>
             </div>
           </div>
         </dialog>
       )}
 
-      {!updateTaskIsOpen ? null : (
-        <dialog 
-        onClick={()=>{
-          Nulled(updateTaskName)&&
-          Nulled(updateTaskStartDate)&&
-          Nulled(updateTaskStartDate)&&
-          Nulled(updateTaskDescription)? closeUpdateTask: null}}
+      {!updateTaskIsOpen && !updateTaskAlertIsOpen ? null : (
+        <dialog onClick={()=>{
+        if(openUpdateTaskIsFromdeleteFinishedTasks){
+          if(updateTaskIsOpen){
+            setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+            closeUpdateTask()
+            opendeleteFinishedTasks()
+          } else closeUpdateTaskAlert()
+        } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert()
+        }}
         id="TPS" className="add-edit-popup">
           <div onClick={e=>e.stopPropagation()} className="atp-container">
             <div className="atp-header">
-              <h3 className="cur-def">Edit Task</h3>
-              <div onClick={closeUpdateTask} className="cur-point xclose-atp">
+              <h3 className="cur-def">{"Edit Task ("+chosenUpdateTask.task_name+")"}</h3>
+              <div onClick={()=>{
+                if(openUpdateTaskIsFromdeleteFinishedTasks){
+                  if(updateTaskIsOpen){
+                    setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                    closeUpdateTask()
+                    opendeleteFinishedTasks()
+                  } else closeUpdateTaskAlert()
+                } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert()
+                }}
+                className="cur-point xclose-atp">
                 <img src="/icons/xclose black.png" alt="close add task popup" />
               </div>
             </div>
-            <div id="updateTask" className="atp-form">
-              <div className="atpf-1">
-                <input 
-                onChange={e=>setupdateTaskName(e.target.value)}
-                defaultValue={chosenUpdateTask.task_name}
-                onKeyDown={e => {e.key === "Enter" && updateTask(e)}} id="update-task_name" placeholder="Task Name" type="text" required />
-              </div>
-              <div className="atpf-2">
-                <label htmlFor="start_date">Start Date</label>
-                {taskDateStatusIsChanging? null: 
+            {!updateTaskAlertIsOpen ? (
+            <>
+              <div id="updateTask" className="atp-form">
+                <div>
+                  <label htmlFor="update-task_name">Task Name</label>
                   <input 
-                  onChange={e=>setupdateTaskStartDate(e.target.value)}
-                  defaultValue={UTCSQLtoLocalHTML(chosenUpdateTask.start_date)}
-                  onKeyDown={e => {e.key === "Enter" && updateTask(e)}}
-                  id="update-start_date" 
-                  type="datetime-local" 
-                  required />
-                }
+                  onChange={e=>setupdateTaskName(e.target.value)}
+                  defaultValue={chosenUpdateTask.task_name}
+                  onKeyDown={e => {
+                    if(e.key === "Enter"){
+                      if(openUpdateTaskIsFromdeleteFinishedTasks){
+                        setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                        updateTask(e)
+                        opendeleteFinishedTasks()
+                      } else 
+                        updateTask(e)
+                      }
+                    }}
+                  id="update-task_name" placeholder="Task Name" type="text" required />
+                </div>
+                <div>
+                  <label htmlFor="start_date">Start Date</label>
+                  {taskDateStatusIsChanging? null: 
+                    <input 
+                    onChange={e=>setupdateTaskStartDate(e.target.value)}
+                    defaultValue={UTCSQLtoLocalHTML(chosenUpdateTask.start_date)}
+                    onKeyDown={e => {
+                    if(e.key === "Enter"){
+                      if(openUpdateTaskIsFromdeleteFinishedTasks){
+                        setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                        updateTask(e)
+                        opendeleteFinishedTasks()
+                      } else 
+                        updateTask(e)
+                      }
+                    }}
+                    id="update-start_date" 
+                    type="datetime-local" 
+                    required />
+                  }
+                </div>
+                <div>
+                  <label htmlFor="end_date">End Date</label>
+                  {taskDateStatusIsChanging? null: 
+                    <input 
+                    onChange={e=>setupdateTaskEndDate(e.target.value)}
+                    defaultValue={UTCSQLtoLocalHTML(chosenUpdateTask.end_date)} 
+                    onKeyDown={e => {
+                    if(e.key === "Enter"){
+                      if(openUpdateTaskIsFromdeleteFinishedTasks){
+                        setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                        updateTask(e)
+                        opendeleteFinishedTasks()
+                      } else 
+                        updateTask(e)
+                      }
+                    }}
+                    id="update-end_date" 
+                    type="datetime-local" 
+                    required />
+                  }
+                </div>
+                <div>
+                  <label htmlFor="update-description">Description</label>
+                  <textarea 
+                    onChange={e=>setupdateTaskDescription(e.target.value)}
+                    defaultValue={chosenUpdateTask.description}
+                    id="update-description" placeholder="Task Description" rows="10" required >
+                  </textarea>
+                </div>
               </div>
-              <div className="atpf-3">
-                <label htmlFor="end_date">End Date</label>
-                {taskDateStatusIsChanging? null: 
-                  <input 
-                  onChange={e=>setupdateTaskEndDate(e.target.value)}
-                  defaultValue={UTCSQLtoLocalHTML(chosenUpdateTask.end_date)} 
-                  onKeyDown={e => {e.key === "Enter" && updateTask(e)}}
-                  id="update-end_date" 
-                  type="datetime-local" 
-                  required />
-                }
+              <div className="tps-btns">
+                <button onClick={openUpdateTaskAlert} className="cur-point tp-btn-delete">Delete</button>
+                <button onClick={e=>{
+                if(openUpdateTaskIsFromdeleteFinishedTasks){
+                  setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                  updateTask(e)
+                  opendeleteFinishedTasks()
+                } else 
+                  updateTask(e)
+                }}     
+                className="cur-point tp-btn-save">Save</button>
               </div>
-              <div className="atpf-4">
-                <textarea 
-                  onChange={e=>setupdateTaskDescription(e.target.value)}
-                  defaultValue={chosenUpdateTask.description}
-                  id="update-description" placeholder="Task Description" rows="4" required >
-                </textarea>
+            </>
+            ) : (
+            <>
+              <div className="atap">
+                <h5 className="cur-def">
+                  Are you sure you want to delete the task named
+                  <span style={{ color: "#bd0303" }}> 
+                    {" "+chosenUpdateTask.task_name} 
+                  </span>
+                  ? This will permanently
+                  <span style={{ color: "#bd0303" }}> delete </span>
+                  the item.
+                </h5>
               </div>
-            </div>
-            <div className="tps-btns">
-              <button onClick={openUpdateTaskAlert} className="cur-point tp-btn-delete" >
-                Delete
-              </button>
-              <button onClick={e=>updateTask(e)} className="cur-point tp-btn-save" >
-                Save
-              </button>
-            </div>
+              <div className="tps-btns">
+                <button onClick={closeUpdateTaskAlert} className="cur-point tp-btn-cancel">Cancel</button>
+                <button onClick={e=>{
+                if(openUpdateTaskIsFromdeleteFinishedTasks){
+                  setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                  deleteTask(e)
+                  opendeleteFinishedTasks()
+                } else 
+                  deleteTask(e)
+                }}
+                className="cur-point tp-btn-delete">Delete</button>
+              </div>
+            </>
+              )
+            }
           </div>
         </dialog>
       )}
 
-      {!updateTaskAlertIsOpen ? null : (
-        <dialog className="csp-alert">
-          <div className="cspa-container">
-            <div className="cspa-header">
-              <h5 className="cur-def">
-                Are you sure you want to delete the task named
-                <span style={{ color: "#bd0303" }}> 
-                  {" "+chosenUpdateTask.task_name} 
-                </span>
-                ? This will permanently
-                <span style={{ color: "#bd0303" }}> delete </span>
-                the item.
-              </h5>
+      {!deleteFinishedTasksIsOpen && !deleteFinishedTasksAlertIsOpen? null : (  
+        <dialog 
+        onClick={deleteFinishedTasksIsOpen?closedeleteAllFinishedTasks:closedeleteAllFinishedTasksAlert}
+        id="TPS" className="add-edit-popup">
+          <div onClick={e=>e.stopPropagation()} className="atp-container">
+            <div className="atp-header">
+              <h3 className="cur-def">Finished Tasks</h3>
+              <div onClick={closedeleteAllFinishedTasks} className="cur-point xclose-atp">
+                <img src="/icons/xclose black.png" alt="close add task popup" />
+              </div>
             </div>
-            <div className="cspa-btns">
-              <button onClick={closeUpdateTaskAlert} className="cur-point cancel-btn">Cancel</button>
-              <button onClick={e=>deleteTask(e)} className="cur-point delete-btn">Delete</button>
-            </div>
+            {!deleteFinishedTasksAlertIsOpen ? (
+            <>
+              <div className="datp">
+                <ul>
+                  {Nulled(categories) || (tasks.filter((task)=>task.taskisfinished===1).length===0)? (
+                    <li className="category-empty">
+                      <img src="/icons/empty.svg" alt="empty task" />
+                      <p>...There are no tasks Finished...</p>
+                    </li>
+                  ) : (
+                    tasks.map((task) => {
+                      return task.taskisfinished === 1 ? (
+                        <li className={"task "+task.date_status+(task.taskisfinished ? " task-finished" : "")} 
+                          key={task.id}>
+                          <div className="cur-def ts-title">
+                            <div className="cur-def ts-title-1">
+                              {taskStatusIsChanging? null: 
+                                <input 
+                                  key={task.id} 
+                                  defaultChecked={task.taskisfinished} 
+                                  onChange={e=>checkTaskStatus(e,task)}
+                                  className="cur-point ts-checkbox" type="checkbox" 
+                                />
+                              }
+                              <h5 className="cur-def ts-name break-word">⠀{task.task_name}</h5>
+                            </div>
+                            <div key={task.id} onClick={e=>openUpdateTaskFromdeleteFinishedTasks(task,e)} className="cur-point task-settings" >
+                              <img src="/icons/settings black.svg" alt="task settings" />
+                            </div>
+                          </div>
+                          <div className="cur-def ts-description">
+                            <p className="break-word">{task.description}</p>
+                          </div>
+                          <div className="ts-date-container">
+                            <div className="ts-date">
+                              <p>
+                                {"⠀Start: "+UTCSQLtoLocal(task.start_date)}
+                              </p>
+                              <p>
+                                {"⠀End: "+UTCSQLtoLocal(task.end_date)}
+                              </p>
+                            </div>
+                          </div>
+                        </li>
+                      ) : null
+                    })
+                  )}
+                </ul>
+              </div>
+              <div className="tps-btns">
+                <button onClick={closedeleteAllFinishedTasks} className="cur-point tp-btn-cancel">Cancel</button>
+                <button onClick={opendeleteFinishedTasks} className="cur-point tp-btn-delete">Delete</button>
+              </div>
+            </>
+            ) : (
+            <>
+              <div className="atap">
+                <h5 className="cur-def">
+                  Are you sure you want to delete the task named
+                  <span style={{ color: "#bd0303" }}> 
+                    {" "+chosenUpdateTask.task_name} 
+                  </span>
+                  ? This will permanently
+                  <span style={{ color: "#bd0303" }}> delete </span>
+                  the item.
+                </h5>
+              </div>
+              <div className="tps-btns">
+                <button onClick={e=>deleteAllFinishedTasks(e)} className="cur-point tp-btn-delete">Delete</button>
+                <button onClick={closedeleteAllFinishedTasksAlert} className="cur-point tp-btn-cancel">Go Back</button>
+              </div>
+            </>
+              )
+            }
           </div>
         </dialog>
-      )}
-
-      {!deleteFinishedTasksAlertIsOpen ? null : (  
-        <dialog className="csp-alert">
-          <div className="cspa-container">
-            <div className="cspa-header">
-              <h5 className="cur-def">
-                Are you sure you want to delete
-                <span style={{ color: "#bd0303" }}> All Finished Tasks</span>? This
-                will permanently<span style={{ color: "#bd0303" }}> delete </span>
-                all the finished items.
-              </h5>
-            </div>
-            <div className="cspa-btns">
-              <button onClick={e=>setdeleteFinishedTasksAlertIsOpen(false)} className="cur-point cancel-btn">
-                Cancel
-              </button>
-              <button onClick={e=>deleteAllFinishedTasks(e)} className="cur-point delete-btn">
-                Delete
-              </button>
-            </div>
-          </div>
-        </dialog>
+        // 
+        
       )}
     </>
   )
@@ -1086,17 +1234,17 @@ if (typeof window !== "undefined") {
       catmenu.style.removeProperty("top")
       catmenu.style.removeProperty("right")
       catmenu.style.removeProperty("position")
-      return (catmenu.style.display = "flex")
+      return (catmenu.style.display = "block")
     } else if (document.body.clientWidth < 785 && active) {
       catmenu.style.right = "0"
       catmenu.style.width = "calc(100% - 3em)"
       catmenu.style.position = "fixed"
-      return (caticon.style.display = "flex")
+      return (caticon.style.display = "block")
     } else {
       catmenu.style.right = "0"
       catmenu.style.width = "calc(100% - 3em)"
       catmenu.style.display = "none"
-      return (caticon.style.display = "flex")
+      return (caticon.style.display = "block")
     }
   })
 
