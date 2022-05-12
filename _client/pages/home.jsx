@@ -623,7 +623,7 @@ export default function Home() {
         <nav className="side-bar">
           <div className="container">
             <img className="logo" src="/icons/favicon.ico" alt="logo" />
-            <img onClick={() => {categoryMenuIcon()}} id="category-icon" className="cur-point category-icon" src="/icons/hamburger.png" alt="categories menu small screen" />
+            <img onClick={() => {categoryMenuIcon()}} id="category-icon" className="cur-point category-icon" src="/icons/hamburger.svg" alt="categories menu small screen" />
             <img onClick={e => {logout(e)}} className="icon logout-icon cur-point" src="/icons/logout white.svg" alt="logout"/>
           </div>
         </nav>
@@ -888,7 +888,7 @@ export default function Home() {
             <div className="atp-header">
               <h3 className="cur-def">{"Edit Category ("+chosenUpdateCategory.category_name+")"}</h3>
               <div onClick={updateCategoryIsOpen?closeUpdateCategory:closeUpdateCategoryAlert} className="cur-point xclose-atp">
-                <img src="/icons/xclose black.png" alt="close add task popup" />
+                <img src="/icons/xclose black.svg" alt="close add task popup" />
               </div>
             </div>
             {!updateCategoryAlertIsOpen ? (
@@ -939,7 +939,7 @@ export default function Home() {
             <div className="atp-header">
               <h3>Add Task</h3>
               <div onClick={closeAddTask} className="cur-point xclose-atp">
-                <img src="/icons/xclose black.png" alt="close add task popup" />
+                <img src="/icons/xclose black.svg" alt="close add task popup" />
               </div>
             </div>
             <div className="atp-form">
@@ -1006,7 +1006,7 @@ export default function Home() {
                 } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert()
                 }}
                 className="cur-point xclose-atp">
-                <img src="/icons/xclose black.png" alt="close add task popup" />
+                <img src="/icons/xclose black.svg" alt="close add task popup" />
               </div>
             </div>
             {!updateTaskAlertIsOpen ? (
@@ -1133,7 +1133,7 @@ export default function Home() {
             <div className="atp-header">
               <h3 className="cur-def">Finished Tasks</h3>
               <div onClick={closedeleteAllFinishedTasks} className="cur-point xclose-atp">
-                <img src="/icons/xclose black.png" alt="close add task popup" />
+                <img src="/icons/xclose black.svg" alt="close add task popup" />
               </div>
             </div>
             {!deleteFinishedTasksAlertIsOpen ? (
