@@ -30,7 +30,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  scroll-behavior: smooth;
 }
 h1,
 h2,
@@ -1063,11 +1062,10 @@ body.loading .loading {
   .categories {
     position: fixed;
     width: calc(100% - 3em);
-    height: 100%;
+    height: calc(100% - 3em);
     max-width: 100%;
     display: none;
-    margin-top: 0px;
-    padding-top: 3.5em;
+    bottom: 0;
   }
 
   .tasks {

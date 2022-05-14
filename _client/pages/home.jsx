@@ -1233,17 +1233,20 @@ if (typeof window !== "undefined") {
     if (document.body.clientWidth >= 785) {
       caticon.style.display = "none"
       catmenu.style.removeProperty("width")
-      catmenu.style.removeProperty("top")
+      catmenu.style.removeProperty("bottom")
       catmenu.style.removeProperty("right")
+      catmenu.style.removeProperty("top")
       catmenu.style.removeProperty("position")
       return (catmenu.style.display = "block")
     } else if (document.body.clientWidth < 785 && active) {
       catmenu.style.right = "0"
+      catmenu.style.bottom = "0"
       catmenu.style.width = "calc(100% - 3em)"
       catmenu.style.position = "fixed"
       return (caticon.style.display = "block")
     } else {
       catmenu.style.right = "0"
+      catmenu.style.bottom = "0"
       catmenu.style.width = "calc(100% - 3em)"
       catmenu.style.display = "none"
       return (caticon.style.display = "block")
