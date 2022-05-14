@@ -30,6 +30,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 h1,
 h2,
@@ -82,6 +83,17 @@ label{
 }
 .icon-container-dark {
   background: #eaeaea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5em;
+  height: 2.5em;
+  max-width: 2.5em;
+  max-height: 2.5em;
+  border-radius: 100%;
+}
+.icon-container-black {
+  background: black;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -254,11 +266,15 @@ body.loading .loading {
 
 .goup-icon {
   display: none;
-  position: absolute;
+  position: fixed;
+  right: 3.5em;
   bottom: 1em;
   justify-self: center;
-  max-width: 2em;
-  min-height: 2em;
+}
+
+.goup-icon div img{
+  max-width: 1.5em;
+  min-height: 1.5em;
 }
 
 .categories {

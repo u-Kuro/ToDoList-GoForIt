@@ -623,7 +623,6 @@ export default function Home() {
             <img className="logo" src="/icons/favicon.ico" alt="logo" />
             <img onClick={() => {categoryMenuIcon()}} id="category-icon" className="cur-point category-icon" src="/icons/hamburger.svg" alt="categories menu small screen" />
             <img onClick={e => {logout(e)}} className="icon logout-icon cur-point" src="/icons/logout white.svg" alt="logout"/>
-            <img onClick={() => {scrollup()}} id="scrollup" className="goup-icon" src="/icons/scroll up white.svg" alt="scroll up" />
           </div>
         </nav>
         <div className="fixed-top-bar">
@@ -1210,10 +1209,13 @@ export default function Home() {
               )
             }
           </div>
-        </dialog>
-        // 
-        
+        </dialog>  
       )}
+    <div id="scrollup" className="goup-icon">
+      <div className="icon-container-black">
+        <img onClick={() => {scrollup()}}  src="/icons/scroll up white.svg" alt="scroll up" />
+      </div>
+    </div>
     </>
   )
 }
