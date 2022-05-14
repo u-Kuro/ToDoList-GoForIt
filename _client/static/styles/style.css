@@ -252,6 +252,15 @@ body.loading .loading {
   min-height: 2em;
 }
 
+.goup-icon {
+  display: none;
+  position: absolute;
+  bottom: 1em;
+  justify-self: center;
+  max-width: 2em;
+  min-height: 2em;
+}
+
 .categories {
   grid-area: categories;
   position: fixed;
@@ -639,6 +648,24 @@ body.loading .loading {
   background-color: transparent;
 }
 
+.ecp-container {
+  background-color: white;
+  width: 95%;
+  height: max-content;
+  max-height: 50%;
+  max-width: 22.5em;
+  left: 0;
+  bottom: 0;
+  padding: 1em;
+  margin: 0.5em;
+  box-shadow: 0 0 0 0.05em rgb(221, 216, 216);
+  border-radius: 0.5em;
+  position: fixed;
+  display: flex;
+  flex-flow: column;
+  gap: 1em;
+}
+
 /* Add Task */
 .add-edit-popup {
   background-color: rgba(0, 0, 0, 0.3);
@@ -758,7 +785,7 @@ body.loading .loading {
   color: black;
 }
 
-.atp-container .atap {
+.atap {
   flex: 1 1 90%;
   align-content: flex-start;
   display: flex;
@@ -994,7 +1021,15 @@ body.loading .loading {
       'dashboard'
       'tasks';
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: repeat(2, minmax(min-content,auto));
+  }
+
+  .dashboard {
+    height: min-content;
+  }
+
+  .tasks {
+    height: min-content;
   }
 }
 @media (max-width: 785px) {
@@ -1027,9 +1062,15 @@ body.loading .loading {
     min-height: 50%;
   }
 }
-/* 
-@media screen and (min-width: 400px) {
+
+@media (orientation:portrait) {
   .atp-container{
-    width: 20em;
+    height: max-content;
+    max-height: 50%;
+    bottom: 0;
   }
-} */
+
+  .goup-icon {
+    display: block;
+  }
+}

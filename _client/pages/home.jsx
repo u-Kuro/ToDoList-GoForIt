@@ -255,27 +255,17 @@ export default function Home() {
       isRunning.current=true
       if ($("#category-icon").css("display") !== "none") {
         setopenedCategory(category)
-        if ($("#categoriesMenu").css("display") === "none") {
-          $("#categoriesMenu").css({
-            top: "-" + $("#categoriesMenu").css("height"),
-          })
-          $("#categoriesMenu").show().animate({
-            top: "+=" + $("#categoriesMenu").css("height"),
-          },100,() => {
+        $('body').css('overflow','visible')
+        $("#categoriesMenu").animate({
+          top: "-=" + $("#categoriesMenu").css("height"),
+        },100,() => {
+          $("#categoriesMenu").hide(() => {
+            El("tasks").scrollIntoView(true);
+            var scrolledY = window.scrollY;
+            if(scrolledY) window.scroll(0, scrolledY - El("top-bar").clientHeight);
             return isRunning.current=false
           })
-        } else {
-          $("#categoriesMenu").animate({
-            top: "-=" + $("#categoriesMenu").css("height"),
-          },100,() => {
-            $("#categoriesMenu").hide(() => {
-              El("tasks").scrollIntoView(true);
-              var scrolledY = window.scrollY;
-              if(scrolledY) window.scroll(0, scrolledY - El("top-bar").clientHeight);
-              return isRunning.current=false
-            })
-          })
-        }
+        })
       } else {
         setopenedCategory(category)
         return isRunning.current=false
@@ -591,10 +581,16 @@ export default function Home() {
   }
 
   //=animation
+  const scrollup = () => {
+    El("dashboard").scrollIntoView(true);
+    var scrolledY = window.scrollY;
+    if(scrolledY) window.scroll(0, scrolledY - El("top-bar").clientHeight);
+  }
   const categoryMenuIcon = () => {
     if (!isRunning.current) {
       isRunning.current=true
-      if ($("#categoriesMenu").css("display") == "none") {
+      if ($("#categoriesMenu").css("display") === "none") {
+        $('body').css('overflow','hidden')
         $("#categoriesMenu").css({
           top: "-" + $("#categoriesMenu").css("height"),
         })
@@ -604,6 +600,7 @@ export default function Home() {
           return isRunning.current=false
         })
       } else {
+        $('body').css('overflow','visible')
         $("#categoriesMenu").animate({
           top: "-=" + $("#categoriesMenu").css("height"),
         },300,() => {
@@ -614,6 +611,7 @@ export default function Home() {
       }
     }
   }
+
   return (
     <>
       <Head>
@@ -625,6 +623,7 @@ export default function Home() {
             <img className="logo" src="/icons/favicon.ico" alt="logo" />
             <img onClick={() => {categoryMenuIcon()}} id="category-icon" className="cur-point category-icon" src="/icons/hamburger.svg" alt="categories menu small screen" />
             <img onClick={e => {logout(e)}} className="icon logout-icon cur-point" src="/icons/logout white.svg" alt="logout"/>
+            <img onClick={() => {scrollup()}} id="scrollup" className="goup-icon" src="/icons/scroll up white.svg" alt="scroll up" />
           </div>
         </nav>
         <div className="fixed-top-bar">
@@ -736,7 +735,7 @@ export default function Home() {
               </ul>
             </div>
             {/* {{!-- Dashboard --}} */}
-            <div className="dashboard">
+            <div id="dashboard" className="dashboard">
               <div className="ts-header">
                 <h3>Dashboard</h3>
                 <div className="icon-container-dark">
@@ -883,8 +882,8 @@ export default function Home() {
       </div>
 
       {(!updateCategoryIsOpen && !updateCategoryAlertIsOpen) || Nulled(chosenUpdateCategory) ? null : (
-        <dialog onClick={updateCategoryIsOpen?closeUpdateCategory:closeUpdateCategoryAlert} id="TPS" className="add-edit-popup">
-          <div onClick={e=>e.stopPropagation()} className="atp-container">
+        <dialog onMouseDown={updateCategoryIsOpen?closeUpdateCategory:closeUpdateCategoryAlert} id="TPS" className="add-edit-popup">
+          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} className="ecp-container">
             <div className="atp-header">
               <h3 className="cur-def">{"Edit Category ("+chosenUpdateCategory.category_name+")"}</h3>
               <div onClick={updateCategoryIsOpen?closeUpdateCategory:closeUpdateCategoryAlert} className="cur-point xclose-atp">
@@ -933,9 +932,9 @@ export default function Home() {
 
       {!addTaskIsOpen ? null : (
         <dialog 
-          onClick={closeAddTask}
+          onMouseDown={closeAddTask}
           id="ATP" className="add-edit-popup">
-          <div onClick={e=>e.stopPropagation()} className="atp-container">
+          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} className="atp-container">
             <div className="atp-header">
               <h3>Add Task</h3>
               <div onClick={closeAddTask} className="cur-point xclose-atp">
@@ -983,7 +982,7 @@ export default function Home() {
       )}
 
       {!updateTaskIsOpen && !updateTaskAlertIsOpen ? null : (
-        <dialog onClick={()=>{
+        <dialog onMouseDown={()=>{
         if(openUpdateTaskIsFromdeleteFinishedTasks){
           if(updateTaskIsOpen){
             setopenUpdateTaskIsFromdeleteFinishedTasks(false)
@@ -993,7 +992,7 @@ export default function Home() {
         } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert()
         }}
         id="TPS" className="add-edit-popup">
-          <div onClick={e=>e.stopPropagation()} className="atp-container">
+          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} className="atp-container">
             <div className="atp-header">
               <h3 className="cur-def">{"Edit Task ("+chosenUpdateTask.task_name+")"}</h3>
               <div onClick={()=>{
@@ -1127,9 +1126,9 @@ export default function Home() {
 
       {!deleteFinishedTasksIsOpen && !deleteFinishedTasksAlertIsOpen? null : (  
         <dialog 
-        onClick={deleteFinishedTasksIsOpen?closedeleteAllFinishedTasks:closedeleteAllFinishedTasksAlert}
+        onMouseDown={deleteFinishedTasksIsOpen?closedeleteAllFinishedTasks:closedeleteAllFinishedTasksAlert}
         id="TPS" className="add-edit-popup">
-          <div onClick={e=>e.stopPropagation()} className="atp-container">
+          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} className="atp-container">
             <div className="atp-header">
               <h3 className="cur-def">Finished Tasks</h3>
               <div onClick={closedeleteAllFinishedTasks} className="cur-point xclose-atp">
@@ -1220,6 +1219,7 @@ export default function Home() {
 }
 
 if (typeof window !== "undefined") {
+
   //Fix Categories menu after resize
   window.addEventListener("resize", function () {
     const catmenu = document.getElementById("categoriesMenu")
@@ -1255,5 +1255,16 @@ if (typeof window !== "undefined") {
 
   window.addEventListener("resize", function () {
     return (document.getElementById("categoriesul").style.maxHeight = document.body.clientHeight - 136 + "px")
-  })
+  }) 
+
+  // Check if screen is below 
+  window.onscroll = () => {
+    const dashboardHeight = document.getElementById("dashboard").clientHeight
+    const goupicon = document.getElementById("scrollup")
+    if (document.body.scrollTop > dashboardHeight || document.documentElement.scrollTop > dashboardHeight) {
+      goupicon.style.display = "block";
+    } else {
+      goupicon.style.display = "none";
+    }
+  }
 }

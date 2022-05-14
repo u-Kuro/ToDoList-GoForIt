@@ -1,0 +1,11 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+	<title>scroll up-svg</title>
+	<defs>
+		<image  width="54" height="30" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAAeAQMAAABddH/FAAAAAXNSR0IB2cksfwAAAAZQTFRFAAAA////pdmf3QAAAAJ0Uk5TAP9bkSK1AAAAh0lEQVR4nC2Pyw0DIQxEB3HgSAORtoV0QFs5RGFvaWs7SAuUwJEDWocZg4wePz8bAHjCx2tzOsLtjOZMdorZLvGwJhbrYv0N0b4SBIsSxDtIkAYqBbmjUHA0BrjJFKzLRMFKCtMn15FndaXzTTmRmXNcjHXYUFSj46OaYzc/4b284b099tfwB/w5L8GzNxYRAAAAAElFTkSuQmCC"/>
+	</defs>
+	<style>
+	</style>
+	<g id="Layer">
+		<use id="Layer" href="#img1" x="5" y="16"/>
+	</g>
+</svg>
