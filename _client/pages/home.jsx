@@ -560,7 +560,6 @@ export default function Home() {
       setTasks(tasks.filter((task)=>{return task!==chosenUpdateTask}))
       closeUpdateTaskAlert()
       closeUpdateTask()
-      // setchosenUpdateTask([])
       $.ajax({
         type: "POST",
         url: "/task/deletetask",
@@ -570,16 +569,12 @@ export default function Home() {
         },
         success: (result) => {
           isRunning.current=false
-          console.log(result.tasks)
           setCategories(result.categories)
           return setTasks(result.tasks)
         },error: ()=>{return isRunning.current=false}
       })
     }
   }
-  useUpdateEffect(()=>{
-    console.log(chosenUpdateTask)
-  },[chosenUpdateTask])
 
   const deleteAllFinishedTasks = (e) => {
     e.preventDefault()
@@ -858,7 +853,6 @@ export default function Home() {
       $(window).on("scroll",() => {
         const dashboardHeight = $("#dashboard").height()
         const goupicon = $("#go-up")
-        console.log($("html").scrollTop() > dashboardHeight)
         if($("html").scrollTop() > dashboardHeight && goupicon.css("opacity")==="0") 
           goupicon.show().fadeTo(250,1,"swing")
         else if($("html").scrollTop() < dashboardHeight && goupicon.css("opacity")==="1") 

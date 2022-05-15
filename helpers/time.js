@@ -41,7 +41,6 @@ const LocaltoUTC = (time) => {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 const UTCSQLtoLocal = (time) => {
-  console.log("orig:"+time)
   const dt = (new Date(time))
   const y = dt.getFullYear()
   const m = dt.getMonth()+1
