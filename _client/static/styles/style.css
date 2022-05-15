@@ -663,11 +663,13 @@ body.loading .loading {
   background-color: transparent;
 }
 
-.ecp-container {
+.cp-container {
+  display: none;
+  overflow: hidden;
   background-color: white;
   width: 95%;
   height: max-content;
-  max-height: 50%;
+  max-height: 95%;
   max-width: 22.5em;
   left: 0;
   bottom: 0;
@@ -694,12 +696,16 @@ body.loading .loading {
   justify-content: center;
 }
 
-.atp-container {
+.tp-container {
+  display: none;
+  overflow: hidden;
   background-color: white;
   width: 95%;
   height: 95%;
+  max-height: 95%;
   max-width: 22.5em;
   right: 0;
+  bottom: 0;
   padding: 1em;
   margin: 0.5em;
   box-shadow: 0 0 0 0.05em rgb(221, 216, 216);
@@ -711,7 +717,7 @@ body.loading .loading {
   
 }
 
-.atp-header {
+.pop-header {
   flex: 1 1 5%;
   display: flex;
   align-items: center;
@@ -720,7 +726,7 @@ body.loading .loading {
   border-bottom: 1px solid hsl(220, 7%, 82%);
 }
 
-.xclose-atp {
+.xclose-pop {
   width: 1.75em;
   height: 1.75em;
   display: flex;
@@ -729,16 +735,16 @@ body.loading .loading {
   border-radius: 50%;
 }
 
-.xclose-atp:hover {
+.xclose-pop:hover {
   background-color: rgba(221, 216, 216, 0.3);
 }
 
-.xclose-atp img {
+.xclose-pop img {
   width: 1.25em;
   height: 1.25em;
 }
 
-.atp-form {
+.pop-body {
   flex: 1 1 90%;
   align-content: flex-start;
   display: flex;
@@ -747,12 +753,17 @@ body.loading .loading {
   overflow: auto;
 }
 
-.atp-form > * {
+.pop-body > * {  
+  position: relative;
   width: 100%;
   align-content: center;
 }
 
-.atp-form input {
+.pop-body > h5 {
+  font-size: 0.8em;
+}
+
+.pop-body input:not([type='checkbox']) {
   border-radius: 0.3em;
   display: block;
   padding: 0.5em;
@@ -761,7 +772,7 @@ body.loading .loading {
   color: black;
 }
 
-.atp-form textarea {
+.pop-body textarea {
   border: 0.05em solid black;
   display: block;
   color: black;
@@ -771,48 +782,7 @@ body.loading .loading {
   min-height: 2.5em;
 }
 
-.atp-btns {
-  flex: 1 1 5%;
-  width: 100%;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  border-top: 1px solid hsl(220, 7%, 82%);
-  padding-top: 1em;
-}
-
-.atp-btns > * {
-  flex: 1 1 100%;
-}
-
-.atp-btns button {
-  background-color: black;
-  color: white;
-  outline: none;
-  border-radius: 0.3em;
-  border: 0.06em solid black;
-  width: 5em;
-  padding: 0.5em;
-}
-
-.atp-btns button:hover {
-  background-color: white;
-  color: black;
-}
-
-.atap {
-  flex: 1 1 90%;
-  align-content: flex-start;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1em;
-}
-
-.atap h5 {
-  font-size: 0.8em;
-}
-
-.tps-btns {
+.pop-btns {
   flex: 1 1 5%;
   width: 100%;
   display: flex;
@@ -823,48 +793,48 @@ body.loading .loading {
   padding-top: 1em;
 }
 
-.tps-btns > * {
+.pop-btns > * {
   flex: 1 1 100%;
 }
 
-.tps-btns button {
+.pop-btns button {
   outline: none;
   border-radius: 0.3em;
   width: 5em;
   padding: 0.5em;
 }
 
-.tp-btn-delete {
+.pop-btn-delete {
   background-color: rgb(173, 48, 16);
   color: white;
   border: 0.05em solid rgb(173, 48, 16);
 }
 
-.tp-btn-delete:hover {
+.pop-btn-delete:hover {
   background-color: transparent;
   color: rgb(173, 48, 16);
   border: 0.05em solid rgb(173, 48, 16);
 }
 
-.tp-btn-save {
+.pop-btn-save {
   background-color: black;
   color: white;
   border: 0.05em solid black;
 }
 
-.tp-btn-save:hover {
+.pop-btn-save:hover {
   background-color: transparent;
   color: black;
   border: 0.05em solid black;
 }
 
-.tp-btn-cancel {
+.pop-btn-cancel {
   background-color: black;
   color: white;
   border: 0.05em solid black;
 }
 
-.tp-btn-cancel:hover {
+.pop-btn-cancel:hover {
   background-color: transparent;
   color: black;
   border: 0.05em solid black;
@@ -880,6 +850,7 @@ body.loading .loading {
 }
 
 .datp > * {
+  position: relative;
   width: 100%;
   align-content: center;
 }
@@ -1036,7 +1007,7 @@ body.loading .loading {
       'dashboard'
       'tasks';
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(2, minmax(min-content,auto));
+    grid-template-rows: repeat(2, min-content);
   }
 
   .dashboard {
@@ -1078,13 +1049,13 @@ body.loading .loading {
 }
 
 @media (orientation:portrait) {
-  .atp-container{
+  .tp-container{
     height: max-content;
-    max-height: 50%;
+    max-height: 95%;
     bottom: 0;
   }
-
+/* 
   .goup-icon {
     display: block;
-  }
+  } */
 }

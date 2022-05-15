@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 const useUpdateEffect = (fun, deps) => {
   const didMount = useRef(false);
   useEffect(() => {
-    if (didMount.current) fun();
+    if (didMount.current) fun()
     else didMount.current = true;
   }, deps);
 };

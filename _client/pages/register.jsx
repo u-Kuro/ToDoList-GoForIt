@@ -40,9 +40,9 @@ export default function Register() {
         return El("cpassword").reportValidity()
       }
       // Load Request
-      $("#register").children("p").fadeTo(300, 0, () => {
+      $("#register").children("p").fadeTo(250, 0, "swing", () => {
         $("#register").children("p").hide()
-        $("#register").children("img").show().fadeTo(300, 1, () => {
+        $("#register").children("img").show().fadeTo(250, 1, "swing", () => {
           // Send Request
           $.ajax({
             type: "POST",
@@ -54,9 +54,9 @@ export default function Register() {
               cpassword: El("cpassword").value,
             },
             success: (data) => {
-              $("#register").children("img").fadeTo(300, 0, () => {
+              $("#register").children("img").fadeTo(250, 0, "swing", () => {
                 $("#register").children("img").hide()
-                $("#register").children("p").show().fadeTo(300, 1, () => {
+                $("#register").children("p").show().fadeTo(250, 1, "swing", () => {
                   if (data.message==="Please include an '@' in an email address.") {
                     El("email").setCustomValidity(data.message)
                     El("email").reportValidity()

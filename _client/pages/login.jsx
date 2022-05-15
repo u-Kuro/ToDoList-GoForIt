@@ -35,9 +35,9 @@ export default function Login({ data }) {
         return El("password").reportValidity()
       }
       // Loading
-      $("#login").children("p").fadeTo(300, 0, () => {
+      $("#login").children("p").fadeTo(250, 0, "swing", () => {
         $("#login").children("p").hide()
-        $("#login").children("img").show().fadeTo(300, 1, () => {
+        $("#login").children("img").show().fadeTo(250, 1, "swing", () => {
         // Send Request
           $.ajax({
             type: "POST",
@@ -47,9 +47,9 @@ export default function Login({ data }) {
               password: El("password").value,
             },
             success: (data) => {
-              $("#login").children("img").fadeTo(300, 0, () => {
+              $("#login").children("img").fadeTo(250, 0, "swing", () => {
                 $("#login").children("img").hide()
-                $("#login").children("p").show().fadeTo(300, 1, () => {
+                $("#login").children("p").show().fadeTo(250, 1, "swing", () => {
                   if (data.valid) return Router.push("/home", undefined, { shallow: true })
                   else {
                     if (data.message === "Password is Incorrect") {

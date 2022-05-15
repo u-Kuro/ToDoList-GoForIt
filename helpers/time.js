@@ -41,9 +41,14 @@ const LocaltoUTC = (time) => {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 const UTCSQLtoLocal = (time) => {
+  console.log("orig:"+time)
   const dt = (new Date(time))
-  const ndt = dt.toLocaleString()
-  return ndt.substring(0, ndt.length-6)+ndt.substring(ndt.length-3, ndt.length)
+  const y = dt.getFullYear()
+  const m = dt.getMonth()+1
+  const dat = dt.getDate()
+  const h = dt.getHours()
+  const mi = dt.getMinutes()
+  return m+"/"+dat+"/"+y+", "+h+":"+mi
 }
 
 const UTCSQLtoLocalHTML = (time) => {
@@ -52,7 +57,7 @@ const UTCSQLtoLocalHTML = (time) => {
   dt.setHours(dt.getHours()+ctoffset[0])
   dt.setMinutes(dt.getMinutes()+ctoffset[1])
   const ndt = dt.toJSON()
-  return ndt.substring(0, ndt.length-8)
+  return (typeof dt!=="undefined"?ndt.substring(0, ndt.length-8):"")
 }
 // Time Converter HTML to SQL (timeConverterHTMLtoSQL)
 const LocalHTMLtoSQL = (time) => {
