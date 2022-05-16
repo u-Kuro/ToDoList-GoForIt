@@ -255,7 +255,7 @@ export default function Home() {
     const topbar = $("#top-bar")
     if($("#category-icon").css("display")!=="none") {
       setopenedCategory(category)
-      $("body").animate({"overflow":"auto"},0,()=>{
+      $("body").css({"overflow":"auto"}).promise().done(()=>{
         catmenu.animate({
           top: -(totalSize(catmenu,"Bottom")+totalSize(topbar,"Bottom"))
         },100,()=>{
