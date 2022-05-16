@@ -268,6 +268,9 @@ export default function Home() {
         }, 250, "swing"); 
       })
     } else {
+      $("html, body").animate({
+        scrollTop: $("#tasks").offset().top - totalSize(topbar,"Bottom")
+      }, 250, "swing"); 
       setopenedCategory(category)
       return isRunning.current=false
     }
@@ -1012,7 +1015,7 @@ export default function Home() {
                                 className="cur-point ts-checkbox" type="checkbox" 
                               />
                             }
-                            <h5 className="cur-def ts-name break-word">⠀{task.task_name}</h5>
+                            <h5 className="cur-def ts-name break-word">{task.task_name}</h5>
                           </div>
                           <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
                             <img src="/icons/settings black.svg" alt="task settings" />
@@ -1070,7 +1073,7 @@ export default function Home() {
                                 />
                               }
                               <h5 className="cur-def ts-name break-word">
-                                ⠀{task.task_name}
+                                {task.task_name}
                               </h5>
                             </div>
                             <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
@@ -1113,7 +1116,7 @@ export default function Home() {
                                 />
                               }
                               <h5 className="cur-def ts-name break-word">
-                                ⠀{task.task_name}
+                                {task.task_name}
                               </h5>
                             </div>
                             <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
@@ -1156,7 +1159,7 @@ export default function Home() {
                                 />
                               }
                               <h5 className="cur-def ts-name break-word">
-                                ⠀{task.task_name}
+                                {task.task_name}
                               </h5>
                             </div>
                             <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
@@ -1259,7 +1262,8 @@ export default function Home() {
                 <input 
                   onChange={e=>setaddTaskName(e.target.value)}
                   value={addTaskName}
-                  onKeyDown={e => {e.key === "Enter" && addTask(e)}} type="text" id="add-task_name" placeholder="Task Name" required />
+                  onKeyDown={e => {e.key === "Enter" && addTask(e)}} 
+                  maxLength="40" type="text" id="add-task_name" placeholder="Task Name" required />
               </div>
               <div>
                 <label htmlFor="add-start_date">Start Date</label>
@@ -1341,7 +1345,7 @@ export default function Home() {
                           updateTask(e)
                         }
                       }}
-                    id="update-task_name" placeholder="Task Name" type="text" required />
+                    maxLength="40" id="update-task_name" placeholder="Task Name" type="text" required />
                   </div>
                   <div>
                     <label htmlFor="start_date">Start Date</label>
@@ -1484,7 +1488,7 @@ export default function Home() {
                                   className="cur-point ts-checkbox" type="checkbox" 
                                 />
                               }
-                              <h5 className="cur-def ts-name break-word">⠀{task.task_name}</h5>
+                              <h5 className="cur-def ts-name break-word">{task.task_name}</h5>
                             </div>
                             <div key={task.id} onClick={e=>openUpdateTaskFromdeleteFinishedTasks(task,e)} className="cur-point task-settings" >
                               <img src="/icons/settings black.svg" alt="task settings" />

@@ -41,9 +41,11 @@ p,
 pre,
 textarea {
   cursor: default;
-  word-break: break-all;
+  hyphens: manual;
+  white-space: pre-wrap;
+  word-break: break-word;
   overflow-wrap: break-word;
-  overflow: hidden;
+  text-align: justify;
   max-width: 100%;
 }
 a,
@@ -58,7 +60,8 @@ dialog {
 img{
   max-width: 100%;
 }
-input{
+input,
+textarea{
   outline: none;
 }
 input[type=text]{
@@ -272,8 +275,9 @@ body.loading .loading {
 }
 
 .goup-icon div img{
-  max-width: 1.5em;
+  min-width: 1.5em;
   min-height: 1.5em;
+  width: 1.5em;
 }
 
 .categories {
@@ -281,7 +285,7 @@ body.loading .loading {
   position: fixed;
   height: calc(100% - 3em);
   min-width: 12.5em;
-  max-width: calc(100% - 3em);
+  max-width: 12.5em;
   min-height: calc(100% - 3em);
   top: 3em;
   left: 0;
@@ -308,6 +312,7 @@ body.loading .loading {
 
 .add-category img {
   min-height: 1.5em;
+  min-width: 1.5em;
   width: 1.5em;
 }
 
@@ -336,9 +341,11 @@ body.loading .loading {
   align-items: center;
   padding: 0.25em;
   border-radius: 0.3em;
+  gap: 0.5em;
 }
 
 .category h5 {
+  max-width: 80%;
   border: none;
   color: black;
   outline: none;
@@ -356,6 +363,7 @@ body.loading .loading {
 
 .category-empty img {
   min-height: 2.5em;
+  min-width: 2.5em;
   width: 2.5em;
 }
 
@@ -377,8 +385,9 @@ body.loading .loading {
 }
 
 .category-settings img {
-  width: 1.25em;
+  min-width: 1.25em;
   min-height: 1.25em;
+  width: 1.25em;
 }
 
 .category-settings-popup {
@@ -431,8 +440,9 @@ body.loading .loading {
 }
 
 .xclose-csp img {
+  min-width: 1.25em;
+  min-height: 1.25em;
   width: 1.25em;
-  height: 1.25em;
 }
 
 .cs-container input {
@@ -564,6 +574,7 @@ body.loading .loading {
 
 .ts-header img {
   min-height: 1.5em;
+  min-width: 1.5em;
   width: 1.5em;
 }
 
@@ -602,6 +613,7 @@ body.loading .loading {
   display: flex;
   align-items: flex-start;
   flex: 1 1 100%;
+  gap: 0.5em;
 }
 
 .ts-title-1 input[type="checkbox"] {
@@ -631,8 +643,9 @@ body.loading .loading {
 }
 
 .task-settings img {
-  max-width: 1.25em;
-  max-height: 1.25em;
+  min-width: 1.25em;
+  min-height: 1.25em;
+  width: 1.25em;
 }
 
 .ts-description {
@@ -653,6 +666,9 @@ body.loading .loading {
 
 .ts-date {
   max-width: 12.5em;
+}
+
+.ts-date > * {
   text-align: right;
 }
 
@@ -727,6 +743,7 @@ body.loading .loading {
   justify-content: space-between;
   padding-bottom: 1em;
   border-bottom: 1px solid hsl(220, 7%, 82%);
+  gap: 1em;
 }
 
 .xclose-pop {
@@ -743,8 +760,9 @@ body.loading .loading {
 }
 
 .xclose-pop img {
+  min-width: 1.25em;
+  min-height: 1.25em;
   width: 1.25em;
-  height: 1.25em;
 }
 
 .pop-body {
@@ -778,6 +796,7 @@ body.loading .loading {
 
 .pop-body textarea {
   border: 0.05em solid black;
+  border-radius: 0.3em;
   display: block;
   color: black;
   width: 100%;
@@ -1059,8 +1078,4 @@ body.loading .loading {
     max-height: 90%;
     bottom: 0;
   }
-/* 
-  .goup-icon {
-    display: block;
-  } */
 }
