@@ -45,8 +45,8 @@ const UTCSQLtoLocal = (time) => {
   const y = dt.getFullYear()
   const m = dt.getMonth()+1
   const dat = dt.getDate()
-  const h = dt.getHours()
-  const mi = dt.getMinutes()
+  const h = FixDateTypes(dt.getHours())
+  const mi = FixDateTypes(dt.getMinutes())
   return m+"/"+dat+"/"+y+", "+h+":"+mi
 }
 
