@@ -255,7 +255,7 @@ export default function Home() {
     const topbar = $("#top-bar")
     if($("#category-icon").css("display")!=="none") {
       setopenedCategory(category)
-      $("body").animate({"overflow":"visible"},0,()=>{
+      $("body").animate({"overflow":"auto"},0,()=>{
         catmenu.animate({
           top: -(totalSize(catmenu,"Bottom")+totalSize(topbar,"Bottom"))
         },100,()=>{
@@ -851,7 +851,7 @@ export default function Home() {
     if (!isRunning.current) {
       isRunning.current=true
       const catmenu = $("#categoriesMenu")
-      const topbar = $(".top-bar")
+      const topbar = $("#top-bar")
       if(catmenu.css("display") === "none") {
         $('body').css({"overflow":"hidden"})
         catmenu.css({top: -(totalSize(catmenu,"Bottom")+totalSize(topbar,"Bottom"))})// return on top
@@ -861,9 +861,9 @@ export default function Home() {
           return isRunning.current=false
         })
       } else {
-        $('body').css('overflow','visible')
+        $('body').css('overflow','auto')
         catmenu.animate({
-          top: "-=" + catmenu.height(),
+          top: -(totalSize(catmenu,"Bottom")+totalSize(topbar,"Bottom"))
         },250,"swing",() => {
           catmenu.hide(() => {
             return isRunning.current=false
@@ -879,12 +879,13 @@ export default function Home() {
         const dashboardHeight = $("#dashboard").height()
         const goupicon = $("#go-up")
         if($("html").scrollTop() > dashboardHeight && goupicon.css("opacity")==="0") 
-          goupicon.show().fadeTo(250,1,"swing")
+          return goupicon.show().fadeTo(250,1,"swing")
         else if($("html").scrollTop() < dashboardHeight && goupicon.css("opacity")==="1") 
-          goupicon.fadeTo(250,0,"swing",()=>goupicon.hide())
+          return goupicon.fadeTo(250,0,"swing",()=>goupicon.hide())
       })
       //Fix Categories menu after resize
       $(window).on("resize", () => {
+        const topbar = $("#top-bar")
         const catmenu = $("#categoriesMenu")
         const cataddinput = $("#add-category_name")
         const catupdateinput = $("#update-category_name")
@@ -893,10 +894,16 @@ export default function Home() {
           catupdateinput.is(":focus") ||
           !Nulled(cataddinput.val()) ||
           !Nulled(catupdateinput.val())
-        if($("body").width()>=785) 
+        if($(window).outerWidth()>=785) {
           catmenu.css("top","").show()
-        else if(catIsActive && $("body").width()<785) return
-        else catmenu.css("top",-catmenu.height()).hide()
+          return $("body").css("overflow","auto")
+        }
+        else if(catIsActive && $(window).outerWidth()<785) 
+          return $("body").css("overflow","hidden")
+        else if($(window).outerWidth()<785) {
+          catmenu.css("top",-(totalSize(catmenu,"Bottom")+totalSize(topbar,"Bottom"))).hide()
+          return $("body").css("overflow","auto")
+        }
       })
       // Change Categories Scroll Max Height
       $(window).on("load", () => {
