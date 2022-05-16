@@ -281,8 +281,10 @@ body.loading .loading {
   position: fixed;
   height: calc(100% - 3em);
   min-width: 12.5em;
+  max-width: calc(100% - 3em);
+  min-height: calc(100% - 3em);
+  top: 3em;
   left: 0;
-  margin-top: 3em;
   padding-top: 0.5em 0;
   background-color: white;
   box-shadow: 0.2em 0 0.1em -0.1em rgb(221, 216, 216);
@@ -603,6 +605,7 @@ body.loading .loading {
 }
 
 .ts-title-1 input[type="checkbox"] {
+  align-self: center;
   accent-color: black !important;
 }
 
@@ -669,7 +672,7 @@ body.loading .loading {
   background-color: white;
   width: 95%;
   height: max-content;
-  max-height: 95%;
+  max-height: 90%;
   max-width: 22.5em;
   left: 0;
   bottom: 0;
@@ -701,7 +704,7 @@ body.loading .loading {
   overflow: hidden;
   background-color: white;
   width: 95%;
-  height: 95%;
+  height: 90%;
   max-height: 95%;
   max-width: 22.5em;
   right: 0;
@@ -750,7 +753,8 @@ body.loading .loading {
   display: flex;
   flex-wrap: wrap;
   gap: 1em;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .pop-body > * {  
@@ -863,7 +867,7 @@ body.loading .loading {
   padding: 0.5em;
 }
 
-.dashboard h5 {
+.dashboard > h5 {
   padding: 0.5em;
   border-bottom: 0.06em solid rgb(225, 222, 223);
 }
@@ -1034,7 +1038,8 @@ body.loading .loading {
     position: fixed;
     width: calc(100% - 3em);
     height: calc(100% - 3em);
-    max-width: 100%;
+    max-width: calc(100% - 3em);
+    min-height: calc(100% - 3em);
     display: none;
     bottom: 0;
   }
@@ -1051,7 +1056,7 @@ body.loading .loading {
 @media (orientation:portrait) {
   .tp-container{
     height: max-content;
-    max-height: 95%;
+    max-height: 90%;
     bottom: 0;
   }
 /* 

@@ -33,8 +33,8 @@ export default function Home() {
     const [chosenUpdateTask, setchosenUpdateTask] = useState([])
     const [updateTaskIsOpen, setupdateTaskIsOpen] = useState(false)
     const [updateTaskAlertIsOpen, setupdateTaskAlertIsOpen] = useState(false)
-    const [deleteFinishedTasksIsOpen, setdeleteFinishedTasksIsOpen] = useState(false)
-    const [deleteFinishedTasksAlertIsOpen, setdeleteFinishedTasksAlertIsOpen] = useState(false)
+    const [deleteAllFinishedTasksIsOpen, setdeleteAllFinishedTasksIsOpen] = useState(false)
+    const [deleteAllFinishedTasksAlertIsOpen, setdeleteAllFinishedTasksAlertIsOpen] = useState(false)
     const [openUpdateTaskIsFromdeleteFinishedTasks, setopenUpdateTaskIsFromdeleteFinishedTasks] = useState(false)
 
   //=input values
@@ -158,128 +158,124 @@ export default function Home() {
   //=logout form
   const logout = (e) => {
     e.preventDefault()
-    if (!isRunning.current) {
-      isRunning.current=true
-      if (window.confirm("Are you sure you want to logout?")) {
-        $.ajax({
-          type: "GET",
-          url: "/auth/logout",
-          success: () => {
-            Router.push("/login", undefined, { shallow: true })
-            return isRunning.current=false
-          },error: ()=>{return isRunning.current=false}
-        })               
-      } else return isRunning.current=false
-    }
+    if(isRunning.current) return
+    isRunning.current=true
+    if (window.confirm("Are you sure you want to logout?")) {
+      $.ajax({
+        type: "GET",
+        url: "/auth/logout",
+        success: () => {
+          Router.push("/login", undefined, { shallow: true })
+          return isRunning.current=false
+        },error: ()=>{return isRunning.current=false}
+      })               
+    } else return isRunning.current=false
   }
 
   //=category form
   const addCategory = (e) => {
     e.preventDefault()
     if(Nulled(addCategoryName)) return $("#add-category_name").get(0).reportValidity()
-    if (!isRunning.current) {
-      isRunning.current=true
-      setaddCategoryName([])
-      setCategories([{
-        category_name:addCategoryName,
-      },...categories])
-      $.ajax({
-        type: "POST",
-        url: "/category/addcategory",
-        data: {
-          category_name: addCategoryName
-        },
-        success: (result) => {
-          setCategories(result.categories)
-          setopenedCategory(result.categories[0])
-          return isRunning.current=false
-        },error: ()=>{return isRunning.current=false}
-      })
-    }
+    if(isRunning.current) return
+    isRunning.current=true
+    setaddCategoryName([])
+    setCategories([{
+      category_name:addCategoryName,
+    },...categories])
+    $.ajax({
+      type: "POST",
+      url: "/category/addcategory",
+      data: {
+        category_name: addCategoryName
+      },
+      success: (result) => {
+        setCategories(result.categories)
+        setopenedCategory(result.categories[0])
+        return isRunning.current=false
+      },error: ()=>{return isRunning.current=false}
+    })
   }
 
   const updateCategory = (e) => {
     e.preventDefault()
     if(Nulled(updateCategoryName)) return $("#update-category_name").get(0).reportValidity()
-    if (!isRunning.current) {
-      isRunning.current=true
-      setCategories([{
+    if(isRunning.current) return
+    isRunning.current=true
+    setCategories([{
+      category_name: updateCategoryName,
+      ...categories
+    }])
+    closeUpdateCategory()
+    $.ajax({
+      type: "POST",
+      url: "/category/updatecategory",
+      data: {
         category_name: updateCategoryName,
-        ...categories
-      }])
-      closeUpdateCategory()
-      $.ajax({
-        type: "POST",
-        url: "/category/updatecategory",
-        data: {
-          category_name: updateCategoryName,
-          category_id: chosenUpdateCategory.id,
-        },
-        success: (result) => {
-          isRunning.current=false
-          setopenedCategory(result.categories[0])
-          return setCategories(result.categories)
-        },error: ()=>{return isRunning.current=false}
-      })
-    }
+        category_id: chosenUpdateCategory.id,
+      },
+      success: (result) => {
+        isRunning.current=false
+        setopenedCategory(result.categories[0])
+        return setCategories(result.categories)
+      },error: ()=>{return isRunning.current=false}
+    })
   }
 
   const deleteCategory = (e) => {
     e.preventDefault()
-    if (!isRunning.current) {
-      isRunning.current=true
-      closeUpdateCategoryAlert()
-      closeUpdateCategory()
-      if(openedCategory === chosenUpdateCategory)
-        setopenedCategory(val(categories[0]))
-      setTasks(tasks.filter((task)=>{return task.category_id!==chosenUpdateCategory.id}))
-      setCategories(categories.filter((category)=>{return category!==chosenUpdateCategory}))
-      $.ajax({
-        type: "POST",
-        url: "/category/deletecategory",
-        data: {
-          category_id: chosenUpdateCategory.id,
-        },
-        success: (result) => {
-          isRunning.current=false
-          if(Nulled(result.categories)) return setopenedCategory([])
-          else if(openedCategory === chosenUpdateCategory)
-            setopenedCategory(result.categories[0])
-          setTasks(result.tasks)
-          return setCategories(result.categories)
-        },error: ()=>{return isRunning.current=false}
-      })
-    }
+    if(isRunning.current) return
+    isRunning.current=true
+    closeUpdateCategoryAlert(true)
+    if(openedCategory === chosenUpdateCategory)
+      setopenedCategory(val(categories[0]))
+    setTasks(tasks.filter((task)=>{return task.category_id!==chosenUpdateCategory.id}))
+    setCategories(categories.filter((category)=>{return category!==chosenUpdateCategory}))
+    $.ajax({
+      type: "POST",
+      url: "/category/deletecategory",
+      data: {
+        category_id: chosenUpdateCategory.id,
+      },
+      success: (result) => {
+        isRunning.current=false
+        if(Nulled(result.categories)) return setopenedCategory([])
+        else if(openedCategory === chosenUpdateCategory)
+          setopenedCategory(result.categories[0])
+        setTasks(result.tasks)
+        return setCategories(result.categories)
+      },error: ()=>{return isRunning.current=false}
+    })
   }
   
   //=category live
   const openCategory = (category) => {
-    if (!isRunning.current) {
-      isRunning.current=true
-      const catmenu = $("#categoriesMenu")
-      if($("#category-icon").css("display")!=="none") {
-        setopenedCategory(category)
-        $("body").css({"overflow":"visible"})
+    if(isRunning.current) return
+    isRunning.current=true
+    const catmenu = $("#categoriesMenu")
+    const topbar = $("#top-bar")
+    if($("#category-icon").css("display")!=="none") {
+      setopenedCategory(category)
+      $("body").animate({"overflow":"visible"},0,()=>{
         catmenu.animate({
-          top: "-=" + catmenu.css("height"),
-        },100,() => {
-          catmenu.hide(() => {
-            $("#tasks")[0].scrollIntoView()
-            const scrolledY = window.scrollY
-            if(scrolledY) window.scroll(0, scrolledY - $("#top-bar").height())
+          top: -(totalSize(catmenu,"Bottom")+totalSize(topbar,"Bottom"))
+        },100,()=>{
+          catmenu.hide(()=>{
             return isRunning.current=false
           })
         })
-      } else {
-        setopenedCategory(category)
-        return isRunning.current=false
-      }
+        $("html, body").animate({
+          scrollTop: $("#tasks").offset().top - totalSize(topbar,"Bottom")
+        }, 250, "swing"); 
+      })
+    } else {
+      setopenedCategory(category)
+      return isRunning.current=false
     }
   }
 
   const openUpdateCategory = (category, e) => {
     e.stopPropagation()
-    if (Nulled(categories)) return
+    if(Nulled(categories)) return
     categories.map((xcategory) => {
       if (xcategory !== category) return
       setchosenUpdateCategory(category)
@@ -290,20 +286,22 @@ export default function Home() {
     const container = $(".cp-container")
     if(updateCategoryIsOpen && !updateCategoryAlertIsOpen){
       if($("html").width()>$("html").height()){//landscape
-        container.css({
+        container.animate({
           "left":-(totalSize(container,"Left"))
-        })
-        container.show().animate({"left":0},250,"swing")
+        },0,()=>{
+          container.show().animate({"left":0},250)
+        })   
       }
       else {
-        container.css({
+        container.animate({
           "bottom":-(totalSize(container,"Bottom"))
+        },0,()=>{
+          container.show().animate({"bottom":0},250,"swing")
         })
-        container.show().animate({"bottom":0},250,"swing")
       }
-    } else if(updateCategoryIsOpen && updateCategoryAlertIsOpen){
+    } 
+    else if(updateCategoryIsOpen && updateCategoryAlertIsOpen)
       setupdateCategoryAlertIsOpen(false)
-    }
   },[updateCategoryIsOpen])
 
   const closeUpdateCategory = () => {
@@ -326,47 +324,56 @@ export default function Home() {
       })
     } 
   }
-
+  
   const openUpdateCategoryAlert = () => {
     setupdateCategoryIsOpen(false)
     setupdateCategoryAlertIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const contained = $(".pop-body")
     const element = $(".pop-body > *")
     if(updateCategoryAlertIsOpen){
-      contained.css({
-        "overflow":"hidden"
-      })
       element.animate({
         "right":-(totalSize(element,"Right"))
-      },0)
-      element.show().animate({
-        "right":0
-      },250,"swing",()=>{
-        contained.css({
-          "overflow":"auto"
-        })
+      },0,()=>{
+        element.show().animate({
+          "right":0
+        },250,"swing")
       })
     } else {
-      contained.css({
-        "overflow":"hidden"
-      })
       element.animate({
         "left":-(totalSize(element,"Left"))
-      },0)
-      element.show().animate({
-        "left":0
-      },250,"swing",()=>{
-        contained.css({
-          "overflow":"auto"
-        })
+      },0,()=>{
+        element.show().animate({
+          "left":0
+        },250,"swing")
       })
     }
   },[updateCategoryAlertIsOpen])
 
-  const closeUpdateCategoryAlert = () => {
-    setupdateCategoryIsOpen(true)
+  const closeUpdateCategoryAlert = (submitted) => {
+    if(submitted) {
+      const container = $(".cp-container")
+      if($("html").width()>$("html").height()){//landscape
+        container.animate({
+          "left":-(totalSize(container,"Left"))
+        },250,"swing",()=>{
+          container.hide()
+          setupdateCategoryAlertIsOpen(false)
+          setupdateCategoryIsOpen(false)
+          setchosenUpdateCategory([])
+        })
+      } else {
+        container.animate({
+          "bottom":-(totalSize(container,"Bottom"))
+        },250,"swing",()=>{
+          container.hide()
+          setupdateCategoryAlertIsOpen(false)
+          setupdateCategoryIsOpen(false)
+          setchosenUpdateCategory([])
+        })
+      } 
+    }
+    else setupdateCategoryIsOpen(true)
   }
 
   //=task form
@@ -390,60 +397,59 @@ export default function Home() {
       return $("#add-end_date").get(0).reportValidity()
     }
     e.preventDefault()
-    if (!isRunning.current) {
-      isRunning.current=true
-      // Create Category if None else Update the Category where task is
-      if (Nulled(categories)||Nulled(openCategory)) {
-        const newCategory = {id:1, category_name: "No Name"}
-        setCategories([newCategory])
-        setopenedCategory(newCategory)
-      } else {
-        setCategories([
-          openedCategory,
-          ...categories.filter((category)=>{return category!==openedCategory})
-        ])
-      }
-      // Update Tasks by Order
-      const start_date = new Date(addTaskStartDate).toJSON()
-      const end_date = new Date(addTaskEndDate).toJSON()
-      const currentdate = new Date()
-      const date_status = CheckTimeStatus(currentdate, new Date(addTaskStartDate), new Date(addTaskEndDate))
-      setTasks([// Order by asc end_dates, then recent
-        ...tasks.filter(x=>{return (new Date(x.end_date)<new Date(end_date))}),
-        {category_id: Nulled(categories)||Nulled(openedCategory)? 1:openedCategory.id,
+    if(isRunning.current) return
+    isRunning.current = true
+    // Create Category if None else Update the Category where task is
+    if (Nulled(categories)||Nulled(openCategory)) {
+      const newCategory = {id:1, category_name: "No Name"}
+      setCategories([newCategory])
+      setopenedCategory(newCategory)
+    } else {
+      setCategories([
+        openedCategory,
+        ...categories.filter((category)=>{return category!==openedCategory})
+      ])
+    }
+    // Update Tasks by Order
+    const start_date = new Date(addTaskStartDate).toJSON()
+    const end_date = new Date(addTaskEndDate).toJSON()
+    const currentdate = new Date()
+    const date_status = CheckTimeStatus(currentdate, new Date(addTaskStartDate), new Date(addTaskEndDate))
+    setTasks([// Order by asc end_dates, then recent
+      ...tasks.filter(x=>{return (new Date(x.end_date)<new Date(end_date))}),
+      {category_id: Nulled(categories)||Nulled(openedCategory)? 1:openedCategory.id,
+      task_name: addTaskName,
+      start_date: start_date,
+      end_date: end_date,
+      description: addTaskDescription,
+      date_status: date_status,
+      taskisfinished: 0,},
+      ...tasks.filter(x=>{return (new Date(x.end_date)>=new Date(end_date))})
+    ])
+    closeAddTask()
+    setaddTaskName([])
+    setaddTaskStartDate([])
+    setaddTaskEndDate([])
+    setaddTaskDescription([])
+    $.ajax({
+      type: "POST",
+      url: "/task/addtask",
+      data: {
         task_name: addTaskName,
-        start_date: start_date,
-        end_date: end_date,
+        start_date: LocalHTMLtoSQL(start_date),
+        end_date: LocalHTMLtoSQL(end_date),
         description: addTaskDescription,
         date_status: date_status,
-        taskisfinished: 0,},
-        ...tasks.filter(x=>{return (new Date(x.end_date)>=new Date(end_date))})
-      ])
-      closeAddTask()
-      setaddTaskName([])
-      setaddTaskStartDate([])
-      setaddTaskEndDate([])
-      setaddTaskDescription([])
-      $.ajax({
-        type: "POST",
-        url: "/task/addtask",
-        data: {
-          task_name: addTaskName,
-          start_date: LocalHTMLtoSQL(start_date),
-          end_date: LocalHTMLtoSQL(end_date),
-          description: addTaskDescription,
-          date_status: date_status,
-          category_id: openedCategory.id
-        },
-        success: (result) => {
-          isRunning.current=false
-          setCategories(result.categories)
-          if (result.noCategory)
-            setopenedCategory(result.categories[0])
-          setTasks(val(result.tasks))
-        },error: ()=>{return isRunning.current=false}
-      })
-    }
+        category_id: openedCategory.id
+      },
+      success: (result) => {
+        isRunning.current=false
+        setCategories(result.categories)
+        if (result.noCategory)
+          setopenedCategory(result.categories[0])
+        setTasks(val(result.tasks))
+      },error: ()=>{return isRunning.current=false}
+    })
   }
 
   const updateTask = (e) => {
@@ -466,133 +472,128 @@ export default function Home() {
       return $("#update-end_date").get(0).reportValidity()
     }
     e.preventDefault()
-    if (!isRunning.current) {      
-      isRunning.current=true
-      setCategories([
-        ...categories.filter((category)=>{return category.id===chosenUpdateTask.category_id}),
-        ...categories.filter((category)=>{return category.id!==chosenUpdateTask.category_id})
-      ])
-      // Check Changed Values
-      const task_name = Nulled(updateTaskName)? chosenUpdateTask.task_name:updateTaskName
-      const start_date = Nulled(updateTaskStartDate)? chosenUpdateTask.start_date:new Date(updateTaskStartDate).toJSON()
-      const end_date = Nulled(updateTaskEndDate)? chosenUpdateTask.end_date:new Date(updateTaskEndDate).toJSON()
-      const description = Nulled(updateTaskDescription)? chosenUpdateTask.description:updateTaskDescription
-      const date_status = CheckTimeStatus(new Date(), new Date(start_date), new Date(end_date))
-      setTasks([// Order by asc end_dates, desc id
-        ...tasks.filter(x=>{return (new Date(x.end_date)<new Date(end_date))&&(x!==chosenUpdateTask)}),
-        {category_id: chosenUpdateTask.category_id,
+    if(isRunning.current) return
+    isRunning.current = true
+    setCategories([
+      ...categories.filter((category)=>{return category.id===chosenUpdateTask.category_id}),
+      ...categories.filter((category)=>{return category.id!==chosenUpdateTask.category_id})
+    ])
+    // Check Changed Values
+    const task_name = Nulled(updateTaskName)? chosenUpdateTask.task_name:updateTaskName
+    const start_date = Nulled(updateTaskStartDate)? chosenUpdateTask.start_date:new Date(updateTaskStartDate).toJSON()
+    const end_date = Nulled(updateTaskEndDate)? chosenUpdateTask.end_date:new Date(updateTaskEndDate).toJSON()
+    const description = Nulled(updateTaskDescription)? chosenUpdateTask.description:updateTaskDescription
+    const date_status = CheckTimeStatus(new Date(), new Date(start_date), new Date(end_date))
+    setTasks([// Order by asc end_dates, desc id
+      ...tasks.filter(x=>{return (new Date(x.end_date)<new Date(end_date))&&(x!==chosenUpdateTask)}),
+      {category_id: chosenUpdateTask.category_id,
+      task_name: task_name,
+      start_date: start_date,
+      end_date: end_date,
+      description: description,
+      date_status: date_status,
+      taskisfinished: chosenUpdateTask.taskisfinished},
+      ...tasks.filter(x=>{return (new Date(x.end_date)>=new Date(end_date))&&(x!==chosenUpdateTask)})
+    ])
+    closeUpdateTask()
+    setupdateTaskName([])
+    setupdateTaskStartDate([])
+    setupdateTaskEndDate([])
+    setupdateTaskDescription([])
+    $.ajax({
+      type: "POST",
+      url: "/task/updatetask",
+      data: {
+        task_id: chosenUpdateTask.id,
+        category_id: chosenUpdateTask.category_id,
         task_name: task_name,
-        start_date: start_date,
-        end_date: end_date,
-        description: description,
+        start_date: LocalHTMLtoSQL(start_date),
+        end_date: LocalHTMLtoSQL(end_date),
         date_status: date_status,
-        taskisfinished: chosenUpdateTask.taskisfinished},
-        ...tasks.filter(x=>{return (new Date(x.end_date)>=new Date(end_date))&&(x!==chosenUpdateTask)})
-      ])
-      closeUpdateTask()
-      setupdateTaskName([])
-      setupdateTaskStartDate([])
-      setupdateTaskEndDate([])
-      setupdateTaskDescription([])
-      $.ajax({
-        type: "POST",
-        url: "/task/updatetask",
-        data: {
-          task_id: chosenUpdateTask.id,
-          category_id: chosenUpdateTask.category_id,
-          task_name: task_name,
-          start_date: LocalHTMLtoSQL(start_date),
-          end_date: LocalHTMLtoSQL(end_date),
-          date_status: date_status,
-          description: description
-        },
-        success: (result) => {
-          isRunning.current=false
-          setchosenUpdateTask(result.newtask)
-          setCategories(result.categories)
-          return setTasks(result.tasks)
-        },error: ()=>{return isRunning.current=false}
-      })
-    }
+        description: description
+      },
+      success: (result) => {
+        isRunning.current=false
+        setchosenUpdateTask(result.newtask)
+        setCategories(result.categories)
+        return setTasks(result.tasks)
+      },error: ()=>{return isRunning.current=false}
+    })
   }
 
   const checkTaskStatus = (e,task) => {
     e.preventDefault()
-    if (!isRunning.current) {
-      isRunning.current=true
-      setCategories([
-        ...categories.filter((category)=>{return category.id===task.category_id}),
-        ...categories.filter((category)=>{return category.id!==task.category_id})
-      ])
-      // Update Tasks by Order
-      setTasks([// Order by asc end_dates, desc id
-        ...tasks.filter(x=>{return (new Date(x.end_date)<new Date(task.end_date))&&(x!==task)}),
-        {category_id: task.category_id,
-        task_name: task.task_name,
-        start_date: task.start_date,
-        end_date: task.end_date,
-        description: task.description,
-        date_status: task.date_status,
-        taskisfinished: !task.taskisfinished,},
-        ...tasks.filter(x=>{return (new Date(x.end_date)>=new Date(task.end_date))&&(x!==task)})
-      ])
-      $.ajax({
-        type: "POST",
-        url: "/task/changetaskcompletionstatus",
-        data: {
-          task_id: task.id
-        },
-        success: (result) => {
-          isRunning.current=false
-          setCategories(result.categories)
-          setTasks(result.tasks)
-          return settaskStatusIsChanging(true)
-        },error: ()=>{return isRunning.current=false}
-      })
-    }
+    if(isRunning.current) return
+    isRunning.current = true
+    setCategories([
+      ...categories.filter((category)=>{return category.id===task.category_id}),
+      ...categories.filter((category)=>{return category.id!==task.category_id})
+    ])
+    // Update Tasks by Order
+    setTasks([// Order by asc end_dates, desc id
+      ...tasks.filter(x=>{return (new Date(x.end_date)<new Date(task.end_date))&&(x!==task)}),
+      {category_id: task.category_id,
+      task_name: task.task_name,
+      start_date: task.start_date,
+      end_date: task.end_date,
+      description: task.description,
+      date_status: task.date_status,
+      taskisfinished: !task.taskisfinished,},
+      ...tasks.filter(x=>{return (new Date(x.end_date)>=new Date(task.end_date))&&(x!==task)})
+    ])
+    $.ajax({
+      type: "POST",
+      url: "/task/changetaskcompletionstatus",
+      data: {
+        task_id: task.id
+      },
+      success: (result) => {
+        isRunning.current=false
+        setCategories(result.categories)
+        setTasks(result.tasks)
+        return settaskStatusIsChanging(true)
+      },error: ()=>{return isRunning.current=false}
+    })
   }
 
   const deleteTask = (e) => {
     e.preventDefault()
-    if (!isRunning.current) {
-      isRunning.current=true
-      const category_id = categories.filter((category)=>{return chosenUpdateTask.category_id===category.id})
-      setTasks(tasks.filter((task)=>{return task!==chosenUpdateTask}))
-      closeUpdateTaskAlert()
-      closeUpdateTask()
-      $.ajax({
-        type: "POST",
-        url: "/task/deletetask",
-        data: {
-          task_id: chosenUpdateTask.id,
-          category_id: category_id
-        },
-        success: (result) => {
-          isRunning.current=false
-          setCategories(result.categories)
-          return setTasks(result.tasks)
-        },error: ()=>{return isRunning.current=false}
-      })
-    }
+    if(isRunning.current) return
+    isRunning.current = true
+    const category_id = categories.filter((category)=>{return chosenUpdateTask.category_id===category.id})
+    setTasks(tasks.filter((task)=>{return task!==chosenUpdateTask}))
+    closeUpdateTaskAlert(true)
+    closeUpdateTask()
+    $.ajax({
+      type: "POST",
+      url: "/task/deletetask",
+      data: {
+        task_id: chosenUpdateTask.id,
+        category_id: category_id
+      },
+      success: (result) => {
+        isRunning.current=false
+        setCategories(result.categories)
+        return setTasks(result.tasks)
+      },error: ()=>{return isRunning.current=false}
+    })
   }
 
   const deleteAllFinishedTasks = (e) => {
     e.preventDefault()
-    if (!isRunning.current) {
-      isRunning.current=true
-      setTasks(tasks.filter((task)=>{return task.taskisfinished!==0}))
-      closedeleteAllFinishedTasksAlert()
-      closedeleteAllFinishedTasks()
-      $.ajax({
-        type: "POST",
-        url: "/task/deleteallfinishedtask",
-        success: (result) => {
-          isRunning.current=false
-          setCategories(result.categories)
-          return setTasks(result.tasks)
-        },error: ()=>{return isRunning.current=false}
-      })
-    }
+    if(isRunning.current) return
+    isRunning.current = true
+    setTasks(tasks.filter((task)=>{return task.taskisfinished!==0}))
+    closedeleteAllFinishedTasksAlert(true)
+    $.ajax({
+      type: "POST",
+      url: "/task/deleteallfinishedtask",
+      success: (result) => {
+        isRunning.current=false
+        setCategories(result.categories)
+        return setTasks(result.tasks)
+      },error: ()=>{return isRunning.current=false}
+    })
   }
 
   //=task live
@@ -603,16 +604,17 @@ export default function Home() {
     const container = $(".tp-container")
     if(addTaskIsOpen){
       if($("html").width()>$("html").height()){//landscape
-        container.css({
+        container.animate({
           "right":-(totalSize(container,"Right"))
+        },0,()=>{
+          container.show().animate({"right":0},250,"swing")
         })
-        container.show().animate({"right":0},250,"swing")
-      }
-      else {
-        container.css({
+      } else {
+        container.animate({
           "bottom":-(totalSize(container,"Bottom"))
+        },0,()=>{
+          container.show().animate({"bottom":0},250,"swing")
         })
-        container.show().animate({"bottom":0},250,"swing")
       }
     }
   },[addTaskIsOpen])
@@ -638,7 +640,8 @@ export default function Home() {
 
   const openUpdateTask = (task, e) => {
     e.stopPropagation()
-    if (Nulled(tasks)||Nulled(categories)) return setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+    if (Nulled(tasks)||Nulled(categories)) 
+      return setopenUpdateTaskIsFromdeleteFinishedTasks(false)
     setchosenUpdateTask(task)
     setupdateTaskIsOpen(true)
   }
@@ -646,20 +649,20 @@ export default function Home() {
     const container = $(".tp-container")
     if(updateTaskIsOpen && !updateTaskAlertIsOpen){
       if($("html").width()>$("html").height()){//landscape
-        container.css({
+        container.animate({
           "right":-(totalSize(container,"Right"))
+        },0,()=>{
+          container.show().animate({"right":0},250,"swing")
         })
-        container.show().animate({"right":0},250,"swing")
-      }
-      else {
-        container.css({
+      } else {
+        container.animate({
           "bottom":-(totalSize(container,"Bottom"))
+        },0,()=>{
+          container.show().animate({"bottom":0},250,"swing")
         })
-        container.show().animate({"bottom":0},250,"swing")
       }
-    } else if(updateTaskIsOpen && updateTaskAlertIsOpen){
+    } else if(updateTaskIsOpen && updateTaskAlertIsOpen)
       setupdateTaskAlertIsOpen(false)
-    }
   },[updateTaskIsOpen])
 
   const closeUpdateTask = () => {
@@ -688,65 +691,75 @@ export default function Home() {
     setupdateTaskAlertIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const contained = $(".pop-body")
     const element = $(".pop-body > *")
     if(updateTaskAlertIsOpen){
-      contained.css({
-        "overflow":"hidden"
-      })
       element.animate({
         "right":-(totalSize(element,"Right"))
-      },0)
-      element.show().animate({
-        "right":0
-      },250,"swing",()=>{
-        contained.css({
-          "overflow":"auto"
-        })
+      },0,()=>{
+        element.show().animate({
+          "right":0
+        },250,"swing")
       })
     } else {
-      contained.css({
-        "overflow":"hidden"
-      })
       element.animate({
         "left":-(totalSize(element,"Left"))
-      },0)
-      element.show().animate({
-        "left":0
-      },250,"swing",()=>{
-        contained.css({
-          "overflow":"auto"
-        })
+      },0,()=>{
+        element.show().animate({
+          "left":0
+        },250,"swing")
       })
     }
   },[updateTaskAlertIsOpen])
 
-  const closeUpdateTaskAlert = () => {
-    setupdateTaskIsOpen(true)
+  const closeUpdateTaskAlert = (submitted) => {
+    if(submitted){
+      const container = $(".tp-container")
+      if($("html").width()>$("html").height()){//landscape
+        container.animate({
+          "right":-(totalSize(container,"Right"))
+        },250,"swing",()=>{
+          container.hide()
+          setupdateTaskAlertIsOpen(false)
+          setupdateTaskIsOpen(false)
+          setchosenUpdateTask([])
+        })
+      } else {
+        container.animate({
+          "bottom":-(totalSize(container,"Bottom"))
+        },250,"swing",()=>{
+          container.hide()
+          setupdateTaskAlertIsOpen(false)
+          setupdateTaskIsOpen(false)
+          setchosenUpdateTask([])
+        })
+      } 
+    }
+    else setupdateTaskIsOpen(true)
   }
 
-  const opendeleteFinishedTasks = () => {
-    setdeleteFinishedTasksIsOpen(true)
+  const opendeleteAllFinishedTasks = (e) => {
+    e.stopPropagation();
+    setdeleteAllFinishedTasksIsOpen(true)
   }
   useUpdateEffect(()=>{
     const container = $(".tp-container")
-    if(deleteFinishedTasksIsOpen && !deleteFinishedTasksAlertIsOpen){
+    if(deleteAllFinishedTasksIsOpen && !deleteAllFinishedTasksAlertIsOpen){
       if($("html").width()>$("html").height()){//landscape
-        container.css({
+        container.animate({
           "right":-(totalSize(container,"Right"))
+        },0,()=>{
+          container.show().animate({"right":0},250,"swing")
         })
-        container.show().animate({"right":0},250,"swing")
-      }
-      else {
-        container.css({
+      } else {
+        container.animate({
           "bottom":-(totalSize(container,"Bottom"))
+        },0,()=>{
+          container.show().animate({"bottom":0},250,"swing")
         })
-        container.show().animate({"bottom":0},250,"swing")
       }
-    } else if(deleteFinishedTasksIsOpen && deleteFinishedTasksAlertIsOpen){
-      setdeleteFinishedTasksAlertIsOpen(false)
-    }
-  },[deleteFinishedTasksIsOpen])
+    } else if(deleteAllFinishedTasksIsOpen && deleteAllFinishedTasksAlertIsOpen)
+      setdeleteAllFinishedTasksAlertIsOpen(false)
+  },[deleteAllFinishedTasksIsOpen])
 
   const closedeleteAllFinishedTasks = () => {
     if(openUpdateTaskIsFromdeleteFinishedTasks) 
@@ -757,62 +770,73 @@ export default function Home() {
         "right":-(totalSize(container,"Right"))
       },250,"swing",()=>{
         container.hide()
-        setdeleteFinishedTasksIsOpen(false)
+        setdeleteAllFinishedTasksIsOpen(false)
       })
     } else {
       container.animate({
         "bottom":-(totalSize(container,"Bottom"))
       },250,"swing",()=>{
         container.hide()
-        setdeleteFinishedTasksIsOpen(false)
+        setdeleteAllFinishedTasksIsOpen(false)
       })
     } 
   }
 
-  const opendeleteFinishedTasksAlert = () => {
-    setdeleteFinishedTasksIsOpen(false)
-    setdeleteFinishedTasksAlertIsOpen(true)
+  const opendeleteAllFinishedTasksAlert = () => {
+    if(Nulled(categories)||Nulled(tasks)) return alert("There are no Tasks Available to Delete.")
+    else if(tasks.filter((task)=>task.taskisfinished===1).length===0) return alert("There are no tasks that have been Finished.")
+    else {
+      setdeleteAllFinishedTasksIsOpen(false)
+      setdeleteAllFinishedTasksAlertIsOpen(true)
+    }
   }
   useUpdateEffect(()=>{
-    const contained = $(".pop-body")
     const element = $(".pop-body > *")
-    if(deleteFinishedTasksAlertIsOpen){
-      contained.css({
-        "overflow":"hidden"
-      })
+    if(deleteAllFinishedTasksAlertIsOpen){
       element.animate({
         "right":-(totalSize(element,"Right"))
-      },0)
-      element.show().animate({
-        "right":0
-      },250,"swing",()=>{
-        contained.css({
-          "overflow":"auto"
-        })
+      },0,()=>{
+        element.show().animate({
+          "right":0
+        },250,"swing")
       })
     } else {
-      contained.css({
-        "overflow":"hidden"
-      })
       element.animate({
         "left":-(totalSize(element,"Left"))
-      },0)
-      element.show().animate({
-        "left":0
-      },250,"swing",()=>{
-        contained.css({
-          "overflow":"auto"
-        })
+      },0,()=>{
+        element.show().animate({
+          "left":0
+        },250,"swing")
       })
     }
-  },[deleteFinishedTasksAlertIsOpen])
+  },[deleteAllFinishedTasksAlertIsOpen])
 
-  const closedeleteAllFinishedTasksAlert = () => {
-    setdeleteFinishedTasksIsOpen(true)
+  const closedeleteAllFinishedTasksAlert = (submitted) => {
+    if(submitted){
+      const container = $(".tp-container")
+      if($("html").width()>$("html").height()){//landscape
+        container.animate({
+          "right":-(totalSize(container,"Right"))
+        },250,"swing",()=>{
+          container.hide()
+          setdeleteAllFinishedTasksAlertIsOpen(false)
+          setdeleteAllFinishedTasksIsOpen(false)
+        })
+      } else {
+        container.animate({
+          "bottom":-(totalSize(container,"Bottom"))
+        },250,"swing",()=>{
+          container.hide()
+          setdeleteAllFinishedTasksAlertIsOpen(false)
+          setdeleteAllFinishedTasksIsOpen(false)
+        })
+      } 
+    }
+    else setdeleteAllFinishedTasksIsOpen(true)
   }
 
   const openUpdateTaskFromdeleteFinishedTasks = (task, e) => {
-    setdeleteFinishedTasksIsOpen(false)
+    setdeleteAllFinishedTasksIsOpen(false)
     setopenUpdateTaskIsFromdeleteFinishedTasks(true)
     openUpdateTask(task, e)
   }
@@ -820,18 +844,19 @@ export default function Home() {
   //=animation
   const scrollup = () => {
     $("html, body").animate({
-        scrollTop: $("#dashboard").offset().top - ($("#top-bar").height())
+      scrollTop: $("#dashboard").offset().top - ($("#top-bar").height())
     }, 250, "swing");    
   }
   const categoryMenuIcon = () => {
     if (!isRunning.current) {
       isRunning.current=true
       const catmenu = $("#categoriesMenu")
+      const topbar = $(".top-bar")
       if(catmenu.css("display") === "none") {
         $('body').css({"overflow":"hidden"})
-        catmenu.css({top: -catmenu.height()})// return on top
+        catmenu.css({top: -(totalSize(catmenu,"Bottom")+totalSize(topbar,"Bottom"))})// return on top
         catmenu.show().animate({
-          top: "+=" + catmenu.height(),
+          top: totalSize(topbar,"Top")
         },250,"swing",() => {
           return isRunning.current=false
         })
@@ -1010,7 +1035,7 @@ export default function Home() {
               <div className="ts-header">
                 <h3>Dashboard</h3>
                 <div className="icon-container-dark">
-                  <img onClick={opendeleteFinishedTasks} className="cur-point trash-icon" src="/icons/trash black.svg" alt="delete finished tasks" />
+                  <img onClick={e=>opendeleteAllFinishedTasks(e)} className="cur-point trash-icon" src="/icons/trash black.svg" alt="delete finished tasks" />
                 </div>
               </div>
               <h5>Missed Tasks</h5>
@@ -1153,11 +1178,17 @@ export default function Home() {
       </div>
 
       {(!updateCategoryIsOpen && !updateCategoryAlertIsOpen) || Nulled(chosenUpdateCategory) ? null : (
-        <dialog onMouseDown={updateCategoryIsOpen?closeUpdateCategory:closeUpdateCategoryAlert} id="TPS" className="add-edit-popup">
+        <dialog onMouseDown={e=>{
+          e.stopPropagation()
+          updateCategoryIsOpen?closeUpdateCategory():closeUpdateCategoryAlert(false)
+          }} id="TPS" className="add-edit-popup">
           <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} className="cp-container">
             <div className="pop-header">
               <h3 className="cur-def">{"Edit Category ("+chosenUpdateCategory.category_name+")"}</h3>
-              <div onClick={updateCategoryIsOpen?closeUpdateCategory:closeUpdateCategoryAlert} className="cur-point xclose-pop">
+              <div onClick={e=>{
+                e.stopPropagation()
+                updateCategoryIsOpen?closeUpdateCategory():closeUpdateCategoryAlert(false)
+                }} className="cur-point xclose-pop">
                 <img src="/icons/xclose-black.svg" alt="close add task popup" />
               </div>
             </div>
@@ -1191,7 +1222,10 @@ export default function Home() {
                 </h5>
               </div>
               <div className="pop-btns">
-                <button onClick={closeUpdateCategoryAlert} className="cur-point pop-btn-cancel">Cancel</button>
+                <button onClick={e=>{
+                  e.stopPropagation()
+                  closeUpdateCategoryAlert(false)
+                }} className="cur-point pop-btn-cancel">Cancel</button>
                 <button onClick={e=>{deleteCategory(e)}}className="cur-point pop-btn-delete">Delete</button>
               </div>
             </>
@@ -1253,27 +1287,29 @@ export default function Home() {
       )}
 
       {!updateTaskIsOpen && !updateTaskAlertIsOpen ? null : (
-        <dialog onMouseDown={()=>{
+        <dialog onMouseDown={(e)=>{
+        e.stopPropagation()
         if(openUpdateTaskIsFromdeleteFinishedTasks){
           if(updateTaskIsOpen){
             setopenUpdateTaskIsFromdeleteFinishedTasks(false)
             closeUpdateTask()
-            opendeleteFinishedTasks()
-          } else closeUpdateTaskAlert()
-        } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert()
+            opendeleteAllFinishedTasks(e)
+          } else closeUpdateTaskAlert(false)
+        } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert(false)
         }}
         id="TPS" className="add-edit-popup">
           <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} className="tp-container">
             <div className="pop-header">
               <h3 className="cur-def">{"Edit Task ("+chosenUpdateTask.task_name+")"}</h3>
-              <div onClick={()=>{
+              <div onClick={(e)=>{
+                e.stopPropagation()
                 if(openUpdateTaskIsFromdeleteFinishedTasks){
                   if(updateTaskIsOpen){
                     setopenUpdateTaskIsFromdeleteFinishedTasks(false)
                     closeUpdateTask()
-                    opendeleteFinishedTasks()
-                  } else closeUpdateTaskAlert()
-                } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert()
+                    opendeleteAllFinishedTasks(e)
+                  } else closeUpdateTaskAlert(false)
+                } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert(false)
                 }}
                 className="cur-point xclose-pop">
                 <img src="/icons/xclose-black.svg" alt="close add task popup" />
@@ -1283,71 +1319,73 @@ export default function Home() {
             <>
               <div id="updateTask" className="pop-body">
                 <div>
-                  <label htmlFor="update-task_name">Task Name</label>
-                  <input 
-                  onChange={e=>setupdateTaskName(e.target.value)}
-                  defaultValue={chosenUpdateTask.task_name}
-                  onKeyDown={e => {
-                    if(e.key === "Enter"){
-                      if(openUpdateTaskIsFromdeleteFinishedTasks){
-                        setopenUpdateTaskIsFromdeleteFinishedTasks(false)
-                        updateTask(e)
-                        opendeleteFinishedTasks()
-                      } else 
-                        updateTask(e)
-                      }
-                    }}
-                  id="update-task_name" placeholder="Task Name" type="text" required />
-                </div>
-                <div>
-                  <label htmlFor="start_date">Start Date</label>
-                  {taskDateStatusIsChanging? null: 
+                  <div>
+                    <label htmlFor="update-task_name">Task Name</label>
                     <input 
-                    onChange={e=>setupdateTaskStartDate(e.target.value)}
-                    defaultValue={UTCSQLtoLocalHTML(chosenUpdateTask.start_date)}
+                    onChange={e=>setupdateTaskName(e.target.value)}
+                    defaultValue={chosenUpdateTask.task_name}
                     onKeyDown={e => {
-                    if(e.key === "Enter"){
-                      if(openUpdateTaskIsFromdeleteFinishedTasks){
-                        setopenUpdateTaskIsFromdeleteFinishedTasks(false)
-                        updateTask(e)
-                        opendeleteFinishedTasks()
-                      } else 
-                        updateTask(e)
-                      }
-                    }}
-                    id="update-start_date" 
-                    type="datetime-local" 
-                    required />
-                  }
-                </div>
-                <div>
-                  <label htmlFor="end_date">End Date</label>
-                  {taskDateStatusIsChanging? null: 
-                    <input 
-                    onChange={e=>setupdateTaskEndDate(e.target.value)}
-                    defaultValue={UTCSQLtoLocalHTML(chosenUpdateTask.end_date)} 
-                    onKeyDown={e => {
-                    if(e.key === "Enter"){
-                      if(openUpdateTaskIsFromdeleteFinishedTasks){
-                        setopenUpdateTaskIsFromdeleteFinishedTasks(false)
-                        updateTask(e)
-                        opendeleteFinishedTasks()
-                      } else 
-                        updateTask(e)
-                      }
-                    }}
-                    id="update-end_date" 
-                    type="datetime-local" 
-                    required />
-                  }
-                </div>
-                <div>
-                  <label htmlFor="update-description">Description</label>
-                  <textarea 
-                    onChange={e=>setupdateTaskDescription(e.target.value)}
-                    defaultValue={chosenUpdateTask.description}
-                    id="update-description" placeholder="Task Description" rows="10" required >
-                  </textarea>
+                      if(e.key === "Enter"){
+                        if(openUpdateTaskIsFromdeleteFinishedTasks){
+                          setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                          updateTask(e)
+                          opendeleteAllFinishedTasks(e)
+                        } else 
+                          updateTask(e)
+                        }
+                      }}
+                    id="update-task_name" placeholder="Task Name" type="text" required />
+                  </div>
+                  <div>
+                    <label htmlFor="start_date">Start Date</label>
+                    {taskDateStatusIsChanging? null: 
+                      <input 
+                      onChange={e=>setupdateTaskStartDate(e.target.value)}
+                      defaultValue={UTCSQLtoLocalHTML(chosenUpdateTask.start_date)}
+                      onKeyDown={e => {
+                      if(e.key === "Enter"){
+                        if(openUpdateTaskIsFromdeleteFinishedTasks){
+                          setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                          updateTask(e)
+                          opendeleteAllFinishedTasks(e)
+                        } else 
+                          updateTask(e)
+                        }
+                      }}
+                      id="update-start_date" 
+                      type="datetime-local" 
+                      required />
+                    }
+                  </div>
+                  <div>
+                    <label htmlFor="end_date">End Date</label>
+                    {taskDateStatusIsChanging? null: 
+                      <input 
+                      onChange={e=>setupdateTaskEndDate(e.target.value)}
+                      defaultValue={UTCSQLtoLocalHTML(chosenUpdateTask.end_date)} 
+                      onKeyDown={e => {
+                      if(e.key === "Enter"){
+                        if(openUpdateTaskIsFromdeleteFinishedTasks){
+                          setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                          updateTask(e)
+                          opendeleteAllFinishedTasks(e)
+                        } else 
+                          updateTask(e)
+                        }
+                      }}
+                      id="update-end_date" 
+                      type="datetime-local" 
+                      required />
+                    }
+                  </div>
+                  <div>
+                    <label htmlFor="update-description">Description</label>
+                    <textarea 
+                      onChange={e=>setupdateTaskDescription(e.target.value)}
+                      defaultValue={chosenUpdateTask.description}
+                      id="update-description" placeholder="Task Description" rows="10" required >
+                    </textarea>
+                  </div>
                 </div>
               </div>
               <div className="pop-btns">
@@ -1356,7 +1394,7 @@ export default function Home() {
                 if(openUpdateTaskIsFromdeleteFinishedTasks){
                   setopenUpdateTaskIsFromdeleteFinishedTasks(false)
                   updateTask(e)
-                  opendeleteFinishedTasks()
+                  opendeleteAllFinishedTasks(e)
                 } else 
                   updateTask(e)
                 }}     
@@ -1377,12 +1415,15 @@ export default function Home() {
                 </h5>
               </div>
               <div className="pop-btns">
-                <button onClick={closeUpdateTaskAlert} className="cur-point pop-btn-cancel">Cancel</button>
+                <button onClick={e=>{
+                  e.stopPropagation()
+                  updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert(false)
+                }} className="cur-point pop-btn-cancel">Cancel</button>
                 <button onClick={e=>{
                 if(openUpdateTaskIsFromdeleteFinishedTasks){
                   setopenUpdateTaskIsFromdeleteFinishedTasks(false)
                   deleteTask(e)
-                  opendeleteFinishedTasks()
+                  opendeleteAllFinishedTasks(e)
                 } else 
                   deleteTask(e)
                 }}
@@ -1395,18 +1436,24 @@ export default function Home() {
         </dialog>
       )}
 
-      {!deleteFinishedTasksIsOpen && !deleteFinishedTasksAlertIsOpen? null : (  
+      {!deleteAllFinishedTasksIsOpen && !deleteAllFinishedTasksAlertIsOpen? null : (  
         <dialog 
-        onMouseDown={deleteFinishedTasksIsOpen?closedeleteAllFinishedTasks:closedeleteAllFinishedTasksAlert}
-        id="TPS" className="add-edit-popup">
+        onMouseDown={e=>{
+          e.stopPropagation()
+          deleteAllFinishedTasksIsOpen?closedeleteAllFinishedTasks():closedeleteAllFinishedTasksAlert(false)
+        }} id="TPS" className="add-edit-popup">
           <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} className="tp-container">
             <div className="pop-header">
               <h3 className="cur-def">Finished Tasks</h3>
-              <div onClick={closedeleteAllFinishedTasks} className="cur-point xclose-pop">
+              <div 
+              onClick={e=>{
+                e.stopPropagation()
+                deleteAllFinishedTasksIsOpen?closedeleteAllFinishedTasks():closedeleteAllFinishedTasksAlert(false)
+              }} className="cur-point xclose-pop">
                 <img src="/icons/xclose-black.svg" alt="close add task popup" />
               </div>
             </div>
-            {!deleteFinishedTasksAlertIsOpen ? (
+            {!deleteAllFinishedTasksAlertIsOpen ? (
             <>
               <div className="pop-body">
                 <ul>
@@ -1456,26 +1503,28 @@ export default function Home() {
                 </ul>
               </div>
               <div className="pop-btns">
-                <button onClick={closedeleteAllFinishedTasks} className="cur-point pop-btn-cancel">Cancel</button>
-                <button onClick={opendeleteFinishedTasksAlert} className="cur-point pop-btn-delete">Delete</button>
+                <button onClick={opendeleteAllFinishedTasksAlert} className="cur-point pop-btn-delete">Delete</button>
+                <button onClick={e=>{
+                  e.stopPropagation()
+                  closedeleteAllFinishedTasks()
+                }} className="cur-point pop-btn-cancel">Cancel</button>
               </div>
             </>
             ) : (
             <>
               <div className="pop-body">
                 <h5 className="cur-def">
-                  Are you sure you want to delete the task named
-                  <span style={{ color: "#bd0303" }}> 
-                    {" "+chosenUpdateTask.task_name} 
-                  </span>
-                  ? This will permanently
+                  Are you sure you want to delete all of your finished tasks? This will permanently
                   <span style={{ color: "#bd0303" }}> delete </span>
-                  the item.
+                  the all of the selected items.
                 </h5>
               </div>
               <div className="pop-btns">
+                <button onClick={e=>{
+                  e.stopPropagation()
+                  closedeleteAllFinishedTasksAlert(false)
+                }} className="cur-point pop-btn-cancel">Go Back</button>
                 <button onClick={e=>deleteAllFinishedTasks(e)} className="cur-point pop-btn-delete">Delete</button>
-                <button onClick={closedeleteAllFinishedTasksAlert} className="cur-point pop-btn-cancel">Go Back</button>
               </div>
             </>
               )
