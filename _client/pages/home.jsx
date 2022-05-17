@@ -67,14 +67,24 @@ export default function Home() {
   const isRunning = useRef(false)
   const currentTimezoneOffset = useRef(new Date().getTimezoneOffset())
     //helper functions
-    const Nulled = (v) => {return typeof v === "undefined" ? true : v === null ? true : v.length === 0}
-    const totalSize = (v,position) => {return (
+    const nulled = (v) => {return typeof v === "undefined" ? true : v === null ? true : v.length === 0}
+    const totalSizePosition = (v,position) => {return (
       ((position==="Left"||position==="Right")?v.width():v.height())+
-      (Nulled(v.css("margin"+position))?0:parseFloat(v.css("margin"+position)))+
-      (Nulled(v.css("padding"+position))?0:parseFloat(v.css("padding"+position)))+
-      (Nulled(v.css("border"+position))?0:parseFloat(v.css("border"+position)))
+      (nulled(v.css("margin"+position))?0:parseFloat(v.css("margin"+position)))+
+      (nulled(v.css("padding"+position))?0:parseFloat(v.css("padding"+position)))+
+      (nulled(v.css("border"+position))?0:parseFloat(v.css("border"+position)))
     )}
-    const val = (v) => {return Nulled(v)?[]:v}
+    const val = (v) => {return nulled(v)?[]:v}
+    const animate = (element, keyframe, duration, easing_callback, callback) => {
+      // console.log(keyframe)
+      const el = typeof element[0]==="undefined"? element: element[0]
+      if(typeof callback==="undefined"&&typeof easing_callback==="function")callback = easing_callback
+      const xduration = typeof duration==="undefined"||typeof duration!=="number"?0:duration
+      const xeasing = typeof easing_callback==="undefined"||typeof easing_callback!=="string"?"cubic-bezier(0, 0, 0.5, 1.25)":easing_callback
+      el.animate([{},keyframe],{duration: xduration, fill: "forwards", easing:xeasing})
+      if(typeof callback!=="undefined"||typeof callback==="function") 
+        return setTimeout(()=>{callback()},xduration)
+    }
 
   //=first render
   useEffect(() => {
@@ -105,7 +115,7 @@ export default function Home() {
 
   //=CheckDateStatus
   useUpdateEffectInterval(()=>{ 
-    if(Nulled(tasks)) return
+    if(nulled(tasks)) return
     tasks.map((task)=>{
       var currentTaskDateStatus = CheckTimeStatus(new Date(), new Date(task.start_date), new Date(task.end_date))
       if(currentTaskDateStatus!==task.date_status){
@@ -126,7 +136,7 @@ export default function Home() {
   
   //=Timezone Changed
   useUpdateEffect(()=>{
-    if (Nulled(tasks)) return
+    if (nulled(tasks)) return
     const clientOffset = TimezoneOffset()
     alert("Detected changes in Location, new Timezone: (UTC"
     +(clientOffset[0]<0?"-":"+")
@@ -175,7 +185,7 @@ export default function Home() {
   //=category form
   const addCategory = (e) => {
     e.preventDefault()
-    if(Nulled(addCategoryName)) return $("#add-category_name").get(0).reportValidity()
+    if(nulled(addCategoryName)) return $("#add-category_name").get(0).reportValidity()
     if(isRunning.current) return
     isRunning.current=true
     setaddCategoryName([])
@@ -198,7 +208,7 @@ export default function Home() {
 
   const updateCategory = (e) => {
     e.preventDefault()
-    if(Nulled(updateCategoryName)) return $("#update-category_name").get(0).reportValidity()
+    if(nulled(updateCategoryName)) return $("#update-category_name").get(0).reportValidity()
     if(isRunning.current) return
     isRunning.current=true
     setCategories([{
@@ -238,7 +248,7 @@ export default function Home() {
       },
       success: (result) => {
         isRunning.current=false
-        if(Nulled(result.categories)) return setopenedCategory([])
+        if(nulled(result.categories)) return setopenedCategory([])
         else if(openedCategory === chosenUpdateCategory)
           setopenedCategory(result.categories[0])
         setTasks(result.tasks)
@@ -251,26 +261,23 @@ export default function Home() {
   const openCategory = (category) => {
     if(isRunning.current) return
     isRunning.current=true
+    const html= $("html")
     const catmenu = $("#categoriesMenu")
     const topbar = $("#top-bar")
     if($("#category-icon").css("display")!=="none") {
       setopenedCategory(category)
-      $("body").css({"overflow":"auto"}).promise().done(()=>{
-        catmenu.animate({
-          top: -(totalSize(catmenu,"Bottom")+totalSize(topbar,"Bottom"))
-        },100,()=>{
-          catmenu.hide(()=>{
-            return isRunning.current=false
-          })
-        })
-        $("html, body").animate({
-          scrollTop: $("#tasks").offset().top - totalSize(topbar,"Bottom")
-        }, 250, "swing"); 
+      html.css({"overflow":"auto"}).promise().done(()=>{
+        animate(catmenu,{
+          transform: "translateY("+(-(totalSizePosition(catmenu,"Bottom")+totalSizePosition(topbar,"Bottom")))+"px)"
+        },300,()=>{return isRunning.current=false})
+        html.animate({
+          scrollTop: $("#tasks").offset().top - totalSizePosition(topbar,"Bottom")
+        }, 300); 
       })
     } else {
-      $("html, body").animate({
-        scrollTop: $("#tasks").offset().top - totalSize(topbar,"Bottom")
-      }, 250, "swing"); 
+      html.animate({
+        scrollTop: $("#tasks").offset().top - totalSizePosition(topbar,"Bottom")
+      }, 300); 
       setopenedCategory(category)
       return isRunning.current=false
     }
@@ -278,7 +285,7 @@ export default function Home() {
 
   const openUpdateCategory = (category, e) => {
     e.stopPropagation()
-    if(Nulled(categories)) return
+    if(nulled(categories)) return
     categories.map((xcategory) => {
       if (xcategory !== category) return
       setchosenUpdateCategory(category)
@@ -286,20 +293,25 @@ export default function Home() {
     })
   }
   useUpdateEffect(()=>{
-    const container = $(".cp-container")
+    const container = $("#uc-cp-container")
+    const html= $("html")
     if(updateCategoryIsOpen && !updateCategoryAlertIsOpen){
-      if($("html").width()>$("html").height()){//landscape
-        container.animate({
-          "left":-(totalSize(container,"Left"))
+      if(html.width()>html.height()){//landscape
+        animate(container,{
+          transform: "translateX("+(-(totalSizePosition(container,"Left")))+"px)"
         },0,()=>{
-          container.show().animate({"left":0},250)
+          container.show(()=>{
+            animate(container,{transform:"translateX(0)"},300)
+          })
         })   
       }
       else {
-        container.animate({
-          "bottom":-(totalSize(container,"Bottom"))
+        animate(container,{
+          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
         },0,()=>{
-          container.show().animate({"bottom":0},250,"swing")
+          container.show(()=>{
+            animate(container,{transform:"translateY(0)"},300)
+          })
         })
       }
     } 
@@ -308,19 +320,20 @@ export default function Home() {
   },[updateCategoryIsOpen])
 
   const closeUpdateCategory = () => {
-    const container = $(".cp-container")
-    if($("html").width()>$("html").height()){//landscape
-      container.animate({
-        "left":-(totalSize(container,"Left"))
-      },250,"swing",()=>{
+    const container = $("#uc-cp-container")
+    const html= $("html")
+    if(html.width()>html.height()){//landscape
+      animate(container,{
+        transform: "translateX("+(-(totalSizePosition(container,"Left")))+"px)"
+      },300,"ease-in",()=>{
         container.hide()
         setchosenUpdateCategory([])
         setupdateCategoryIsOpen(false)
       })
     } else {
-      container.animate({
-        "bottom":-(totalSize(container,"Bottom"))
-      },250,"swing",()=>{
+      animate(container,{
+        transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+      },300,"ease-in",()=>{
         container.hide()
         setchosenUpdateCategory([])
         setupdateCategoryIsOpen(false)
@@ -333,42 +346,44 @@ export default function Home() {
     setupdateCategoryAlertIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const element = $(".pop-body > *")
+    const element = $("#uca-pop-body > *")
     if(updateCategoryAlertIsOpen){
-      element.animate({
-        "right":-(totalSize(element,"Right"))
+      animate(element,{
+        transform: "translateX("+(totalSizePosition(element,"Right"))+"px)"
       },0,()=>{
-        element.show().animate({
-          "right":0
-        },250,"swing")
+        element.show(()=>{
+          animate(element,{transform:"translateX(0)"},300)
+        })
       })
     } else {
-      element.animate({
-        "left":-(totalSize(element,"Left"))
+      animate(element,{
+        transform: "translateX("+(-(totalSizePosition(element,"Left")))+"px)"
       },0,()=>{
-        element.show().animate({
-          "left":0
-        },250,"swing")
+        element.show(()=>{
+          animate(element,{transform:"translateX(0)"},300)
+        })
       })
     }
   },[updateCategoryAlertIsOpen])
 
   const closeUpdateCategoryAlert = (submitted) => {
+    const container = $("#uc-cp-container")
+    const html= $("html")
     if(submitted) {
-      const container = $(".cp-container")
-      if($("html").width()>$("html").height()){//landscape
-        container.animate({
-          "left":-(totalSize(container,"Left"))
-        },250,"swing",()=>{
+      container = $(".cp-container")
+      if(html.width()>html.height()){//landscape
+        animate(container,{
+          transform: "translateX("+(-(totalSizePosition(container,"Left")))+"px)"
+        },300,"ease-in",()=>{
           container.hide()
           setupdateCategoryAlertIsOpen(false)
           setupdateCategoryIsOpen(false)
           setchosenUpdateCategory([])
         })
       } else {
-        container.animate({
-          "bottom":-(totalSize(container,"Bottom"))
-        },250,"swing",()=>{
+        animate(container,{
+          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+        },300,"ease-in",()=>{
           container.hide()
           setupdateCategoryAlertIsOpen(false)
           setupdateCategoryIsOpen(false)
@@ -381,18 +396,18 @@ export default function Home() {
 
   //=task form
   const addTask = (e) => {
-    if(Nulled(addTaskName)){
+    if(nulled(addTaskName)){
       return $("#add-task_name").get(0).reportValidity()
     }
-    if(Nulled(addTaskStartDate)){
+    if(nulled(addTaskStartDate)){
       $("#add-start_date").get(0).setCustomValidity("")
       return $("#add-start_date").get(0).reportValidity()
     }
-    if(Nulled(addTaskEndDate)){
+    if(nulled(addTaskEndDate)){
       $("#add-end_date").get(0).setCustomValidity("")
       return $("#add-end_date").get(0).reportValidity()
     }
-    if(Nulled(addTaskDescription)){
+    if(nulled(addTaskDescription)){
       return $("#add-description").get(0).reportValidity()
     }
     if(addTaskStartDate>=addTaskEndDate){
@@ -403,7 +418,7 @@ export default function Home() {
     if(isRunning.current) return
     isRunning.current = true
     // Create Category if None else Update the Category where task is
-    if (Nulled(categories)||Nulled(openCategory)) {
+    if (nulled(categories)||nulled(openCategory)) {
       const newCategory = {id:1, category_name: "No Name"}
       setCategories([newCategory])
       setopenedCategory(newCategory)
@@ -420,7 +435,7 @@ export default function Home() {
     const date_status = CheckTimeStatus(currentdate, new Date(addTaskStartDate), new Date(addTaskEndDate))
     setTasks([// Order by asc end_dates, then recent
       ...tasks.filter(x=>{return (new Date(x.end_date)<new Date(end_date))}),
-      {category_id: Nulled(categories)||Nulled(openedCategory)? 1:openedCategory.id,
+      {category_id: nulled(categories)||nulled(openedCategory)? 1:openedCategory.id,
       task_name: addTaskName,
       start_date: start_date,
       end_date: end_date,
@@ -482,10 +497,10 @@ export default function Home() {
       ...categories.filter((category)=>{return category.id!==chosenUpdateTask.category_id})
     ])
     // Check Changed Values
-    const task_name = Nulled(updateTaskName)? chosenUpdateTask.task_name:updateTaskName
-    const start_date = Nulled(updateTaskStartDate)? chosenUpdateTask.start_date:new Date(updateTaskStartDate).toJSON()
-    const end_date = Nulled(updateTaskEndDate)? chosenUpdateTask.end_date:new Date(updateTaskEndDate).toJSON()
-    const description = Nulled(updateTaskDescription)? chosenUpdateTask.description:updateTaskDescription
+    const task_name = nulled(updateTaskName)? chosenUpdateTask.task_name:updateTaskName
+    const start_date = nulled(updateTaskStartDate)? chosenUpdateTask.start_date:new Date(updateTaskStartDate).toJSON()
+    const end_date = nulled(updateTaskEndDate)? chosenUpdateTask.end_date:new Date(updateTaskEndDate).toJSON()
+    const description = nulled(updateTaskDescription)? chosenUpdateTask.description:updateTaskDescription
     const date_status = CheckTimeStatus(new Date(), new Date(start_date), new Date(end_date))
     setTasks([// Order by asc end_dates, desc id
       ...tasks.filter(x=>{return (new Date(x.end_date)<new Date(end_date))&&(x!==chosenUpdateTask)}),
@@ -604,37 +619,43 @@ export default function Home() {
     setaddTaskIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const container = $(".tp-container")
+    const container = $("#at-tp-container")
+    const html= $("html")
     if(addTaskIsOpen){
-      if($("html").width()>$("html").height()){//landscape
-        container.animate({
-          "right":-(totalSize(container,"Right"))
+      if(html.width()>html.height()){//landscape
+        animate(container,{
+          transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
         },0,()=>{
-          container.show().animate({"right":0},250,"swing")
+          container.show(()=>{
+            animate(container,{transform:"translateX(0)"},300)
+          })
         })
       } else {
-        container.animate({
-          "bottom":-(totalSize(container,"Bottom"))
+        animate(container,{
+          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
         },0,()=>{
-          container.show().animate({"bottom":0},250,"swing")
+          container.show(()=>{
+            animate(container,{transform:"translateX(0)"},300)
+          })
         })
       }
     }
   },[addTaskIsOpen])
 
   const closeAddTask = () => {
-    const container = $(".tp-container")
-    if($("html").width()>$("html").height()){//landscape
-      container.animate({
-        "right":-(totalSize(container,"Right"))
-      },250,"swing",()=>{
+    const container = $("#at-tp-container")
+    const html= $("html")
+    if(html.width()>html.height()){//landscape
+      animate(container,{
+        transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+      },300,"ease-in",()=>{
         container.hide()
         setaddTaskIsOpen(false)
       })
     } else {
-      container.animate({
-        "bottom":-(totalSize(container,"Bottom"))
-      },250,"swing",()=>{
+      animate(container,{
+        transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+      },300,"ease-in",()=>{
         container.hide()
         setaddTaskIsOpen(false)
       })
@@ -643,25 +664,30 @@ export default function Home() {
 
   const openUpdateTask = (task, e) => {
     e.stopPropagation()
-    if (Nulled(tasks)||Nulled(categories)) 
+    if (nulled(tasks)||nulled(categories)) 
       return setopenUpdateTaskIsFromdeleteFinishedTasks(false)
     setchosenUpdateTask(task)
     setupdateTaskIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const container = $(".tp-container")
+    const container = $("#ut-tp-container")
+    const html = $("html")
     if(updateTaskIsOpen && !updateTaskAlertIsOpen){
-      if($("html").width()>$("html").height()){//landscape
-        container.animate({
-          "right":-(totalSize(container,"Right"))
+      if(html.width()>html.height()){//landscape
+        animate(container,{
+          transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
         },0,()=>{
-          container.show().animate({"right":0},250,"swing")
+          container.show(()=>{
+            animate(container,{transform:"translateX(0)"},300)
+          })
         })
       } else {
-        container.animate({
-          "bottom":-(totalSize(container,"Bottom"))
+        animate(container,{
+          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
         },0,()=>{
-          container.show().animate({"bottom":0},250,"swing")
+          container.show(()=>{
+            animate(container,{transform:"translateY(0)"},300)
+          })
         })
       }
     } else if(updateTaskIsOpen && updateTaskAlertIsOpen)
@@ -669,19 +695,20 @@ export default function Home() {
   },[updateTaskIsOpen])
 
   const closeUpdateTask = () => {
-    const container = $(".tp-container")
-    if($("html").width()>$("html").height()){//landscape
-      container.animate({
-        "right":-(totalSize(container,"Right"))
-      },250,"swing",()=>{
+    const container = $("#ut-tp-container")
+    const html= $("html")
+    if(html.width()>html.height()){//landscape
+      animate(container,{
+        transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+      },300,"ease-in",()=>{
         container.hide()
         setupdateTaskIsOpen(false)
         setchosenUpdateTask([])
       })
     } else {
-      container.animate({
-        "bottom":-(totalSize(container,"Bottom"))
-      },250,"swing",()=>{
+      animate(container,{
+        transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+      },300,"ease-in",()=>{
         container.hide()
         setupdateTaskIsOpen(false)
         setchosenUpdateTask([])
@@ -694,42 +721,44 @@ export default function Home() {
     setupdateTaskAlertIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const element = $(".pop-body > *")
+    const element = $("#uta-pop-body > *")
     if(updateTaskAlertIsOpen){
-      element.animate({
-        "right":-(totalSize(element,"Right"))
+      animate(element,{
+        transform: "translateX("+(totalSizePosition(element,"Right"))+"px)"
       },0,()=>{
-        element.show().animate({
-          "right":0
-        },250,"swing")
+        element.show(()=>{
+          animate(element,{transform:"translateX(0)"},300)
+        })
       })
     } else {
-      element.animate({
-        "left":-(totalSize(element,"Left"))
+      animate(element,{
+        transform: "translateX("+(-(totalSizePosition(element,"Left")))+"px)"
       },0,()=>{
-        element.show().animate({
-          "left":0
-        },250,"swing")
+        element.show(()=>{
+          animate(element,{transform:"translateX(0)"},300)
+        })
       })
     }
   },[updateTaskAlertIsOpen])
 
   const closeUpdateTaskAlert = (submitted) => {
+    const container = $("#ut-tp-container")
+    const html= $("html")
     if(submitted){
-      const container = $(".tp-container")
-      if($("html").width()>$("html").height()){//landscape
-        container.animate({
-          "right":-(totalSize(container,"Right"))
-        },250,"swing",()=>{
+      container = $(".tp-container")
+      if(html.width()>html.height()){//landscape
+        animate(container,{
+          transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+        },300,"ease-in",()=>{
           container.hide()
           setupdateTaskAlertIsOpen(false)
           setupdateTaskIsOpen(false)
           setchosenUpdateTask([])
         })
       } else {
-        container.animate({
-          "bottom":-(totalSize(container,"Bottom"))
-        },250,"swing",()=>{
+        animate(container,{
+          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+        },300,"ease-in",()=>{
           container.hide()
           setupdateTaskAlertIsOpen(false)
           setupdateTaskIsOpen(false)
@@ -745,19 +774,24 @@ export default function Home() {
     setdeleteAllFinishedTasksIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const container = $(".tp-container")
+    const container = $("#daft-tp-container")
+    const html= $("html")
     if(deleteAllFinishedTasksIsOpen && !deleteAllFinishedTasksAlertIsOpen){
-      if($("html").width()>$("html").height()){//landscape
-        container.animate({
-          "right":-(totalSize(container,"Right"))
+      if(html.width()>html.height()){//landscape
+        animate(container,{
+          transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
         },0,()=>{
-          container.show().animate({"right":0},250,"swing")
+          container.show(()=>{
+            animate(container,{transform: "translateX(0)"},300)
+          })
         })
       } else {
-        container.animate({
-          "bottom":-(totalSize(container,"Bottom"))
+        animate(container,{
+          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
         },0,()=>{
-          container.show().animate({"bottom":0},250,"swing")
+          container.show(()=>{
+            animate(container,{transform: "translateY(0)"},300)
+          })
         })
       }
     } else if(deleteAllFinishedTasksIsOpen && deleteAllFinishedTasksAlertIsOpen)
@@ -767,18 +801,19 @@ export default function Home() {
   const closedeleteAllFinishedTasks = () => {
     if(openUpdateTaskIsFromdeleteFinishedTasks) 
       setopenUpdateTaskIsFromdeleteFinishedTasks(false)
-    const container = $(".tp-container")
-    if($("html").width()>$("html").height()){//landscape
-      container.animate({
-        "right":-(totalSize(container,"Right"))
-      },250,"swing",()=>{
+    const container = $("#daft-tp-container")
+    const html= $("html")
+    if(html.width()>html.height()){//landscape
+      animate(container,{
+        transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+      },300,"ease-in",()=>{
         container.hide()
         setdeleteAllFinishedTasksIsOpen(false)
       })
     } else {
-      container.animate({
-        "bottom":-(totalSize(container,"Bottom"))
-      },250,"swing",()=>{
+      animate(container,{
+        transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+      },300,"ease-in",()=>{
         container.hide()
         setdeleteAllFinishedTasksIsOpen(false)
       })
@@ -786,7 +821,7 @@ export default function Home() {
   }
 
   const opendeleteAllFinishedTasksAlert = () => {
-    if(Nulled(categories)||Nulled(tasks)) return alert("There are no Tasks Available to Delete.")
+    if(nulled(categories)||nulled(tasks)) return alert("There are no Tasks Available to Delete.")
     else if(tasks.filter((task)=>task.taskisfinished===1).length===0) return alert("There are no tasks that have been Finished.")
     else {
       setdeleteAllFinishedTasksIsOpen(false)
@@ -794,41 +829,43 @@ export default function Home() {
     }
   }
   useUpdateEffect(()=>{
-    const element = $(".pop-body > *")
+    const element = $("#dafta-pop-body > *")
     if(deleteAllFinishedTasksAlertIsOpen){
-      element.animate({
-        "right":-(totalSize(element,"Right"))
+      animate(element,{
+        transform: "translateX("+(totalSizePosition(element,"Right"))+"px)"
       },0,()=>{
-        element.show().animate({
-          "right":0
-        },250,"swing")
+        element.show(()=>{
+          animate(element,{transform: "translateX(0)"},300)
+        })
       })
     } else {
-      element.animate({
-        "left":-(totalSize(element,"Left"))
+      animate(element,{
+        transform: "translateX("+(-(totalSizePosition(element,"Left")))+"px)"
       },0,()=>{
-        element.show().animate({
-          "left":0
-        },250,"swing")
+        element.show(()=>{
+          animate(element,{transform: "translateX(0)"},300)
+        })
       })
     }
   },[deleteAllFinishedTasksAlertIsOpen])
 
   const closedeleteAllFinishedTasksAlert = (submitted) => {
+    const container = $("#daft-tp-container")
+    const html= $("html")
     if(submitted){
-      const container = $(".tp-container")
-      if($("html").width()>$("html").height()){//landscape
-        container.animate({
-          "right":-(totalSize(container,"Right"))
-        },250,"swing",()=>{
+      container = $(".tp-container")
+      if(html.width()>html.height()){//landscape
+        animate(container,{
+          transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+        },300,"ease-in",()=>{
           container.hide()
           setdeleteAllFinishedTasksAlertIsOpen(false)
           setdeleteAllFinishedTasksIsOpen(false)
         })
       } else {
-        container.animate({
-          "bottom":-(totalSize(container,"Bottom"))
-        },250,"swing",()=>{
+        animate(container,{
+          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+        },300,"ease-in",()=>{
           container.hide()
           setdeleteAllFinishedTasksAlertIsOpen(false)
           setdeleteAllFinishedTasksIsOpen(false)
@@ -846,31 +883,31 @@ export default function Home() {
 
   //=animation
   const scrollup = () => {
-    $("html, body").animate({
-      scrollTop: $("#dashboard").offset().top - ($("#top-bar").height())
-    }, 250, "swing");    
+    const html= $("html")
+    html.animate({
+      scrollTop: ($("#dashboard").offset().top - ($("#top-bar").height()))+"px"
+    }, 300);    
   }
   const categoryMenuIcon = () => {
     if (!isRunning.current) {
       isRunning.current=true
-      const catmenu = $("#categoriesMenu")
+      const html = $("html")
       const topbar = $("#top-bar")
-      if(catmenu.css("display") === "none") {
-        $('body').css({"overflow":"hidden"})
-        catmenu.css({top: -(totalSize(catmenu,"Bottom")+totalSize(topbar,"Bottom"))})// return on top
-        catmenu.show().animate({
-          top: totalSize(topbar,"Top")
-        },250,"swing",() => {
-          return isRunning.current=false
-        })
-      } else {
-        $('body').css('overflow','auto')
-        catmenu.animate({
-          top: -(totalSize(catmenu,"Bottom")+totalSize(topbar,"Bottom"))
-        },250,"swing",() => {
-          catmenu.hide(() => {
+      const catmenu = $("#categoriesMenu")
+      if(catmenu.css("transform") !== "matrix(1, 0, 0, 1, 0, 0)") {//check if translateY is 0
+        html.css({"overflow":"hidden"})
+        animate(catmenu,{transform: "translateY("+-(totalSizePosition(catmenu,"Bottom")+totalSizePosition(topbar,"Bottom"))+"px)"})// return on top
+        animate(catmenu,{
+            transform: "translateY(0)"
+          },300,() => {
             return isRunning.current=false
           })
+      } else {
+        html.css("overflow","auto")
+        animate(catmenu,{
+          transform: "translateY("+(-(totalSizePosition(catmenu,"Bottom")+totalSizePosition(topbar,"Bottom")))+"px)"
+        },300,"ease-in",() => {
+          return isRunning.current=false
         })
       }
     }
@@ -878,16 +915,22 @@ export default function Home() {
   //=event listeners
   useEffect(()=>{
     if (typeof window !== "undefined") {
+      const html= $("html")
       $(window).on("scroll",() => {
         const dashboardHeight = $("#dashboard").height()
         const goupicon = $("#go-up")
-        if($("html").scrollTop() > dashboardHeight && goupicon.css("opacity")==="0") 
-          return goupicon.show().fadeTo(250,1,"swing")
-        else if($("html").scrollTop() < dashboardHeight && goupicon.css("opacity")==="1") 
-          return goupicon.fadeTo(250,0,"swing",()=>goupicon.hide())
+        if(html.scrollTop() > dashboardHeight && goupicon.css("opacity")==="0") 
+          return goupicon.show(()=>{
+            animate(goupicon,{opacity: "1"},300)
+          })
+        else if(html.scrollTop() < dashboardHeight && goupicon.css("opacity")==="1") 
+          return animate(goupicon,{opacity:"0"},()=>{
+            goupicon.hide()
+          })
       })
       //Fix Categories menu after resize
       $(window).on("resize", () => {
+        const html= $("html")
         const topbar = $("#top-bar")
         const catmenu = $("#categoriesMenu")
         const cataddinput = $("#add-category_name")
@@ -895,26 +938,40 @@ export default function Home() {
         const catIsActive = 
           cataddinput.is(":focus") || 
           catupdateinput.is(":focus") ||
-          !Nulled(cataddinput.val()) ||
-          !Nulled(catupdateinput.val())
+          !nulled(cataddinput.val()) ||
+          !nulled(catupdateinput.val())
         if($(window).outerWidth()>=785) {
-          catmenu.css("top","").show()
-          return $("body").css("overflow","auto")
+          animate(catmenu,{transform: "translateY(0)"})
+          return html.css("overflow","auto")
         }
-        else if(catIsActive && $(window).outerWidth()<785) 
-          return $("body").css("overflow","hidden")
+        else if(catIsActive && $(window).outerWidth()<785){
+          animate(catmenu,{transform: "translateY(0)"})
+          return html.css("overflow","hidden")
+        }
         else if($(window).outerWidth()<785) {
-          catmenu.css("top",-(totalSize(catmenu,"Bottom")+totalSize(topbar,"Bottom"))).hide()
-          return $("body").css("overflow","auto")
+          animate(catmenu,{transform: "translateY("+-(totalSizePosition(catmenu,"Bottom")+totalSizePosition(topbar,"Bottom"))+"px)"})
+          return html.css("overflow","auto")
         }
       })
       // Change Categories Scroll Max Height
       $(window).on("load", () => {
-        return $("#categoriesul").css({"maxHeight":$("body").height() - 136 + "px"})
+        const topbar = $("#top-bar")
+        const addcategory = $(".add-category")
+        const addcategoryname = $("#add-category_name")
+        const listItem = $("#categoriesul > li:first-child")
+        const listItemPMHeight = typeof listItem==="undefined"? 0 : listItem.outerHeight()-listItem.height()
+        const totalHeightAbove = topbar.outerHeight()+addcategory.outerHeight()+addcategoryname.outerHeight()+listItemPMHeight
+        return $("#categoriesul").css({"maxHeight":$(window).outerHeight() - totalHeightAbove + "px"})
       })
 
       $(window).on("resize", () => {
-        return $("#categoriesul").css({"maxHeight":$("body").height() - 136 + "px"})
+        const topbar = $("#top-bar")
+        const addcategory = $(".add-category")
+        const addcategoryname = $("#add-category_name")
+        const listItem = $("#categoriesul > li:first-child")
+        const listItemPMHeight = typeof listItem==="undefined"? 0 : listItem.outerHeight()-listItem.height()
+        const totalHeightAbove = topbar.outerHeight()+addcategory.outerHeight()+addcategoryname.outerHeight()+listItemPMHeight
+        return $("#categoriesul").css({"maxHeight":$(window).outerHeight() - totalHeightAbove + "px"})
       }) 
     }
   },[])
@@ -937,7 +994,7 @@ export default function Home() {
             <nav id="top-bar" className="top-bar">
               <h1>GoForIt</h1>
               <h5>
-                {Nulled(data.username)? "" : "Hello, "+data.username}
+                {nulled(data.username)? "" : "Hello, "+data.username}
               </h5>
             </nav>
           </div>
@@ -955,7 +1012,7 @@ export default function Home() {
                 onChange={e=>setaddCategoryName(e.target.value)} 
                 onKeyDown={e => {e.key === "Enter" && addCategory(e)}} placeholder="Add Category" maxLength="35" type="text" required />
             <ul id="categoriesul">
-              {Nulled(categories) ? (
+              {nulled(categories) ? (
                 <li className="category-empty">
                   <img src="/icons/empty.svg" alt="empty category" />
                   <p>...Whew Empty...</p>
@@ -985,7 +1042,7 @@ export default function Home() {
           <div className="main-contents">
             <div id="tasks" className="tasks">
               <div className="ts-header">
-                {Nulled(categories) ? (
+                {nulled(categories) ? (
                   <h3>Tasks</h3>
                 ) : (
                   <h3 className="break-word">Tasks: {val(openedCategory.category_name)}</h3>
@@ -995,7 +1052,7 @@ export default function Home() {
                 </div>
               </div>
               <ul>
-                {Nulled(categories) || (tasks.filter((task)=>task.category_id===openedCategory.id).length===0)? (
+                {nulled(categories) || (tasks.filter((task)=>task.category_id===openedCategory.id).length===0)? (
                   <li className="category-empty">
                     <img src="/icons/empty.svg" alt="empty task" />
                     <p>...Whew Empty...</p>
@@ -1050,7 +1107,7 @@ export default function Home() {
               </div>
               <h5>Missed Tasks</h5>
               <ul className="dashboardul">
-                {Nulled(tasks)
+                {nulled(tasks)
                   ? null
                   : tasks.map((task, idx) => {
                       return task.date_status === "Missed" ? (
@@ -1100,7 +1157,7 @@ export default function Home() {
 
               <h5>Ongoing Tasks</h5>
               <ul className="dashboardul">
-                {Nulled(tasks)
+                {nulled(tasks)
                   ? null
                   : tasks.map((task, idx) => {
                       return task.date_status === "Ongoing" ? (
@@ -1143,7 +1200,7 @@ export default function Home() {
 
               <h5>Tasks Soon</h5>
               <ul className="dashboardul">
-                {Nulled(tasks)
+                {nulled(tasks)
                   ? null
                   : tasks.map((task, idx) => {
                       return task.date_status === "Soon" ? (
@@ -1187,12 +1244,12 @@ export default function Home() {
           </div>
       </div>
 
-      {(!updateCategoryIsOpen && !updateCategoryAlertIsOpen) || Nulled(chosenUpdateCategory) ? null : (
+      {(!updateCategoryIsOpen && !updateCategoryAlertIsOpen) || nulled(chosenUpdateCategory) ? null : (
         <dialog onMouseDown={e=>{
           e.stopPropagation()
           updateCategoryIsOpen?closeUpdateCategory():closeUpdateCategoryAlert(false)
-          }} id="TPS" className="add-edit-popup">
-          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} className="cp-container">
+          }} className="add-edit-popup">
+          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} id="uc-cp-container" className="cp-container">
             <div className="pop-header">
               <h3 className="cur-def">{"Edit Category ("+chosenUpdateCategory.category_name+")"}</h3>
               <div onClick={e=>{
@@ -1204,7 +1261,7 @@ export default function Home() {
             </div>
             {!updateCategoryAlertIsOpen ? (
             <>
-              <div className="pop-body">
+              <div id="uca-pop-body" className="pop-body">
                 <div>
                   <label htmlFor="update-category_name">Category Name</label>
                   <input 
@@ -1221,7 +1278,7 @@ export default function Home() {
             </>
             ) : (
             <>
-              <div className="pop-body">
+              <div id="uca-pop-body" className="pop-body">
                 <h5>
                   Are you sure you want to delete the category 
                   <span style={{ color: "#bd0303" }}>
@@ -1247,16 +1304,15 @@ export default function Home() {
 
       {!addTaskIsOpen ? null : (
         <dialog 
-          onMouseDown={closeAddTask}
-          id="ATP" className="add-edit-popup">
-          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} className="tp-container">
+          onMouseDown={closeAddTask} className="add-edit-popup">
+          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} id="at-tp-container" className="tp-container">
             <div className="pop-header">
               <h3>Add Task</h3>
               <div onClick={closeAddTask} className="cur-point xclose-pop">
                 <img src="/icons/xclose-black.svg" alt="close add task popup" />
               </div>
             </div>
-            <div className="pop-body">
+            <div id="pop-body" className="pop-body">
               <div>
                 <label htmlFor="add-task_name">Task Name</label>
                 <input 
@@ -1307,9 +1363,8 @@ export default function Home() {
             opendeleteAllFinishedTasks(e)
           } else closeUpdateTaskAlert(false)
         } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert(false)
-        }}
-        id="TPS" className="add-edit-popup">
-          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} className="tp-container">
+        }} className="add-edit-popup">
+          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} id="ut-tp-container" className="tp-container">
             <div className="pop-header">
               <h3 className="cur-def">{"Edit Task ("+chosenUpdateTask.task_name+")"}</h3>
               <div onClick={(e)=>{
@@ -1328,7 +1383,7 @@ export default function Home() {
             </div>
             {!updateTaskAlertIsOpen ? (
             <>
-              <div id="updateTask" className="pop-body">
+              <div id="uta-pop-body" className="pop-body">
                 <div>
                   <div>
                     <label htmlFor="update-task_name">Task Name</label>
@@ -1414,7 +1469,7 @@ export default function Home() {
             </>
             ) : (
             <>
-              <div className="pop-body">
+              <div id="uta-pop-body" className="pop-body">
                 <h5 className="cur-def">
                   Are you sure you want to delete the task named
                   <span style={{ color: "#bd0303" }}> 
@@ -1452,8 +1507,8 @@ export default function Home() {
         onMouseDown={e=>{
           e.stopPropagation()
           deleteAllFinishedTasksIsOpen?closedeleteAllFinishedTasks():closedeleteAllFinishedTasksAlert(false)
-        }} id="TPS" className="add-edit-popup">
-          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} className="tp-container">
+        }} className="add-edit-popup">
+          <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} id="daft-tp-container" className="tp-container">
             <div className="pop-header">
               <h3 className="cur-def">Finished Tasks</h3>
               <div 
@@ -1466,9 +1521,9 @@ export default function Home() {
             </div>
             {!deleteAllFinishedTasksAlertIsOpen ? (
             <>
-              <div className="pop-body">
+              <div id="pop-body" className="pop-body">
                 <ul>
-                  {Nulled(categories) || (tasks.filter((task)=>task.taskisfinished===1).length===0)? (
+                  {nulled(categories) || (tasks.filter((task)=>task.taskisfinished===1).length===0)? (
                     <li className="category-empty">
                       <img src="/icons/empty.svg" alt="empty task" />
                       <p>...There are no tasks Finished...</p>
@@ -1523,7 +1578,7 @@ export default function Home() {
             </>
             ) : (
             <>
-              <div className="pop-body">
+              <div id="dafta-pop-body" className="pop-body">
                 <h5 className="cur-def">
                   Are you sure you want to delete all of your finished tasks? This will permanently
                   <span style={{ color: "#bd0303" }}> delete </span>
