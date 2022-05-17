@@ -76,7 +76,6 @@ export default function Home() {
     )}
     const val = (v) => {return nulled(v)?[]:v}
     const animate = (element, keyframe, duration, easing_callback, callback) => {
-      // console.log(keyframe)
       const el = typeof element[0]==="undefined"? element: element[0]
       if(typeof callback==="undefined"&&typeof easing_callback==="function")callback = easing_callback
       const xduration = typeof duration==="undefined"||typeof duration!=="number"?0:duration
