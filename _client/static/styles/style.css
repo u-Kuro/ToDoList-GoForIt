@@ -114,7 +114,7 @@ p{
 }
 /* /////////////////////////////////////////// */
 .category-selected{
-  background-color:rgba(0,0,0,.08)
+  background-color:rgba(221,216,216,.4)
 }
 
 .Missed{
@@ -352,7 +352,7 @@ body.loading .loading{
 }
 
 .category:hover{
-  background-color:rgba(0,0,0,.08)
+  background-color:rgba(221,216,216,.4)
 }
 
 .category-empty{
@@ -380,7 +380,7 @@ body.loading .loading{
 }
 
 .category-settings:hover{
-  background-color:rgba(221,216,216,.3)
+  background-color:rgba(221,216,216,.4)
 }
 
 .category-settings img{
@@ -390,7 +390,7 @@ body.loading .loading{
 }
 
 .category-settings-popup{
-  background-color:rgba(0,0,0,.3);
+  background-color:rgba(0,0,0,.4);
   width:100%;
   min-height:100%;
   top:0;
@@ -506,7 +506,7 @@ body.loading .loading{
 
 .task-settings:hover{
   border-radius:.3em;
-  background-color:rgba(221,216,216,.3)
+  background-color:rgba(221,216,216,.4)
 }
 
 .task-settings img{
@@ -570,7 +570,7 @@ body.loading .loading{
 }
 
 .add-edit-popup{
-  background-color:rgba(0,0,0,.3);
+  background-color:rgba(0,0,0,.4);
   width:100%;
   min-height:100%;
   position:fixed;
@@ -621,7 +621,7 @@ body.loading .loading{
 }
 
 .xclose-pop:hover{
-  background-color:rgba(221,216,216,.3)
+  background-color:rgba(221,216,216,.4)
 }
 
 .xclose-pop img{
@@ -767,7 +767,7 @@ body.loading .loading{
   display:flex;
   align-items:center;
   justify-content:center;
-  background: rgba(0, 0, 0,0.5);
+  background: rgba(0, 0, 0,0.4);
 }
 
 .reg-container{

@@ -268,7 +268,7 @@ export default function Home() {
       html.css({"overflow":"auto"}).promise().done(()=>{
         animate(catmenu,{
           transform: "translateY("+(-(totalSizePosition(catmenu,"Bottom")+totalSizePosition(topbar,"Bottom")))+"px)"
-        },300,()=>{return isRunning.current=false})
+        },300,"ease-out",()=>{return isRunning.current=false})
         html.animate({
           scrollTop: $("#tasks").offset().top - totalSizePosition(topbar,"Bottom")
         }, 300); 
@@ -898,7 +898,7 @@ export default function Home() {
         animate(catmenu,{transform: "translateY("+-(totalSizePosition(catmenu,"Bottom")+totalSizePosition(topbar,"Bottom"))+"px)"})// return on top
         animate(catmenu,{
             transform: "translateY(0)"
-          },300,() => {
+          },300,"ease-out",() => {
             return isRunning.current=false
           })
       } else {
