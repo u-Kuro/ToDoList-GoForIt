@@ -35,20 +35,20 @@
          return this
        }
      }
-    animate(keyframe, duration_callback, easing_iterations_callback, iterations_callback, callback) {
-      const _duration = typeof duration_callback==="function"? 0:duration_callback
-      const _easing = typeof easing_callback==="function"? "cubic-bezier(0, 0, 0.5, 1.25)":easing_callback
-      const _iterations = typeof iterations_callback==="function"? 1:iteration_callback
-      const _callback = typeof callback==="function"? callback:()=>{}
-      this.forEach(element=> {
-        element.animate([{},keyframe], {
-          duration:_duration, fill:"forwards", easing:_easing, iterations:_iterations})
-      })
-      setTimeout(()=> {
-        _callback()
-        return this
-      },_duration)    
-    }
+     animate(keyframe, duration_callback, easing_iterations_callback, iterations_callback, callback) {
+       const _duration = typeof duration_callback==="function"? 0:duration_callback
+       const _easing = typeof easing_callback==="function"? "cubic-bezier(0, 0, 0.5, 1.25)":easing_callback
+       const _iterations = typeof iterations_callback==="function"? 1:iteration_callback
+       const _callback = typeof callback==="function"? callback:()=>{}
+       this.forEach(element=> {
+         element.animate([{},keyframe], {
+           duration:_duration, fill:"forwards", easing:_easing, iterations:_iterations})
+       })
+       setTimeout(()=> {
+         _callback()
+         return this
+       },_duration)    
+     }
 //   // Validator
 //   setCustomValidity(message) {
 //     this.forEach(element=>element.setCustomValidity(message))
@@ -59,7 +59,7 @@
 //     return this
 //   }
 //   // Setter
-//   val(value) {
+//   set val(value) {
 //     this.forEach(element=>element.value=value)
        return this
 //   }
@@ -72,6 +72,11 @@
 //     return this
 //   }
      // Getter
+     get val() {
+       return (this.isElement? this.element.value
+         : this.map(element=>element.value)
+       )
+     }
 //   get height() {
 //     return (this.isElement? this.element.style.height
          : this.map(element=>element.style.height)
