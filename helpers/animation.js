@@ -3,6 +3,8 @@
        new Elements[...document.querySelectorAll(element_s)])
      else new Elements([element_s])
 // }
+
+//   const axios = ({method, url, data={}, success=()=>{},
    const propVal = (element, property) => {
      if(element[property]===null)
        if(element.style[property].replace(/\D/g,'').length>0)
@@ -22,14 +24,15 @@
      ready(callback) {
        if(this.some(element=>element.readyState!==null && element.readyState!=="loading"))
          callback()
-       else this.on("DOMContentLoaded,callback))
+       else this.on("DOMContentLoaded",callback))
+       return this
      }
 //   on(event,callback_element,callback) {
        if(typeof callback_element==="function")
          this.forEach(element=>element.addEventListener(event,callback))
        else this.forEach(element=>element.addEventListener(event,e=>{
          if(e.target.matches(callback_element)) callback()
-       })
+       }) return this
 //   }
 //   //Animate
 //   css(properties_values,values) {
@@ -83,9 +86,7 @@
 //   // Setter
 //   set val(value) {
 //     this.forEach(element=>element.value=value)
-       return this
 //   }
-      
      // Getter
      get val() {
        return (this.isElement? this.element.value
