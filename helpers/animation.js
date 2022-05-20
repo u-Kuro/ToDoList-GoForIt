@@ -19,36 +19,32 @@
        })
 //   }
 //   //Animate
-//   css(property_value,value){
-       if(typeof property_value==="string"){
-         if(typeof value==="string"){
-           this.forEach(element=>{
-             element.style[property_value] = value
-           }) return this
-         } else return this.element.style[property_values]
-       } else {
-         this.forEach(()=>{
-           Object.entries(property_values).forEach(([property,value]) => {
-             element.style[property]=value
-           }) return this
-         }
+//   css(properties_values,values){
+       const _properties = typeof properties_values==="object"? Object.keys(properties_values):properties_values
+       const _values = typeof properties_values==="object"? Object.values(properties_values):typeof values==="string"||values instanceof String? values:""
+       if(_values.length) return this.forEach(element=>element.style[_properties])
+       else {
+         this.forEach(element=>element.style[_properties]=_values)
+         return this
        }
      }
-//   animate(keyframe, duration, easing_callback, callback) {
-//     if(typeof easing_callback==="function") callback = easing_callback
-//     const _duration = typeof duration==="undefined"||typeof duration!=="number"?0:duration
-//     const _easing = typeof easing_callback==="undefined"||typeof easing_callback!=="string"?"cubic-bezier(0, 0, 0.5, 1.5)":easing_callback
-//     this.element.animate([{},keyframe],{
-//       duration: xduration, fill: "forwards", easing:xeasing})
-//     if(typeof callback==="undefined"||typeof callback!=="function") return this
-//     else {
-//       setTimeout(()=>{callback()},xduration)
-//       return this
-//     }
-//   }
+    animate(keyframe, duration_callback, easing_iterations_callback, iterations_callback, callback){
+      const _duration = typeof duration_callback==="function"? 0:duration_callback
+      const _easing = typeof easing_callback==="function"? "cubic-bezier(0, 0, 0.5, 1.25)":easing_callback
+      const _iterations = typeof iterations_callback==="function"? 1:iteration_callback
+      const _callback = typeof callback==="function"? callback:()=>{}
+      this.forEach(element=>{
+        element.animate([{},keyframe],{
+          duration:_duration, fill:"forwards", easing:_easing, iterations:_iterations})
+      })
+      setTimeout(()=>{
+        _callback()
+        return this
+      },_duration)    
+    }
 //   // Validator
 //   setCustomValidity(message) {
-//     this.element.setCustomValidity(message)
+//     this.forEach(element=>element.setCustomValidity(message))
 //     return this
 //   }
 //   reportValidity() {
