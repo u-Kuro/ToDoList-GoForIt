@@ -85,6 +85,38 @@
          return this
        },_duration)    
      }
+     // Append
+     insert(newElement, position_nodeBefore) {
+       const div= document.createElement("div");
+       div.innerHTML = newElement
+       const _newElement = div.firstChild
+       if(this.isElement) {
+         if(typeof position_nodeBefore==="undefined") this.element.append(_newElement)
+         else if(typeof position_nodeBefore==="string" || position_nodeBefore instanceof String) {
+           
+         }
+         else {
+           const _nodeBefore = 
+             position_nodeBefore instanceof Elements?
+               position_nodeBefore[0] : typeof position_nodeBefore==="object" && typeof position_nodeBefore.nodeType!==undefined ?
+                 position_nodeBefore : this.element.querySelector(position_nodeBefore)
+           this.element.insertBefore(_newElement, _nodeBefore)
+         }
+       } else this.map(element=> {
+         if(typeof nodeBefore==="undefined") element.append(_newElement)
+         else {
+           nodeBefore instanceof Elements?
+               nodeBefore[0] : typeof nodeBefore==="object" && typeof nodeBefore.nodeType!==undefined ?
+                 nodeBefore : this.element.querySelector(nodeBefore)
+           element.insertBefore(_newElement, _nodeBefore)
+         }
+       })
+       return this
+     }
+     extract(element_s) {
+       
+       return this
+     }
      // Selectors
      parent(element_s) {
        if(element_s===undefined) return new Elements([this.element.parentElement]))
