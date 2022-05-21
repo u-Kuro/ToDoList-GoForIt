@@ -1,10 +1,9 @@
 // const DOM = (element_s) => {
      if(typeof id==="string" || id instancof String)
-       new Elements[...document.querySelectorAll(element_s)])
-     else new Elements([element_s])
+       return new Elements[...document.querySelectorAll(element_s)])
+     else return new Elements([element_s])
 // }
 
-//   const axios = ({method, url, data={}, success=()=>{},
    const propVal = (element, property) => {
      if(element[property]===null)
        if(element.style[property].replace(/\D/g,'').length>0)
@@ -85,6 +84,19 @@
          _callback()
          return this
        },_duration)    
+     }
+     // Selectors
+     parent(element_s) {
+       if(element_s===undefined) return new Elements([this.element.parentElement]))
+       else return (this.isElement? new Element([...this.element.parentElement.parentElement.querySelectorAll(element_s)])
+         : this.map(element=>new Element([....element.parentElement.parentElement.querySelectorAll(element_s)])
+       )
+     }
+     child(element_s) {
+       if(element_s===undefined) return new Elements([...this.element.children]))
+       else return (this.isElement? new Element([...this.element.querySelectorAll(element_s)])
+         : this.map(element=>new Element([....element.querySelectorAll(element_s)]))
+       )
      }
 //   // Validator
 //   setCustomValidity(message) {
