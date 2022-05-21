@@ -59,12 +59,24 @@
        const _iterations = typeof iterations_callback==="function"? 1:iteration_callback
        const _callback = typeof callback==="function"? callback:()=>{}
        const _keyframes = Object.entries(obj).reduce((kfs, [p, v]) => {
-                            if(p==="scrollTop") return [kfs[0],{...kfs[1],top:parseFloat(v)}]
-                            else if(p==="scrollLeft") return [kfs[0],{...kfs[1],left:parseFloat(v)}]   
+                            if(p==="scrollTop") return [kfs[0],{...kfs[1],p:parseFloat(v)}]
+                            else if(p==="scrollLeft") return [kfs[0],{...kfs[1],p:parseFloat(v)}]   
                             else return [{...kfs[0],[p]:v},kfs[1]]
                           }, [])
-       if(typeof _keyframes[1]!=="undefined")
-         window.scrollTo({..._keyframes[1],behavior:"smooth"})
+       if(typeof _keyframes[1]!=="undefined") //Scroll Animation
+         Object.entries(_keyframes[1]).forEach(([p,v])=>{
+           const to = parseFloat(v)
+           const from = propVal(element,p)
+           this.forEach(element=> {
+             dif = _duration===0? to-from:(to-from)/_duration
+             for(let i=_duration===0?0:1;i<=_duration;++i){
+               setTimeout(()=>{
+                 element[p]+=dif
+               },i)
+             }
+           })
+         })
+         //Alternative: window.scrollTo({..._keyframes[1],behavior:"smooth"})
        this.forEach(element=> {
          element.animate([{},_keyframes[0]], {
            duration:_duration, fill:"forwards", easing:_easing, iterations:_iterations})
