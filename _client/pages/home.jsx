@@ -2,6 +2,8 @@ import Head from "next/head"
 import Router from "next/router"
 import $ from "jquery"
 
+import DOM from "../../helpers/animation"
+
 import { useState, useEffect, useRef } from "react"
 import useUpdateEffect from "./render script/useUpdateEffect"
 import useEffectInterval from "./render script/useEffectInterval"
@@ -68,22 +70,10 @@ export default function Home() {
   const currentTimezoneOffset = useRef(new Date().getTimezoneOffset())
     //helper functions
     const nulled = (v) => {return typeof v === "undefined" ? true : v === null ? true : v.length === 0}
-    const totalSizePosition = (v,position) => {return (
-      ((position==="Left"||position==="Right")?v.width():v.height())+
-      (nulled(v.css("margin"+position))?0:parseFloat(v.css("margin"+position)))+
-      (nulled(v.css("padding"+position))?0:parseFloat(v.css("padding"+position)))+
-      (nulled(v.css("border"+position))?0:parseFloat(v.css("border"+position)))
-    )}
+    // const totalSizePosition = (v,position) => {return (
+    //   (position==="Left"||position==="Right")?v.width("cbpm"):v.height("cbpm")
+    // )}
     const val = (v) => {return nulled(v)?[]:v}
-    const animate = (element, keyframe, duration, easing_callback, callback) => {
-      const el = typeof element[0]==="undefined"? element: element[0]
-      if(typeof callback==="undefined"&&typeof easing_callback==="function")callback = easing_callback
-      const xduration = typeof duration==="undefined"||typeof duration!=="number"?0:duration
-      const xeasing = typeof easing_callback==="undefined"||typeof easing_callback!=="string"?"cubic-bezier(0, 0, 0.5, 1.25)":easing_callback
-      el.animate([{},keyframe],{duration: xduration, fill: "forwards", easing:xeasing})
-      if(typeof callback!=="undefined"||typeof callback==="function") 
-        return setTimeout(()=>{callback()},xduration)
-    }
 
   //=first render
   useEffect(() => {
@@ -184,7 +174,7 @@ export default function Home() {
   //=category form
   const addCategory = (e) => {
     e.preventDefault()
-    if(nulled(addCategoryName)) return $("#add-category_name").get(0).reportValidity()
+    if(nulled(addCategoryName)) return DOM("#add-category_name").reportValidity()
     if(isRunning.current) return
     isRunning.current=true
     setaddCategoryName([])
@@ -207,7 +197,7 @@ export default function Home() {
 
   const updateCategory = (e) => {
     e.preventDefault()
-    if(nulled(updateCategoryName)) return $("#update-category_name").get(0).reportValidity()
+    if(nulled(updateCategoryName)) return DOM("#update-category_name").reportValidity()
     if(isRunning.current) return
     isRunning.current=true
     setCategories([{
@@ -260,22 +250,21 @@ export default function Home() {
   const openCategory = (category) => {
     if(isRunning.current) return
     isRunning.current=true
-    const html= $("html")
-    const catmenu = $("#categoriesMenu")
-    const topbar = $("#top-bar")
-    if($("#category-icon").css("display")!=="none") {
+    const html= DOM("html")
+    const catmenu = DOM("#categoriesMenu")
+    const topbar = DOM("#top-bar")
+    if(DOM("#category-icon").css("display")!=="none") {
       setopenedCategory(category)
-      html.css({"overflow":"auto"}).promise().done(()=>{
-        animate(catmenu,{
-          transform: "translateY("+(-(totalSizePosition(catmenu,"Bottom")+totalSizePosition(topbar,"Bottom")))+"px)"
-        },300,"ease-out",()=>{return isRunning.current=false})
-        html.animate({
-          scrollTop: $("#tasks").offset().top - totalSizePosition(topbar,"Bottom")
-        }, 300); 
-      })
+      html.css({"overflow":"visible"})
+      catmenu.animate({
+        transform: "translateY("+(-(catmenu.height("cpbm","bottom")+topbar.height("cpbm","bottom")))+"px)"
+      },300,"ease-out",()=>{return isRunning.current=false})
+      html.animate({
+        scrollTop: DOM("#tasks").offsetTop - topbar.height("cpbm","bottom")
+      }, 300); 
     } else {
       html.animate({
-        scrollTop: $("#tasks").offset().top - totalSizePosition(topbar,"Bottom")
+        scrollTop: DOM("#tasks").offsetTop - topbar.height("cpbm","bottom")
       }, 300); 
       setopenedCategory(category)
       return isRunning.current=false
@@ -292,25 +281,21 @@ export default function Home() {
     })
   }
   useUpdateEffect(()=>{
-    const container = $("#uc-cp-container")
-    const html= $("html")
+    const container = DOM("#uc-cp-container")
+    const w = DOM(window)
     if(updateCategoryIsOpen && !updateCategoryAlertIsOpen){
-      if(html.width()>html.height()){//landscape
-        animate(container,{
-          transform: "translateX("+(-(totalSizePosition(container,"Left")))+"px)"
+      if(w.outerWidth>w.outerHeight){//landscape
+        container.animate({
+          transform: "translateX("+(-(container.width("cpbm","left")))+"px)"
         },0,()=>{
-          container.show(()=>{
-            animate(container,{transform:"translateX(0)"},300)
-          })
+          container.animate({transform:"translateX(0)"},300)
         })   
       }
       else {
-        animate(container,{
-          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+        container.animate({
+          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
         },0,()=>{
-          container.show(()=>{
-            animate(container,{transform:"translateY(0)"},300)
-          })
+          container.animate({transform:"translateY(0)"},300)
         })
       }
     } 
@@ -319,21 +304,20 @@ export default function Home() {
   },[updateCategoryIsOpen])
 
   const closeUpdateCategory = () => {
-    const container = $("#uc-cp-container")
-    const html= $("html")
-    if(html.width()>html.height()){//landscape
-      animate(container,{
-        transform: "translateX("+(-(totalSizePosition(container,"Left")))+"px)"
+    const container = DOM("#uc-cp-container")
+    const w = DOM(window)
+    w.outerWidth>w.outerHeight
+    if(w.outerWidth>w.outerHeight){//landscape
+      container.animate({
+        transform: "translateX("+(-(container.width("cbpm","left")))+"px)"
       },300,"ease-in",()=>{
-        container.hide()
         setchosenUpdateCategory([])
         setupdateCategoryIsOpen(false)
       })
     } else {
-      animate(container,{
-        transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+      container.animate({
+        transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
       },300,"ease-in",()=>{
-        container.hide()
         setchosenUpdateCategory([])
         setupdateCategoryIsOpen(false)
       })
@@ -345,45 +329,39 @@ export default function Home() {
     setupdateCategoryAlertIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const element = $("#uca-pop-body > *")
+    const element = DOM("#uca-pop-body > *")
     if(updateCategoryAlertIsOpen){
-      animate(element,{
-        transform: "translateX("+(totalSizePosition(element,"Right"))+"px)"
+      element.animate({
+        transform: "translateX("+(element.width("cpbm","right"))+"px)"
       },0,()=>{
-        element.show(()=>{
-          animate(element,{transform:"translateX(0)"},300)
-        })
+        element.animate({transform:"translateX(0)"},300)
       })
     } else {
-      animate(element,{
-        transform: "translateX("+(-(totalSizePosition(element,"Left")))+"px)"
+      element.animate({
+        transform: "translateX("+(-(element.width("cpbm","left")))+"px)"
       },0,()=>{
-        element.show(()=>{
-          animate(element,{transform:"translateX(0)"},300)
-        })
+        element.animate({transform:"translateX(0)"},300)
       })
     }
   },[updateCategoryAlertIsOpen])
 
   const closeUpdateCategoryAlert = (submitted) => {
-    const container = $("#uc-cp-container")
-    const html= $("html")
+    const container = DOM("#uc-cp-container")
+    const w = DOM(window)
     if(submitted) {
-      container = $(".cp-container")
-      if(html.width()>html.height()){//landscape
-        animate(container,{
-          transform: "translateX("+(-(totalSizePosition(container,"Left")))+"px)"
+      container = DOM(".cp-container")
+      if(w.outerWidth>w.outerHeight){//landscape
+        container.animate({
+          transform: "translateX("+(-(container.width("cpbm","left")))+"px)"
         },300,"ease-in",()=>{
-          container.hide()
           setupdateCategoryAlertIsOpen(false)
           setupdateCategoryIsOpen(false)
           setchosenUpdateCategory([])
         })
       } else {
-        animate(container,{
-          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+        container[animate]({
+          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
         },300,"ease-in",()=>{
-          container.hide()
           setupdateCategoryAlertIsOpen(false)
           setupdateCategoryIsOpen(false)
           setchosenUpdateCategory([])
@@ -396,22 +374,22 @@ export default function Home() {
   //=task form
   const addTask = (e) => {
     if(nulled(addTaskName)){
-      return $("#add-task_name").get(0).reportValidity()
+      return DOM("#add-task_name").reportValidity()
     }
     if(nulled(addTaskStartDate)){
-      $("#add-start_date").get(0).setCustomValidity("")
-      return $("#add-start_date").get(0).reportValidity()
+      DOM("#add-start_date").setCustomValidity("")
+      return DOM("#add-start_date").reportValidity()
     }
     if(nulled(addTaskEndDate)){
-      $("#add-end_date").get(0).setCustomValidity("")
-      return $("#add-end_date").get(0).reportValidity()
+      DOM("#add-end_date").setCustomValidity("")
+      return DOM("#add-end_date").reportValidity()
     }
     if(nulled(addTaskDescription)){
-      return $("#add-description").get(0).reportValidity()
+      return DOM("#add-description").reportValidity()
     }
     if(addTaskStartDate>=addTaskEndDate){
-      $("#add-end_date").get(0).setCustomValidity("Start Date should be set before the End Date")
-      return $("#add-end_date").get(0).reportValidity()
+      DOM("#add-end_date").setCustomValidity("Start Date should be set before the End Date")
+      return DOM("#add-end_date").reportValidity()
     }
     e.preventDefault()
     if(isRunning.current) return
@@ -470,23 +448,23 @@ export default function Home() {
   }
 
   const updateTask = (e) => {
-    if($("#update-task_name").val()===""){
-      return $("#update-task_name").get(0).reportValidity()
+    if(DOM("#update-task_name").val===""){
+      return DOM("#update-task_name").reportValidity()
     }
-    if($("#update-start_date").val()===""){
-      $("#update-start_date").get(0).setCustomValidity("")
-      return $("#update-start_date").get(0).reportValidity()
+    if(DOM("#update-start_date").val===""){
+      DOM("#update-start_date").setCustomValidity("")
+      return DOM("#update-start_date").reportValidity()
     }
-    if($("#update-end_date").val()===""){
-      $("#update-end_date").get(0).setCustomValidity("")
-      return $("#update-end_date").get(0).reportValidity()
+    if(DOM("#update-end_date").val===""){
+      DOM("#update-end_date").setCustomValidity("")
+      return DOM("#update-end_date").reportValidity()
     }
-    if($("#update-description").val()===""){
-      return $("#update-description").get(0).reportValidity()
+    if(DOM("#update-description").val===""){
+      return DOM("#update-description").reportValidity()
     }
-    if($("#update-start_date").val()>=$("#update-end_date").val()){
-      $("#update-end_date").get(0).setCustomValidity("Start Date should be set before the End Date")
-      return $("#update-end_date").get(0).reportValidity()
+    if(DOM("#update-start_date").val>=DOM("#update-end_date").val){
+      DOM("#update-end_date").setCustomValidity("Start Date should be set before the End Date")
+      return DOM("#update-end_date").reportValidity()
     }
     e.preventDefault()
     if(isRunning.current) return
@@ -618,44 +596,38 @@ export default function Home() {
     setaddTaskIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const container = $("#at-tp-container")
-    const html= $("html")
+    const container = DOM("#at-tp-container")
+    const w = DOM(window)
     if(addTaskIsOpen){
-      if(html.width()>html.height()){//landscape
-        animate(container,{
-          transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+      if(w.outerWidth>w.outerHeight){//landscape
+        container.animate({
+          transform: "translateX("+(container.width("cpbm","right"))+"px)"
         },0,()=>{
-          container.show(()=>{
-            animate(container,{transform:"translateX(0)"},300)
-          })
+          container.animate({transform:"translateX(0)"},300)
         })
       } else {
-        animate(container,{
-          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+        container.animate({
+          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
         },0,()=>{
-          container.show(()=>{
-            animate(container,{transform:"translateX(0)"},300)
-          })
+          container.animate({transform:"translateX(0)"},300)
         })
       }
     }
   },[addTaskIsOpen])
 
   const closeAddTask = () => {
-    const container = $("#at-tp-container")
-    const html= $("html")
-    if(html.width()>html.height()){//landscape
-      animate(container,{
-        transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+    const container = DOM("#at-tp-container")
+    const w = DOM(window)
+    if(w.outerWidth>w.outerHeight){//landscape
+      container.animate({
+        transform: "translateX("+(container.width("cpbm","right"))+"px)"
       },300,"ease-in",()=>{
-        container.hide()
         setaddTaskIsOpen(false)
       })
     } else {
-      animate(container,{
-        transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+      container.animate({
+        transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
       },300,"ease-in",()=>{
-        container.hide()
         setaddTaskIsOpen(false)
       })
     } 
@@ -669,24 +641,21 @@ export default function Home() {
     setupdateTaskIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const container = $("#ut-tp-container")
-    const html = $("html")
+    const container = DOM("#ut-tp-container")
+    const w = DOM(window)
+    console.log(w.outerWidth, w.outerHeight, w.outerWidth>w.outerHeight)
     if(updateTaskIsOpen && !updateTaskAlertIsOpen){
-      if(html.width()>html.height()){//landscape
-        animate(container,{
-          transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+      if(w.outerWidth>w.outerHeight){//landscape
+        container.animate({
+          transform: "translateX("+(container.width("cpbm","right"))+"px)"
         },0,()=>{
-          container.show(()=>{
-            animate(container,{transform:"translateX(0)"},300)
-          })
+          container.animate({transform:"translateX(0)"},300)
         })
       } else {
-        animate(container,{
-          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+        container.animate({
+          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
         },0,()=>{
-          container.show(()=>{
-            animate(container,{transform:"translateY(0)"},300)
-          })
+          container.animate({transform:"translateY(0)"},300)
         })
       }
     } else if(updateTaskIsOpen && updateTaskAlertIsOpen)
@@ -694,21 +663,19 @@ export default function Home() {
   },[updateTaskIsOpen])
 
   const closeUpdateTask = () => {
-    const container = $("#ut-tp-container")
-    const html= $("html")
-    if(html.width()>html.height()){//landscape
-      animate(container,{
-        transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+    const container = DOM("#ut-tp-container")
+    const w = DOM(window)
+    if(w.outerWidth>w.outerHeight){//landscape
+      container.animate({
+        transform: "translateX("+(container.width("cpbm","right"))+"px)"
       },300,"ease-in",()=>{
-        container.hide()
         setupdateTaskIsOpen(false)
         setchosenUpdateTask([])
       })
     } else {
-      animate(container,{
-        transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+      container.animate({
+        transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
       },300,"ease-in",()=>{
-        container.hide()
         setupdateTaskIsOpen(false)
         setchosenUpdateTask([])
       })
@@ -720,45 +687,39 @@ export default function Home() {
     setupdateTaskAlertIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const element = $("#uta-pop-body > *")
+    const element = DOM("#uta-pop-body > *")
     if(updateTaskAlertIsOpen){
-      animate(element,{
-        transform: "translateX("+(totalSizePosition(element,"Right"))+"px)"
+      element.animate({
+        transform: "translateX("+(element.width("cpbm","right"))+"px)"
       },0,()=>{
-        element.show(()=>{
-          animate(element,{transform:"translateX(0)"},300)
-        })
+        element.animate({transform:"translateX(0)"},300)
       })
     } else {
-      animate(element,{
-        transform: "translateX("+(-(totalSizePosition(element,"Left")))+"px)"
+      element.animate({
+        transform: "translateX("+(-(element.width("cpbm","left")))+"px)"
       },0,()=>{
-        element.show(()=>{
-          animate(element,{transform:"translateX(0)"},300)
-        })
+        element.animate({transform:"translateX(0)"},300)
       })
     }
   },[updateTaskAlertIsOpen])
 
   const closeUpdateTaskAlert = (submitted) => {
-    const container = $("#ut-tp-container")
-    const html= $("html")
+    const container = DOM("#ut-tp-container")
+    const w = DOM(window)
     if(submitted){
-      container = $(".tp-container")
-      if(html.width()>html.height()){//landscape
-        animate(container,{
-          transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+      container = DOM(".tp-container")
+      if(w.outerWidth>w.outerHeight){//landscape
+        container.animate({
+          transform: "translateX("+(container.width("cpmb","right"))+"px)"
         },300,"ease-in",()=>{
-          container.hide()
           setupdateTaskAlertIsOpen(false)
           setupdateTaskIsOpen(false)
           setchosenUpdateTask([])
         })
       } else {
-        animate(container,{
-          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+        container.animate({
+          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
         },300,"ease-in",()=>{
-          container.hide()
           setupdateTaskAlertIsOpen(false)
           setupdateTaskIsOpen(false)
           setchosenUpdateTask([])
@@ -773,24 +734,20 @@ export default function Home() {
     setdeleteAllFinishedTasksIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const container = $("#daft-tp-container")
-    const html= $("html")
+    const container = DOM("#daft-tp-container")
+    const w = DOM(window)
     if(deleteAllFinishedTasksIsOpen && !deleteAllFinishedTasksAlertIsOpen){
-      if(html.width()>html.height()){//landscape
-        animate(container,{
-          transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+      if(w.outerWidth>w.outerHeight){//landscape
+        container.animate({
+          transform: "translateX("+(container.width("cpbm","right"))+"px)"
         },0,()=>{
-          container.show(()=>{
-            animate(container,{transform: "translateX(0)"},300)
-          })
+          container.animate({transform: "translateX(0)"},300)
         })
       } else {
-        animate(container,{
-          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+        container.animate({
+          transform: "translateY("+(container.height("cpmb","bottom"))+"px)"
         },0,()=>{
-          container.show(()=>{
-            animate(container,{transform: "translateY(0)"},300)
-          })
+          container.animate({transform: "translateY(0)"},300)
         })
       }
     } else if(deleteAllFinishedTasksIsOpen && deleteAllFinishedTasksAlertIsOpen)
@@ -800,20 +757,18 @@ export default function Home() {
   const closedeleteAllFinishedTasks = () => {
     if(openUpdateTaskIsFromdeleteFinishedTasks) 
       setopenUpdateTaskIsFromdeleteFinishedTasks(false)
-    const container = $("#daft-tp-container")
-    const html= $("html")
-    if(html.width()>html.height()){//landscape
-      animate(container,{
-        transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+    const container = DOM("#daft-tp-container")
+    const w = DOM(window)
+    if(w.outerWidth>w.outerHeight){//landscape
+      container.animate({
+        transform: "translateX("+(container.width("cpbm","right"))+"px)"
       },300,"ease-in",()=>{
-        container.hide()
         setdeleteAllFinishedTasksIsOpen(false)
       })
     } else {
-      animate(container,{
-        transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+     container.animate({
+        transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
       },300,"ease-in",()=>{
-        container.hide()
         setdeleteAllFinishedTasksIsOpen(false)
       })
     } 
@@ -828,44 +783,38 @@ export default function Home() {
     }
   }
   useUpdateEffect(()=>{
-    const element = $("#dafta-pop-body > *")
+    const element = DOM("#dafta-pop-body>* , #pop-body>*")
     if(deleteAllFinishedTasksAlertIsOpen){
-      animate(element,{
-        transform: "translateX("+(totalSizePosition(element,"Right"))+"px)"
+      element.animate({
+        transform: "translateX("+(element.width("cpbm","right"))+"px)"
       },0,()=>{
-        element.show(()=>{
-          animate(element,{transform: "translateX(0)"},300)
-        })
+        element.animate({transform: "translateX(0)"},300)
       })
     } else {
-      animate(element,{
-        transform: "translateX("+(-(totalSizePosition(element,"Left")))+"px)"
+      element.animate({
+        transform: "translateX("+(-(element.width("cpbm","left")))+"px)"
       },0,()=>{
-        element.show(()=>{
-          animate(element,{transform: "translateX(0)"},300)
-        })
+        element.animate({transform: "translateX(0)"},300)
       })
     }
   },[deleteAllFinishedTasksAlertIsOpen])
 
   const closedeleteAllFinishedTasksAlert = (submitted) => {
-    const container = $("#daft-tp-container")
-    const html= $("html")
+    const container = DOM("#daft-tp-container")
+    const w = DOM(window)
     if(submitted){
-      container = $(".tp-container")
-      if(html.width()>html.height()){//landscape
-        animate(container,{
-          transform: "translateX("+(totalSizePosition(container,"Right"))+"px)"
+      container = DOM(".tp-container")
+      if(w.outerWidth>w.outerHeight){//landscape
+        container.animate({
+          transform: "translateX("+(container.width("cpbm","right"))+"px)"
         },300,"ease-in",()=>{
-          container.hide()
           setdeleteAllFinishedTasksAlertIsOpen(false)
           setdeleteAllFinishedTasksIsOpen(false)
         })
       } else {
-        animate(container,{
-          transform: "translateY("+(totalSizePosition(container,"Bottom"))+"px)"
+        container.animate({
+          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
         },300,"ease-in",()=>{
-          container.hide()
           setdeleteAllFinishedTasksAlertIsOpen(false)
           setdeleteAllFinishedTasksIsOpen(false)
         })
@@ -882,30 +831,36 @@ export default function Home() {
 
   //=animation
   const scrollup = () => {
-    const html= $("html")
+    const html= DOM("html")
     html.animate({
-      scrollTop: ($("#dashboard").offset().top - ($("#top-bar").height()))+"px"
+      scrollTop: (DOM("#dashboard").offsetTop - (DOM("#top-bar").height("cpb")))+"px"
     }, 300);    
   }
   const categoryMenuIcon = () => {
     if (!isRunning.current) {
       isRunning.current=true
-      const html = $("html")
-      const topbar = $("#top-bar")
-      const catmenu = $("#categoriesMenu")
+      const html = DOM("html")
+      const topbar = DOM("#top-bar")
+      const catmenu = DOM("#categoriesMenu")
+      console.log(catmenu.css("transform"))
       if(catmenu.css("transform") !== "matrix(1, 0, 0, 1, 0, 0)") {//check if translateY is 0
-        html.css({"overflow":"hidden"})
-        animate(catmenu,{transform: "translateY("+-(totalSizePosition(catmenu,"Bottom")+totalSizePosition(topbar,"Bottom"))+"px)"})// return on top
-        animate(catmenu,{
+        html.css("overflow","hidden")
+        catmenu.animate({
+          transform: "translateY("+-catmenu.height("cbpm","bottom")+topbar.height("cbpm","bottom")+"px)"}
+        )
+        // catmenu.animate({transform: "translateY("+-catmenu.height("cbpm","bottom")+topbar.height("cbpm","bottom")+"px)"})// return on top
+        catmenu.animate({
             transform: "translateY(0)"
           },300,"ease-out",() => {
             return isRunning.current=false
           })
       } else {
-        html.css("overflow","auto")
-        animate(catmenu,{
-          transform: "translateY("+(-(totalSizePosition(catmenu,"Bottom")+totalSizePosition(topbar,"Bottom")))+"px)"
+        console.log(-catmenu.height("cbpm","bottom")+topbar.height("cbpm","bottom"))
+        html.css("overflow","visible")
+        catmenu.animate({
+          transform: "translateY("+(-catmenu.height("cbpm","bottom")+topbar.height("cbpm","bottom"))+"px)"
         },300,"ease-in",() => {
+          catmenu
           return isRunning.current=false
         })
       }
@@ -914,63 +869,62 @@ export default function Home() {
   //=event listeners
   useEffect(()=>{
     if (typeof window !== "undefined") {
-      const html= $("html")
-      $(window).on("scroll",() => {
-        const dashboardHeight = $("#dashboard").height()
-        const goupicon = $("#go-up")
-        if(html.scrollTop() > dashboardHeight && goupicon.css("opacity")==="0") 
-          return goupicon.show(()=>{
-            animate(goupicon,{opacity: "1"},300)
-          })
-        else if(html.scrollTop() < dashboardHeight && goupicon.css("opacity")==="1") 
-          return animate(goupicon,{opacity:"0"},()=>{
-            goupicon.hide()
+      DOM(window).on("scroll",() => {
+        const html = DOM("html")
+        const dashboardHeight = DOM("#dashboard").height()
+        const goupicon = DOM("#go-up")
+        if(html.scrollTop > dashboardHeight && goupicon.css("opacity")==="0") 
+          return goupicon.show.animate({opacity: "1"},300)
+        else if(html.scrollTop < dashboardHeight && goupicon.css("opacity")==="1") 
+          return goupicon.animate({opacity:"0"},()=>{
+            goupicon.hide
           })
       })
       //Fix Categories menu after resize
-      $(window).on("resize", () => {
-        const html= $("html")
-        const topbar = $("#top-bar")
-        const catmenu = $("#categoriesMenu")
-        const cataddinput = $("#add-category_name")
-        const catupdateinput = $("#update-category_name")
+      DOM(window).on("resize", () => {
+        const html= DOM("html")
+        const topbar = DOM("#top-bar")
+        const catmenu = DOM("#categoriesMenu")
+        const cataddinput = DOM("#add-category_name")
+        const catupdateinput = DOM("#update-category_name")
         const catIsActive = 
-          cataddinput.is(":focus") || 
-          catupdateinput.is(":focus") ||
-          !nulled(cataddinput.val()) ||
-          !nulled(catupdateinput.val())
-        if($(window).outerWidth()>=785) {
-          animate(catmenu,{transform: "translateY(0)"})
-          return html.css("overflow","auto")
+          cataddinput.isActive || 
+          catupdateinput.isActive ||
+          !nulled(cataddinput.val) ||
+          !nulled(catupdateinput.val)
+        if(DOM(window).outerWidth>=785) {
+          catmenu.animate({transform: "translateY(0)"})
+          return html.css("overflow","visible")
         }
-        else if(catIsActive && $(window).outerWidth()<785){
-          animate(catmenu,{transform: "translateY(0)"})
-          return html.css("overflow","hidden")
+        else if(catIsActive && DOM(window).outerWidth<785){
+          catmenu.animate({transform: "translateY(0)"})
+          return html.css("overflow","visible")
         }
-        else if($(window).outerWidth()<785) {
-          animate(catmenu,{transform: "translateY("+-(totalSizePosition(catmenu,"Bottom")+totalSizePosition(topbar,"Bottom"))+"px)"})
-          return html.css("overflow","auto")
+        else if(DOM(window).outerWidth<785) {
+          catmenu.animate({transform: "translateY("+-(catmenu.height("cpbm","bottom")+topbar.height("cpbm","bottom"))+"px)"})
+          return html.css("overflow","visible")
         }
       })
       // Change Categories Scroll Max Height
-      $(window).on("load", () => {
-        const topbar = $("#top-bar")
-        const addcategory = $(".add-category")
-        const addcategoryname = $("#add-category_name")
-        const listItem = $("#categoriesul > li:first-child")
-        const listItemPMHeight = typeof listItem==="undefined"? 0 : listItem.outerHeight()-listItem.height()
-        const totalHeightAbove = topbar.outerHeight()+addcategory.outerHeight()+addcategoryname.outerHeight()+listItemPMHeight
-        return $("#categoriesul").css({"maxHeight":$(window).outerHeight() - totalHeightAbove + "px"})
+      DOM(window).on("load", () => {
+        const topbar = DOM("#top-bar")
+        const addcategory = DOM(".add-category")
+        const addcategoryname = DOM("#add-category_name")
+        const listItem = DOM("#categoriesul > li:first-child")
+        console.log(listItem, DOM(window))
+        const listItemPMHeight = typeof listItem==="undefined"? 0 : listItem.height("pm")
+        const totalHeightAbove = topbar.height("cpbm")+addcategory.height("cbpm")+addcategoryname.height("cbpm")+listItemPMHeight
+        return DOM("#categoriesul").css({"maxHeight":DOM(window).outerHeight - totalHeightAbove + "px"})
       })
 
-      $(window).on("resize", () => {
-        const topbar = $("#top-bar")
-        const addcategory = $(".add-category")
-        const addcategoryname = $("#add-category_name")
-        const listItem = $("#categoriesul > li:first-child")
-        const listItemPMHeight = typeof listItem==="undefined"? 0 : listItem.outerHeight()-listItem.height()
-        const totalHeightAbove = topbar.outerHeight()+addcategory.outerHeight()+addcategoryname.outerHeight()+listItemPMHeight
-        return $("#categoriesul").css({"maxHeight":$(window).outerHeight() - totalHeightAbove + "px"})
+      DOM(window).on("resize", () => {
+        const topbar = DOM("#top-bar")
+        const addcategory = DOM(".add-category")
+        const addcategoryname = DOM("#add-category_name")
+        const listItem = DOM("#categoriesul > li:first-child")
+        const listItemPMHeight = typeof listItem==="undefined"? 0 : listItem.height("pm")
+        const totalHeightAbove = topbar.height("cpbm")+addcategory.height("cbpm")+addcategoryname.height("cbpm")+listItemPMHeight
+        return DOM("#categoriesul").css({"maxHeight":DOM(window).outerHeight - totalHeightAbove + "px"})
       }) 
     }
   },[])

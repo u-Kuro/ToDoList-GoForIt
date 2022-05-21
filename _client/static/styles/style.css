@@ -289,7 +289,8 @@ body.loading .loading{
   box-shadow:.2em 0 .1em -.1em #ddd8d8;
   z-index:1;
   flex-wrap:wrap;
-  align-content:flex-start
+  align-content:flex-start;
+  overflow:hidden;
 }
 
 .add-category{
@@ -607,6 +608,10 @@ body.loading .loading{
   gap:1em
 }
 
+.pop-header h3 {
+  max-width: 80%;
+}
+
 .xclose-pop{
   width:1.75em;
   height:1.75em;
@@ -633,7 +638,9 @@ body.loading .loading{
   flex-wrap:wrap;
   gap:1em;
   overflow-y:auto;
-  overflow-x:hidden
+  overflow-x:hidden;
+  padding-block: 1em;
+  padding-inline: 0.25em;
 }
 
 .pop-body>*{
