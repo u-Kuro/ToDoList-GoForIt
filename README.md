@@ -1,9 +1,9 @@
 # ToDoList GoForIt
-  - a mini todolist application using node, nextjs, expressjs, and self made jquery clone
+    a mini todolist application using node, nextjs, expressjs, and self made jquery clone
 
 # Prerequisites
-  XAMPP: https://www.apachefriends.org/xampp-files/7.4.28/xampp-windows-x64-7.4.28-1-VC15-installer.exe
-  Node: https://nodejs.org/dist/v16.14.2/node-v16.14.2-x64.msi
+  - XAMPP: https://www.apachefriends.org/xampp-files/7.4.28/xampp-windows-x64-7.4.28-1-VC15-installer.exe
+  - Node: https://nodejs.org/dist/v16.14.2/node-v16.14.2-x64.msi
 
 # Get Started Locally
   1) Start Apache and MySQL in XAMPP
@@ -13,5 +13,5 @@
   5) Search http://localhost:5500 in browser if it did not automatically start
 
 # See Deployed Example in Heroku
-  https://todolist-goforit.herokuapp.com
+    https://todolist-goforit.herokuapp.com
 
