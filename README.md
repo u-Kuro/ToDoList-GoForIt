@@ -13,5 +13,5 @@
   5) Search http://localhost:5500 in browser if it did not automatically start
 
 # See Deployed Example in Heroku
-  - Website: https://todolist-goforit.herokuapp.com
+  - https://todolist-goforit.herokuapp.com
 
