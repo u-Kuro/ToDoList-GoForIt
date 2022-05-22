@@ -1,0 +1,9 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+	<title>icons8-check-all-64</title>
+	<defs>
+		<image  width="48" height="48" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwAQMAAABtzGvEAAAAAXNSR0IB2cksfwAAAAZQTFRFAAAA////pdmf3QAAAAJ0Uk5TAP9bkSK1AAAAbElEQVR4nJ3QPQ6AMAgGUEyHjr2BHKVHI95Mb9IjdOzQFMuHg05GGXgJCT+BRFUHkVp8ZnX4RneagOoULx5OMGTEyeCejNTYiqFmYyti7ISZZQE1gBbBbDMG+9r8POI/mfCQTIgLQQ4vH0HjCcNl0wQpbNGVAAAAAElFTkSuQmCC"/>
+	</defs>
+	<style>
+	</style>
+	<use id="Background" href="#img1" x="8" y="8"/>
+</svg>

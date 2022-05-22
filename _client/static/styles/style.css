@@ -215,7 +215,6 @@ body.loading .loading{
 
 .top-bar h1{
   font-family:Righteous,cursive;
-  font-size:35px;
   color:#000
 }
 
@@ -445,7 +444,6 @@ body.loading .loading{
 .tasks ul{
   overflow-y:auto;
   max-height:35.5em;
-  padding:.5em
 }
 
 .task{
@@ -639,7 +637,7 @@ body.loading .loading{
   gap:1em;
   overflow-y:auto;
   overflow-x:hidden;
-  padding-block: 1em;
+  padding-block: 0.5em;
   padding-inline: 0.25em;
 }
 
@@ -647,10 +645,6 @@ body.loading .loading{
   position:relative;
   width:100%;
   align-content:center
-}
-
-.pop-body>h5{
-  font-size:.8em
 }
 
 .pop-body input:not([type=checkbox]){
@@ -761,7 +755,6 @@ body.loading .loading{
   overflow-y:auto;
   max-height:10em;
   flex-grow:1;
-  padding:.5em
 }
 
 .reg-log-bg{
@@ -921,7 +914,7 @@ body.loading .loading{
     padding-top: 3em;
     padding-right: 3em;
     bottom:0;
-    transform: translateY(calc(100% - 3em));
+    transform: translateY(calc((-100% - 3em)));
   }  
   
   .tasks{

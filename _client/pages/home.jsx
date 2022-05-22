@@ -5,9 +5,9 @@ import $ from "jquery"
 import DOM from "../../helpers/animation"
 
 import { useState, useEffect, useRef } from "react"
-import useUpdateEffect from "./render script/useUpdateEffect"
-import useEffectInterval from "./render script/useEffectInterval"
-import useUpdateEffectInterval from "./render script/useUpdateEffectInterval"
+import useUpdateEffect from "./components/useUpdateEffect"
+import useEffectInterval from "./components/useEffectInterval"
+import useUpdateEffectInterval from "./components/useUpdateEffectInterval"
 
 import {
   UTCSQLtoLocal,
@@ -67,6 +67,7 @@ export default function Home() {
 
   //=helper
   const isRunning = useRef(false)
+  const closeAllPopups = useRef(false)
   const currentTimezoneOffset = useRef(new Date().getTimezoneOffset())
     //helper functions
     const nulled = (v) => {return typeof v === "undefined" ? true : v === null ? true : v.length === 0}
@@ -174,7 +175,7 @@ export default function Home() {
   //=category form
   const addCategory = (e) => {
     e.preventDefault()
-    if(nulled(addCategoryName)) return DOM("#add-category_name").reportValidity()
+    if(nulled(addCategoryName)) return DOM("#add-category_name").reportValidity
     if(isRunning.current) return
     isRunning.current=true
     setaddCategoryName([])
@@ -197,7 +198,7 @@ export default function Home() {
 
   const updateCategory = (e) => {
     e.preventDefault()
-    if(nulled(updateCategoryName)) return DOM("#update-category_name").reportValidity()
+    if(nulled(updateCategoryName)) return DOM("#update-category_name").reportValidity
     if(isRunning.current) return
     isRunning.current=true
     setCategories([{
@@ -224,7 +225,8 @@ export default function Home() {
     e.preventDefault()
     if(isRunning.current) return
     isRunning.current=true
-    closeUpdateCategoryAlert(true)
+    closeAllPopups.current=true
+    closeUpdateCategoryAlert()
     if(openedCategory === chosenUpdateCategory)
       setopenedCategory(val(categories[0]))
     setTasks(tasks.filter((task)=>{return task.category_id!==chosenUpdateCategory.id}))
@@ -257,14 +259,14 @@ export default function Home() {
       setopenedCategory(category)
       html.css({"overflow":"visible"})
       catmenu.animate({
-        transform: "translateY("+(-(catmenu.height("cpbm","bottom")+topbar.height("cpbm","bottom")))+"px)"
+        transform: `translateY(${-catmenu.height("c")}px)`
       },300,"ease-out",()=>{return isRunning.current=false})
       html.animate({
-        scrollTop: DOM("#tasks").offsetTop - topbar.height("cpbm","bottom")
+        scrollTop: DOM("#tasks").offsetTop - topbar.height("cpb","bottom")
       }, 300); 
     } else {
       html.animate({
-        scrollTop: DOM("#tasks").offsetTop - topbar.height("cpbm","bottom")
+        scrollTop: DOM("#tasks").offsetTop - topbar.height("cpb","bottom")
       }, 300); 
       setopenedCategory(category)
       return isRunning.current=false
@@ -280,20 +282,20 @@ export default function Home() {
       setupdateCategoryIsOpen(true)
     })
   }
-  useUpdateEffect(()=>{
-    const container = DOM("#uc-cp-container")
-    const w = DOM(window)
+  useUpdateEffect(()=>{   
     if(updateCategoryIsOpen && !updateCategoryAlertIsOpen){
+      const w = DOM(window)
+      const container = DOM("#uc-cp-container")
       if(w.outerWidth>w.outerHeight){//landscape
         container.animate({
-          transform: "translateX("+(-(container.width("cpbm","left")))+"px)"
+          transform: `translateX(${-container.width("cpbm","left")}px)`
         },0,()=>{
           container.animate({transform:"translateX(0)"},300)
         })   
       }
-      else {
+      else if(!closeAllPopups.current){
         container.animate({
-          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
+          transform: `translateY(${container.height("cpbm","bottom")}px)`
         },0,()=>{
           container.animate({transform:"translateY(0)"},300)
         })
@@ -301,6 +303,8 @@ export default function Home() {
     } 
     else if(updateCategoryIsOpen && updateCategoryAlertIsOpen)
       setupdateCategoryAlertIsOpen(false)
+    // Close All Popups
+    if(closeAllPopups.current) closeAllPopups.current=false
   },[updateCategoryIsOpen])
 
   const closeUpdateCategory = () => {
@@ -309,14 +313,14 @@ export default function Home() {
     w.outerWidth>w.outerHeight
     if(w.outerWidth>w.outerHeight){//landscape
       container.animate({
-        transform: "translateX("+(-(container.width("cbpm","left")))+"px)"
+        transform: `translateX(${-container.width("cbpm","left")}px)`
       },300,"ease-in",()=>{
         setchosenUpdateCategory([])
         setupdateCategoryIsOpen(false)
       })
     } else {
       container.animate({
-        transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
+        transform: `translateY(${container.height("cpbm","bottom")}px)`
       },300,"ease-in",()=>{
         setchosenUpdateCategory([])
         setupdateCategoryIsOpen(false)
@@ -329,38 +333,42 @@ export default function Home() {
     setupdateCategoryAlertIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const element = DOM("#uca-pop-body > *")
-    if(updateCategoryAlertIsOpen){
+    if(updateCategoryAlertIsOpen) {
+      const element = DOM("#uca-pop-body > *")
       element.animate({
-        transform: "translateX("+(element.width("cpbm","right"))+"px)"
+        transform: `translateX(${element.width("cpbm","right")}px)`
       },0,()=>{
         element.animate({transform:"translateX(0)"},300)
       })
-    } else {
+    } 
+    else if(!closeAllPopups.current) {
+      const element = DOM("#uca-pop-body > *")
       element.animate({
-        transform: "translateX("+(-(element.width("cpbm","left")))+"px)"
+        transform: `translateX(${-(element.width("cpbm","left"))}px)`
       },0,()=>{
         element.animate({transform:"translateX(0)"},300)
       })
     }
+    // Close All Popups
+    if(closeAllPopups.current) closeAllPopups.current=false
   },[updateCategoryAlertIsOpen])
 
-  const closeUpdateCategoryAlert = (submitted) => {
+  const closeUpdateCategoryAlert = () => {
     const container = DOM("#uc-cp-container")
     const w = DOM(window)
-    if(submitted) {
+    if(closeAllPopups.current) {
       container = DOM(".cp-container")
       if(w.outerWidth>w.outerHeight){//landscape
         container.animate({
-          transform: "translateX("+(-(container.width("cpbm","left")))+"px)"
+          transform: `translateX(${-container.width("cpbm","left")}px)`
         },300,"ease-in",()=>{
           setupdateCategoryAlertIsOpen(false)
           setupdateCategoryIsOpen(false)
           setchosenUpdateCategory([])
         })
       } else {
-        container[animate]({
-          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
+        container.animate({
+          transform: `translateY(${container.height("cpbm","bottom")}px)`
         },300,"ease-in",()=>{
           setupdateCategoryAlertIsOpen(false)
           setupdateCategoryIsOpen(false)
@@ -374,22 +382,22 @@ export default function Home() {
   //=task form
   const addTask = (e) => {
     if(nulled(addTaskName)){
-      return DOM("#add-task_name").reportValidity()
+      return DOM("#add-task_name").reportValidity
     }
     if(nulled(addTaskStartDate)){
       DOM("#add-start_date").setCustomValidity("")
-      return DOM("#add-start_date").reportValidity()
+      return DOM("#add-start_date").reportValidity
     }
     if(nulled(addTaskEndDate)){
       DOM("#add-end_date").setCustomValidity("")
-      return DOM("#add-end_date").reportValidity()
-    }
-    if(nulled(addTaskDescription)){
-      return DOM("#add-description").reportValidity()
+      return DOM("#add-end_date").reportValidity
     }
     if(addTaskStartDate>=addTaskEndDate){
       DOM("#add-end_date").setCustomValidity("Start Date should be set before the End Date")
-      return DOM("#add-end_date").reportValidity()
+      return DOM("#add-end_date").reportValidity
+    }
+    if(nulled(addTaskDescription)){
+      return DOM("#add-description").reportValidity
     }
     e.preventDefault()
     if(isRunning.current) return
@@ -449,22 +457,22 @@ export default function Home() {
 
   const updateTask = (e) => {
     if(DOM("#update-task_name").val===""){
-      return DOM("#update-task_name").reportValidity()
+      return DOM("#update-task_name").reportValidity
     }
     if(DOM("#update-start_date").val===""){
       DOM("#update-start_date").setCustomValidity("")
-      return DOM("#update-start_date").reportValidity()
+      return DOM("#update-start_date").reportValidity
     }
     if(DOM("#update-end_date").val===""){
       DOM("#update-end_date").setCustomValidity("")
-      return DOM("#update-end_date").reportValidity()
-    }
-    if(DOM("#update-description").val===""){
-      return DOM("#update-description").reportValidity()
+      return DOM("#update-end_date").reportValidity
     }
     if(DOM("#update-start_date").val>=DOM("#update-end_date").val){
       DOM("#update-end_date").setCustomValidity("Start Date should be set before the End Date")
-      return DOM("#update-end_date").reportValidity()
+      return DOM("#update-end_date").reportValidity
+    }
+    if(DOM("#update-description").val===""){
+      return DOM("#update-description").reportValidity
     }
     e.preventDefault()
     if(isRunning.current) return
@@ -557,7 +565,8 @@ export default function Home() {
     isRunning.current = true
     const category_id = categories.filter((category)=>{return chosenUpdateTask.category_id===category.id})
     setTasks(tasks.filter((task)=>{return task!==chosenUpdateTask}))
-    closeUpdateTaskAlert(true)
+    closeAllPopups.current=true
+    closeUpdateTaskAlert()
     closeUpdateTask()
     $.ajax({
       type: "POST",
@@ -579,7 +588,8 @@ export default function Home() {
     if(isRunning.current) return
     isRunning.current = true
     setTasks(tasks.filter((task)=>{return task.taskisfinished!==0}))
-    closedeleteAllFinishedTasksAlert(true)
+    closeAllPopups.current=true
+    closedeleteAllFinishedTasksAlert()
     $.ajax({
       type: "POST",
       url: "/task/deleteallfinishedtask",
@@ -596,23 +606,25 @@ export default function Home() {
     setaddTaskIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const container = DOM("#at-tp-container")
-    const w = DOM(window)
     if(addTaskIsOpen){
+      const w = DOM(window)
+      const container = DOM("#at-tp-container")
       if(w.outerWidth>w.outerHeight){//landscape
         container.animate({
-          transform: "translateX("+(container.width("cpbm","right"))+"px)"
+          transform: `translateX(${container.width("cpbm","right")}px)`
         },0,()=>{
           container.animate({transform:"translateX(0)"},300)
         })
       } else {
         container.animate({
-          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
+          transform: `translateY(${container.height("cpbm","bottom")}px)`
         },0,()=>{
           container.animate({transform:"translateX(0)"},300)
         })
       }
     }
+    // Close All Popups
+    if(closeAllPopups.current) closeAllPopups.current=false
   },[addTaskIsOpen])
 
   const closeAddTask = () => {
@@ -620,13 +632,13 @@ export default function Home() {
     const w = DOM(window)
     if(w.outerWidth>w.outerHeight){//landscape
       container.animate({
-        transform: "translateX("+(container.width("cpbm","right"))+"px)"
+        transform: `translateX(${container.width("cpbm","right")}px)`
       },300,"ease-in",()=>{
         setaddTaskIsOpen(false)
       })
     } else {
       container.animate({
-        transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
+        transform: `translateY(${container.height("cpbm","bottom")}px)`
       },300,"ease-in",()=>{
         setaddTaskIsOpen(false)
       })
@@ -641,25 +653,26 @@ export default function Home() {
     setupdateTaskIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const container = DOM("#ut-tp-container")
-    const w = DOM(window)
-    console.log(w.outerWidth, w.outerHeight, w.outerWidth>w.outerHeight)
     if(updateTaskIsOpen && !updateTaskAlertIsOpen){
+      const w = DOM(window)
+      const container = DOM("#ut-tp-container")
       if(w.outerWidth>w.outerHeight){//landscape
         container.animate({
-          transform: "translateX("+(container.width("cpbm","right"))+"px)"
+          transform: `translateX(${container.width("cpbm","right")}px)`
         },0,()=>{
           container.animate({transform:"translateX(0)"},300)
         })
-      } else {
+      } else if(!closeAllPopups.current) {
         container.animate({
-          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
+          transform: `translateY(${container.height("cpbm","bottom")}px)`
         },0,()=>{
           container.animate({transform:"translateY(0)"},300)
         })
       }
     } else if(updateTaskIsOpen && updateTaskAlertIsOpen)
       setupdateTaskAlertIsOpen(false)
+    // Close All Popups
+    if(closeAllPopups.current) closeAllPopups.current=false
   },[updateTaskIsOpen])
 
   const closeUpdateTask = () => {
@@ -667,14 +680,14 @@ export default function Home() {
     const w = DOM(window)
     if(w.outerWidth>w.outerHeight){//landscape
       container.animate({
-        transform: "translateX("+(container.width("cpbm","right"))+"px)"
+        transform: `translateX(${container.width("cpbm","right")}px)`
       },300,"ease-in",()=>{
         setupdateTaskIsOpen(false)
         setchosenUpdateTask([])
       })
     } else {
       container.animate({
-        transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
+        transform: `translateY(${container.height("cpbm","bottom")}px)`
       },300,"ease-in",()=>{
         setupdateTaskIsOpen(false)
         setchosenUpdateTask([])
@@ -687,30 +700,33 @@ export default function Home() {
     setupdateTaskAlertIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const element = DOM("#uta-pop-body > *")
     if(updateTaskAlertIsOpen){
+      const element = DOM("#uta-pop-body > *")
       element.animate({
-        transform: "translateX("+(element.width("cpbm","right"))+"px)"
+        transform: `translateX(${element.width("cpbm","right")}px)`
       },0,()=>{
         element.animate({transform:"translateX(0)"},300)
       })
-    } else {
+    } else if(!closeAllPopups.current) {
+      const element = DOM("#uta-pop-body > *")
       element.animate({
-        transform: "translateX("+(-(element.width("cpbm","left")))+"px)"
+        transform: `translateX(${-element.width("cpbm","left")}px)`
       },0,()=>{
         element.animate({transform:"translateX(0)"},300)
       })
     }
+    // Close All Popups
+    if(closeAllPopups.current) closeAllPopups.current=false
   },[updateTaskAlertIsOpen])
 
-  const closeUpdateTaskAlert = (submitted) => {
+  const closeUpdateTaskAlert = () => {
     const container = DOM("#ut-tp-container")
     const w = DOM(window)
-    if(submitted){
+    if(closeAllPopups.current){
       container = DOM(".tp-container")
       if(w.outerWidth>w.outerHeight){//landscape
         container.animate({
-          transform: "translateX("+(container.width("cpmb","right"))+"px)"
+          transform: `translateX(${container.width("cpmb","right")}px)`
         },300,"ease-in",()=>{
           setupdateTaskAlertIsOpen(false)
           setupdateTaskIsOpen(false)
@@ -718,15 +734,14 @@ export default function Home() {
         })
       } else {
         container.animate({
-          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
+          transform: `translateY(${container.height("cpbm","bottom")}px)`
         },300,"ease-in",()=>{
           setupdateTaskAlertIsOpen(false)
           setupdateTaskIsOpen(false)
           setchosenUpdateTask([])
         })
       } 
-    }
-    else setupdateTaskIsOpen(true)
+    } else setupdateTaskIsOpen(true)
   }
 
   const opendeleteAllFinishedTasks = (e) => {
@@ -734,24 +749,26 @@ export default function Home() {
     setdeleteAllFinishedTasksIsOpen(true)
   }
   useUpdateEffect(()=>{
-    const container = DOM("#daft-tp-container")
-    const w = DOM(window)
     if(deleteAllFinishedTasksIsOpen && !deleteAllFinishedTasksAlertIsOpen){
+      const w = DOM(window)
+      const container = DOM("#daft-tp-container")
       if(w.outerWidth>w.outerHeight){//landscape
         container.animate({
-          transform: "translateX("+(container.width("cpbm","right"))+"px)"
+          transform: `translateX(${container.width("cpbm","right")}px)`
         },0,()=>{
           container.animate({transform: "translateX(0)"},300)
         })
       } else {
         container.animate({
-          transform: "translateY("+(container.height("cpmb","bottom"))+"px)"
+          transform: `translateY(${container.height("cpmb","bottom")}px)`
         },0,()=>{
           container.animate({transform: "translateY(0)"},300)
         })
       }
     } else if(deleteAllFinishedTasksIsOpen && deleteAllFinishedTasksAlertIsOpen)
       setdeleteAllFinishedTasksAlertIsOpen(false)
+    // Close All Popups
+    if(closeAllPopups.current) closeAllPopups.current=false
   },[deleteAllFinishedTasksIsOpen])
 
   const closedeleteAllFinishedTasks = () => {
@@ -761,13 +778,13 @@ export default function Home() {
     const w = DOM(window)
     if(w.outerWidth>w.outerHeight){//landscape
       container.animate({
-        transform: "translateX("+(container.width("cpbm","right"))+"px)"
+        transform: `translateX(${container.width("cpbm","right")}px)`
       },300,"ease-in",()=>{
         setdeleteAllFinishedTasksIsOpen(false)
       })
     } else {
      container.animate({
-        transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
+        transform: `translateY(${container.height("cpbm","bottom")}px)`
       },300,"ease-in",()=>{
         setdeleteAllFinishedTasksIsOpen(false)
       })
@@ -783,37 +800,40 @@ export default function Home() {
     }
   }
   useUpdateEffect(()=>{
-    const element = DOM("#dafta-pop-body>* , #pop-body>*")
     if(deleteAllFinishedTasksAlertIsOpen){
+      const element = DOM("#dafta-pop-body>* , #pop-body>*")
       element.animate({
-        transform: "translateX("+(element.width("cpbm","right"))+"px)"
+        transform: `translateX(${element.width("cpbm","right")}px)`
       },0,()=>{
         element.animate({transform: "translateX(0)"},300)
       })
-    } else {
+    } else if(!closeAllPopups.current){
+      const element = DOM("#dafta-pop-body>* , #pop-body>*")
       element.animate({
-        transform: "translateX("+(-(element.width("cpbm","left")))+"px)"
+        transform: `translateX(${-element.width("cpbm","left")}+"px)`
       },0,()=>{
         element.animate({transform: "translateX(0)"},300)
       })
     }
+    // Close All Popups
+    if(closeAllPopups.current) closeAllPopups.current=false
   },[deleteAllFinishedTasksAlertIsOpen])
 
-  const closedeleteAllFinishedTasksAlert = (submitted) => {
+  const closedeleteAllFinishedTasksAlert = () => {
     const container = DOM("#daft-tp-container")
     const w = DOM(window)
-    if(submitted){
+    if(closeAllPopups.current){
       container = DOM(".tp-container")
       if(w.outerWidth>w.outerHeight){//landscape
         container.animate({
-          transform: "translateX("+(container.width("cpbm","right"))+"px)"
+          transform: `translateX(${container.width("cpbm","right")}px)`
         },300,"ease-in",()=>{
           setdeleteAllFinishedTasksAlertIsOpen(false)
           setdeleteAllFinishedTasksIsOpen(false)
         })
       } else {
         container.animate({
-          transform: "translateY("+(container.height("cpbm","bottom"))+"px)"
+          transform: `translateY(${container.height("cpbm","bottom")}+"px)`
         },300,"ease-in",()=>{
           setdeleteAllFinishedTasksAlertIsOpen(false)
           setdeleteAllFinishedTasksIsOpen(false)
@@ -840,25 +860,21 @@ export default function Home() {
     if (!isRunning.current) {
       isRunning.current=true
       const html = DOM("html")
-      const topbar = DOM("#top-bar")
       const catmenu = DOM("#categoriesMenu")
-      console.log(catmenu.css("transform"))
       if(catmenu.css("transform") !== "matrix(1, 0, 0, 1, 0, 0)") {//check if translateY is 0
         html.css("overflow","hidden")
         catmenu.animate({
-          transform: "translateY("+-catmenu.height("cbpm","bottom")+topbar.height("cbpm","bottom")+"px)"}
-        )
-        // catmenu.animate({transform: "translateY("+-catmenu.height("cbpm","bottom")+topbar.height("cbpm","bottom")+"px)"})// return on top
+          transform: `translateY(${-catmenu.height("c")}px)`
+        })
         catmenu.animate({
             transform: "translateY(0)"
           },300,"ease-out",() => {
             return isRunning.current=false
           })
       } else {
-        console.log(-catmenu.height("cbpm","bottom")+topbar.height("cbpm","bottom"))
         html.css("overflow","visible")
         catmenu.animate({
-          transform: "translateY("+(-catmenu.height("cbpm","bottom")+topbar.height("cbpm","bottom"))+"px)"
+          transform: `translateY(${-catmenu.height("c")}px)`
         },300,"ease-in",() => {
           catmenu
           return isRunning.current=false
@@ -869,8 +885,11 @@ export default function Home() {
   //=event listeners
   useEffect(()=>{
     if (typeof window !== "undefined") {
-      DOM(window).on("scroll",() => {
-        const html = DOM("html")
+      const win = DOM(window)
+      const html= DOM("html")
+      var oldWinWidth = win.innerWidth
+      var newWinWidth = oldWinWidth
+      win.on("scroll",() => {
         const dashboardHeight = DOM("#dashboard").height()
         const goupicon = DOM("#go-up")
         if(html.scrollTop > dashboardHeight && goupicon.css("opacity")==="0") 
@@ -881,50 +900,44 @@ export default function Home() {
           })
       })
       //Fix Categories menu after resize
-      DOM(window).on("resize", () => {
-        const html= DOM("html")
-        const topbar = DOM("#top-bar")
+      win.on("resize", () => {
         const catmenu = DOM("#categoriesMenu")
-        const cataddinput = DOM("#add-category_name")
-        const catupdateinput = DOM("#update-category_name")
+        const catupPopup = DOM("#uc-cp-container")
+        const inputs = [DOM("#add-category_name"),DOM("#update-category_name")]
+        newWinWidth = win.innerWidth
+        // Check if Categories Menu is Below in Small Screen or in Use
         const catIsActive = 
-          cataddinput.isActive || 
-          catupdateinput.isActive ||
-          !nulled(cataddinput.val) ||
-          !nulled(catupdateinput.val)
-        if(DOM(window).outerWidth>=785) {
+          (catmenu.css("transform")==="matrix(1, 0, 0, 1, 0, 0)" && catmenu.width("cpbm")===html.outerWidth)
+        const catIsInuse = 
+          typeof catupPopup!=="undefined"||
+          inputs.some(input=>{
+            if(typeof input==="undefined") return false
+            else return input.isActive || !nulled(input.val)
+          })
+        if(win.innerWidth>=785) {
+          oldWinWidth=newWinWidth
           catmenu.animate({transform: "translateY(0)"})
+          return html.css("overflow","hidden")
+        } else if(oldWinWidth>785 && !catIsInuse) {
+          oldWinWidth=newWinWidth
+          catmenu.animate({transform: `translateY(${-catmenu.height("c")}px)`})
           return html.css("overflow","visible")
-        }
-        else if(catIsActive && DOM(window).outerWidth<785){
+        } else if(catIsActive||catIsInuse){
           catmenu.animate({transform: "translateY(0)"})
-          return html.css("overflow","visible")
-        }
-        else if(DOM(window).outerWidth<785) {
-          catmenu.animate({transform: "translateY("+-(catmenu.height("cpbm","bottom")+topbar.height("cpbm","bottom"))+"px)"})
+          html.css("overflow","hidden")
+        } else {
+          catmenu.animate({transform: `translateY(${-catmenu.height("c")}px)`})
           return html.css("overflow","visible")
         }
       })
       // Change Categories Scroll Max Height
-      DOM(window).on("load", () => {
-        const topbar = DOM("#top-bar")
-        const addcategory = DOM(".add-category")
-        const addcategoryname = DOM("#add-category_name")
-        const listItem = DOM("#categoriesul > li:first-child")
-        console.log(listItem, DOM(window))
-        const listItemPMHeight = typeof listItem==="undefined"? 0 : listItem.height("pm")
-        const totalHeightAbove = topbar.height("cpbm")+addcategory.height("cbpm")+addcategoryname.height("cbpm")+listItemPMHeight
-        return DOM("#categoriesul").css({"maxHeight":DOM(window).outerHeight - totalHeightAbove + "px"})
+      const catul = DOM("#categoriesul")
+      win.on("load", () => {
+        return catul.css({"maxHeight": win.outerHeight-catul.offsetTop+"px"})
       })
 
-      DOM(window).on("resize", () => {
-        const topbar = DOM("#top-bar")
-        const addcategory = DOM(".add-category")
-        const addcategoryname = DOM("#add-category_name")
-        const listItem = DOM("#categoriesul > li:first-child")
-        const listItemPMHeight = typeof listItem==="undefined"? 0 : listItem.height("pm")
-        const totalHeightAbove = topbar.height("cpbm")+addcategory.height("cbpm")+addcategoryname.height("cbpm")+listItemPMHeight
-        return DOM("#categoriesul").css({"maxHeight":DOM(window).outerHeight - totalHeightAbove + "px"})
+      win.on("resize", () => {
+        return catul.css({"maxHeight": win.outerHeight-catul.offsetTop+"px"})
       }) 
     }
   },[])
@@ -939,6 +952,8 @@ export default function Home() {
           <div className="container">
             <img className="logo" src="/icons/favicon.ico" alt="logo" />
             <img onClick={() => {categoryMenuIcon()}} id="category-icon" className="cur-point category-icon" src="/icons/hamburger.svg" alt="categories menu small screen" />
+            <img onClick={() => {setaddTaskIsOpen(true)}} className="cur-point logout-icon icon" src="/icons/add task white.svg" alt="add task" />
+            <img onClick={() => {setdeleteAllFinishedTasksIsOpen(true)}} className="cur-point logout-icon icon" src="/icons/trash white.svg" alt="delete all finished tasks" />
             <img onClick={e => {logout(e)}} className="icon logout-icon cur-point" src="/icons/logout white.svg" alt="logout"/>
           </div>
         </nav>
@@ -1200,14 +1215,16 @@ export default function Home() {
       {(!updateCategoryIsOpen && !updateCategoryAlertIsOpen) || nulled(chosenUpdateCategory) ? null : (
         <dialog onMouseDown={e=>{
           e.stopPropagation()
-          updateCategoryIsOpen?closeUpdateCategory():closeUpdateCategoryAlert(false)
+          closeAllPopups.current=true
+          updateCategoryIsOpen?closeUpdateCategory():closeUpdateCategoryAlert()
           }} className="add-edit-popup">
           <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} id="uc-cp-container" className="cp-container">
             <div className="pop-header">
               <h3 className="cur-def">{"Edit Category ("+chosenUpdateCategory.category_name+")"}</h3>
               <div onClick={e=>{
                 e.stopPropagation()
-                updateCategoryIsOpen?closeUpdateCategory():closeUpdateCategoryAlert(false)
+                closeAllPopups.current=true
+                updateCategoryIsOpen?closeUpdateCategory():closeUpdateCategoryAlert()
                 }} className="cur-point xclose-pop">
                 <img src="/icons/xclose-black.svg" alt="close add task popup" />
               </div>
@@ -1309,26 +1326,28 @@ export default function Home() {
       {!updateTaskIsOpen && !updateTaskAlertIsOpen ? null : (
         <dialog onMouseDown={(e)=>{
         e.stopPropagation()
+        closeAllPopups.current=true
         if(openUpdateTaskIsFromdeleteFinishedTasks){
           if(updateTaskIsOpen){
-            setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+            setopenUpdateTaskIsFromdeleteFinishedTasks()
             closeUpdateTask()
             opendeleteAllFinishedTasks(e)
-          } else closeUpdateTaskAlert(false)
-        } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert(false)
+          } else closeUpdateTaskAlert()
+        } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert()
         }} className="add-edit-popup">
           <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} id="ut-tp-container" className="tp-container">
             <div className="pop-header">
               <h3 className="cur-def">{"Edit Task ("+chosenUpdateTask.task_name+")"}</h3>
               <div onClick={(e)=>{
                 e.stopPropagation()
+                closeAllPopups.current=true
                 if(openUpdateTaskIsFromdeleteFinishedTasks){
                   if(updateTaskIsOpen){
-                    setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                    setopenUpdateTaskIsFromdeleteFinishedTasks()
                     closeUpdateTask()
                     opendeleteAllFinishedTasks(e)
-                  } else closeUpdateTaskAlert(false)
-                } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert(false)
+                  } else closeUpdateTaskAlert()
+                } else updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert()
                 }}
                 className="cur-point xclose-pop">
                 <img src="/icons/xclose-black.svg" alt="close add task popup" />
@@ -1346,7 +1365,7 @@ export default function Home() {
                     onKeyDown={e => {
                       if(e.key === "Enter"){
                         if(openUpdateTaskIsFromdeleteFinishedTasks){
-                          setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                          setopenUpdateTaskIsFromdeleteFinishedTasks()
                           updateTask(e)
                           opendeleteAllFinishedTasks(e)
                         } else 
@@ -1364,7 +1383,7 @@ export default function Home() {
                       onKeyDown={e => {
                       if(e.key === "Enter"){
                         if(openUpdateTaskIsFromdeleteFinishedTasks){
-                          setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                          setopenUpdateTaskIsFromdeleteFinishedTasks()
                           updateTask(e)
                           opendeleteAllFinishedTasks(e)
                         } else 
@@ -1385,7 +1404,7 @@ export default function Home() {
                       onKeyDown={e => {
                       if(e.key === "Enter"){
                         if(openUpdateTaskIsFromdeleteFinishedTasks){
-                          setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                          setopenUpdateTaskIsFromdeleteFinishedTasks()
                           updateTask(e)
                           opendeleteAllFinishedTasks(e)
                         } else 
@@ -1411,7 +1430,7 @@ export default function Home() {
                 <button onClick={openUpdateTaskAlert} className="cur-point pop-btn-delete">Delete</button>
                 <button onClick={e=>{
                 if(openUpdateTaskIsFromdeleteFinishedTasks){
-                  setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                  setopenUpdateTaskIsFromdeleteFinishedTasks()
                   updateTask(e)
                   opendeleteAllFinishedTasks(e)
                 } else 
@@ -1436,11 +1455,11 @@ export default function Home() {
               <div className="pop-btns">
                 <button onClick={e=>{
                   e.stopPropagation()
-                  updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert(false)
-                }} className="cur-point pop-btn-cancel">Cancel</button>
+                  updateTaskIsOpen?closeUpdateTask():closeUpdateTaskAlert()
+                }} className="cur-point pop-btn-cancel">Go Back</button>
                 <button onClick={e=>{
                 if(openUpdateTaskIsFromdeleteFinishedTasks){
-                  setopenUpdateTaskIsFromdeleteFinishedTasks(false)
+                  setopenUpdateTaskIsFromdeleteFinishedTasks()
                   deleteTask(e)
                   opendeleteAllFinishedTasks(e)
                 } else 
@@ -1459,7 +1478,10 @@ export default function Home() {
         <dialog 
         onMouseDown={e=>{
           e.stopPropagation()
-          deleteAllFinishedTasksIsOpen?closedeleteAllFinishedTasks():closedeleteAllFinishedTasksAlert(false)
+          closeAllPopups.current=true
+          deleteAllFinishedTasksIsOpen?
+            closedeleteAllFinishedTasks() :
+            closedeleteAllFinishedTasksAlert()
         }} className="add-edit-popup">
           <div onMouseDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} id="daft-tp-container" className="tp-container">
             <div className="pop-header">
@@ -1467,7 +1489,10 @@ export default function Home() {
               <div 
               onClick={e=>{
                 e.stopPropagation()
-                deleteAllFinishedTasksIsOpen?closedeleteAllFinishedTasks():closedeleteAllFinishedTasksAlert(false)
+                closeAllPopups.current=true
+                deleteAllFinishedTasksIsOpen?
+                  closedeleteAllFinishedTasks() :
+                  closedeleteAllFinishedTasksAlert()
               }} className="cur-point xclose-pop">
                 <img src="/icons/xclose-black.svg" alt="close add task popup" />
               </div>
@@ -1541,7 +1566,7 @@ export default function Home() {
               <div className="pop-btns">
                 <button onClick={e=>{
                   e.stopPropagation()
-                  closedeleteAllFinishedTasksAlert(false)
+                  closedeleteAllFinishedTasksAlert()
                 }} className="cur-point pop-btn-cancel">Go Back</button>
                 <button onClick={e=>deleteAllFinishedTasks(e)} className="cur-point pop-btn-delete">Delete</button>
               </div>

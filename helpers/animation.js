@@ -1,11 +1,17 @@
 const DOM = (element_s) => {
-  if(typeof element_s==="string" || element_s instanceof  String)
-    return new Elements(...document.querySelectorAll(element_s))
-  else return new Elements(element_s)
+  if(typeof element_s==="string" || element_s instanceof  String){
+    if(document.querySelectorAll(element_s).length===0)
+      return undefined
+    else return new Elements(...document.querySelectorAll(element_s))
+  } else {
+    if(!(element_s instanceof Window)&&!(element_s instanceof Document)&&!(element_s instanceof HTMLElement)) 
+      return undefined
+    else return new Elements(element_s)
+  } 
 }
 
 const propVal = (element, property) => {  
-  if(typeof element[property]==="undefined"||element[property]===null) 
+  if(typeof element[property]==="undefined"||element[property]===null)
     if(element.style[property].length===0){
       const value = window.getComputedStyle(element)[property].toString()
       const cssUnits=["px","em","rem","ch","%","vh","vw","ex","cm","mm","in","pt","pc","vmin","vmax"]
@@ -57,7 +63,8 @@ class Elements extends Array {
                         else if(p==="scrollLeft") return [kfs[0],{...kfs[1],[p]:parseFloat(v)}]   
                         else return [{...kfs[0],[p]:v},kfs[1]]
                       }, [])
-    if(typeof _keyframes[1]!=="undefined"&&_keyframes[1]!==null) { //Scroll Animation 
+    // Additional Scroll Animation 
+    if(typeof _keyframes[1]!=="undefined"&&_keyframes[1]!==null) { 
       const scrolled = this[0]===document.body||this[0]===window||this[0]===document? DOM("html"):this
       DOM("body").css("overflow","visible")
       DOM("html").css("overflow","visible")// Allow scroll
@@ -89,6 +96,7 @@ class Elements extends Array {
         })
       })
     }
+    // CSS Animation Keyframes
     this.length===1? 
     this[0].animate([{},_keyframes[0]], {
         duration:_duration, fill:"forwards", easing:_easing}) 
@@ -110,48 +118,19 @@ class Elements extends Array {
     this.forEach(element=>element.style.display="none")
     return this
   }
-    //Append
-    // insert(newElement, position_nodeBefore) {
-    //    const div= document.createElement("div");
-    //    div.innerHTML = newElement
-    //    const _newElement = div.firstChild
-    //    if(this.isElement) {
-    //      if(typeof position_nodeBefore==="undefined") this.elements.append(_newElement)
-    //      else {
-    //        const _nodeBefore = 
-    //          position_nodeBefore instanceof Elements?
-    //            position_nodeBefore[0] : typeof position_nodeBefore==="object" && typeof position_nodeBefore.nodeType!==undefined ?
-    //              position_nodeBefore : this.elements.querySelector(position_nodeBefore)
-    //        this.elements.insertBefore(_newElement, _nodeBefore)
-    //      }
-    //    } else this.map(element=> {
-    //      if(typeof nodeBefore==="undefined") element.append(_newElement)
-    //      else {
-    //        nodeBefore instanceof Elements?
-    //            nodeBefore[0] : typeof nodeBefore==="object" && typeof nodeBefore.nodeType!==undefined ?
-    //              nodeBefore : this.elements.querySelector(nodeBefore)
-    //        element.insertBefore(_newElement, _nodeBefore)
-    //      }
-    //    })
-    //   return this
-    //  }
-    //  extract(element_s) {
-       
-    //    return this
-    //  }
-    //Selectors
+  //Selectors
   parent(element_s) {
-    if(element_s==="undefined") {return new Elements([this[0].parentElement])}
+    if(element_s==="undefined") {return new Elements(this[0].parentElement)}
     else return (
-      this.length===1? new Element([...this[0].parentElement.parentElement.querySelectorAll(element_s)]):
-      this.map(element=>new Element([...element.parentElement.parentElement.querySelectorAll(element_s)]))
+      this.length===1? new Element(...this[0].parentElement.parentElement.querySelectorAll(element_s)):
+      this.map(element=>new Element(...element.parentElement.parentElement.querySelectorAll(element_s)))
     )
    }
   child(element_s) {
-    if(element_s===undefined) return new Elements([...this[0].children])
+    if(element_s===undefined) return new Elements(...this[0].children)
     else return (
-      this.length===1? new Element([...this[0].querySelectorAll(element_s)]) :
-      this.map(element=>new Element([...element.querySelectorAll(element_s)]))
+      this.length===1? new Element(...this[0].querySelectorAll(element_s)) :
+      this.map(element=>new Element(...element.querySelectorAll(element_s)))
     )
   }
   //Validator
@@ -159,7 +138,8 @@ class Elements extends Array {
       this.forEach(element=>element.setCustomValidity(message))
     return this
   }
-  reportValidity(){
+  get reportValidity(){
+      this.length===0? this[0].reportValidity() :
       this.forEach(element=>element.reportValidity())
     return this
   }
@@ -175,35 +155,26 @@ class Elements extends Array {
     )
   }
   height(cbpm, position) {
-    const options = typeof cpbm==="undefined"? ["c","p","b"] : cbpm.replace(" ","").toLowerCase().split("")
+    const options = typeof cbpm==="undefined"? ["c","p","b"] : cbpm.replace(" ","").toLowerCase().split("")
     if(typeof position==="string"||position instanceof String){
       const _position = position.charAt(0).toUpperCase() + position.slice(1)
         if(this.length===1) {
           const scrollbarHeight = 
             (_position==="Bottom"? 
               (this[0].offsetHeight - this[0].clientHeight): 0 +
-          propVal(this[0],"border"+_position))
+          propVal(this[0],"border"+_position+"Width"))
           return (
             (scrollbarHeight) +
-            (options.includes("c")? propVal(this[0],"height"):0) + 
+            (options.includes("c")? 
+              propVal(this[0],"height")
+                -propVal(this[0],"paddingTop")
+                -propVal(this[0],"paddingBottom")
+                -propVal(this[0],"borderTopWidth")
+                -propVal(this[0],"borderBottomWidth")
+                -propVal(this[0],"marginTop")
+                -propVal(this[0],"marginBottom"):0) + 
             (options.includes("b")?
-              propVal(this[0],"border"+_position):0) +
-            (options.includes("p")?
-              propVal(this[0],"padding"+_position):0) +
-            (options.includes("m")?
-              propVal(this[0],"margin"+_position):0)
-          )
-        } else {
-        if(this.length[0]===1){
-          const scrollbarHeight = 
-            (_position==="Bottom"? 
-              (this[0].offsetHeight - this[0].clientHeight): 0 +
-          propVal(this[0],"border"+_position))
-          return (
-            (scrollbarHeight) +
-            (options.includes("c")? propVal(this[0],"height"):0) + 
-            (options.includes("b")?
-              propVal(this[0],"border"+_position):0) +
+              propVal(this[0],"border"+_position+"Width"):0) +
             (options.includes("p")?
               propVal(this[0],"padding"+_position):0) +
             (options.includes("m")?
@@ -214,34 +185,46 @@ class Elements extends Array {
             const scrollbarHeight = 
             (_position==="Bottom"? 
               (element.offsetHeight - element.clientHeight): 0 +
-            propVal(element,"border"+_position))
-              return (
-                (scrollbarHeight) +
-                (options.includes("c")? propVal(element,"height"):0) + 
-                (options.includes("b")?
-                  propVal(element,"border"+_position):0) +
-                (options.includes("p")?
-                  propVal(element,"padding"+_position):0) +
-                (options.includes("m")?
-                  propVal(element,"margin"+_position):0)
-              )
-            }
-          )
+              propVal(element,"border"+_position+"Width"))
+            return (
+              (scrollbarHeight) +
+              (options.includes("c")? 
+                propVal(element,"height")
+                  -propVal(element,"paddingTop")
+                  -propVal(element,"paddingBottom")
+                  -propVal(element,"borderTopWidth")
+                  -propVal(element,"borderBottomWidth")
+                  -propVal(element,"marginTop")
+                  -propVal(element,"marginBottom"):0) + 
+              (options.includes("b")?
+                propVal(element,"border"+_position+"Width"):0) +
+              (options.includes("p")?
+                propVal(element,"padding"+_position):0) +
+              (options.includes("m")?
+                propVal(element,"margin"+_position):0)
+            )
+          })
         }
-      }
     } else {
       if(this.length===1) {
         const scrollbarHeight = 
           this[0].offsetHeight - 
           (this[0].clientHeight +
-          propVal(this[0],"borderTop") + 
-          propVal(this[0],"borderBottom"))
+          propVal(this[0],"borderTopWidth") + 
+          propVal(this[0],"borderBottomWidth"))
         return (
           (scrollbarHeight) +
-          (options.includes("c")? propVal(this[0],"height"):0) + 
+          (options.includes("c")? 
+            propVal(this[0],"height")
+              -propVal(this[0],"paddingTop")
+              -propVal(this[0],"paddingBottom")
+              -propVal(this[0],"borderTopWidth")
+              -propVal(this[0],"borderBottomWidth")
+              -propVal(this[0],"marginTop")
+              -propVal(this[0],"marginBottom"):0) + 
           (options.includes("b")? (
-            propVal(this[0],"borderTop") +
-            propVal(this[0],"borderBottom")):0) +
+            propVal(this[0],"borderTopWidth") +
+            propVal(this[0],"borderBottomWidth")):0) +
           (options.includes("p")? (
             propVal(this[0],"paddingTop") +
             propVal(this[0],"paddingBottom")):0) +
@@ -254,14 +237,21 @@ class Elements extends Array {
           const scrollbarHeight = 
             element.offsetHeight - 
             (element.clientHeight +
-            propVal(element,"borderTop") + 
-            propVal(element,"borderBottom"))
+            propVal(element,"borderTopWidth") + 
+            propVal(element,"borderBottomWidth"))
           return (
             (scrollbarHeight) +
-            (options.includes("c")? propVal(element,"height"):0) + 
+            (options.includes("c")? 
+              propVal(element,"height")
+                -propVal(element,"paddingTop")
+                -propVal(element,"paddingBottom")
+                -propVal(element,"borderTopWidth")
+                -propVal(element,"borderBottomWidth")
+                -propVal(element,"marginTop")
+                -propVal(element,"marginBottom"):0) + 
             (options.includes("b")? (
-              propVal(element,"borderTop") +
-              propVal(element,"borderBottom")):0) +
+              propVal(element,"borderTopWidth") +
+              propVal(element,"borderBottomWidth")):0) +
             (options.includes("p")? (
               propVal(element,"paddingTop") +
               propVal(element,"paddingBottom")):0) +
@@ -274,19 +264,26 @@ class Elements extends Array {
     }
   }
   width(cbpm, position) {
-    const options = typeof cpbm==="undefined"? ["c","p","b"] : cbpm.replace(" ","").toLowerCase().split("")
+    const options = typeof cbpm==="undefined"? ["c","p","b"] : cbpm.replace(" ","").toLowerCase().split("")
     if(typeof position==="string"||position instanceof String){
       const _position = position.charAt(0).toUpperCase() + position.slice(1)
       if(this.length===1){
         const scrollbarHeight = 
           (_position==="Right"? 
             (this[0].offsetWidth - this[0].clientWidth): 0 +
-            propVal(this[0],"border"+_position))
+            propVal(this[0],"border"+_position+"Width"))
         return (
           (scrollbarHeight) +
-          (options.includes("c")? propVal(this[0],"width"):0) + 
+          (options.includes("c")? 
+            (propVal(this[0],"width")
+              -propVal(this[0],"paddingLeft")
+              -propVal(this[0],"paddingRight")
+              -propVal(this[0],"borderLeftWidth")
+              -propVal(this[0],"borderRightWidth")
+              -propVal(this[0],"marginRight")
+              -propVal(this[0],"marginLeft")):0) +
           (options.includes("b")?
-            propVal(this[0],"border"+_position):0) +
+            propVal(this[0],"border"+_position+"Width"):0) +
           (options.includes("p")?
             propVal(this[0],"padding"+_position):0) +
           (options.includes("m")?
@@ -297,12 +294,19 @@ class Elements extends Array {
           const scrollbarHeight = 
           (_position==="Right"? 
             (element.offsetWidth - element.clientWidth): 0 +
-          propVal(element,"border"+_position))
+          propVal(element,"border"+_position+"Width"))
           return (
             (scrollbarHeight) +
-            (options.includes("c")? propVal(element,"width"):0) + 
+            (options.includes("c")? 
+              propVal(element,"width")
+                -propVal(this[0],"paddingLeft")
+                -propVal(this[0],"paddingRight")
+                -propVal(this[0],"borderLeftWidth")
+                -propVal(this[0],"borderRightWidth")
+                -propVal(this[0],"marginRight")
+                -propVal(this[0],"marginLeft"):0) + 
             (options.includes("b")?
-              propVal(element,"border"+_position):0) +
+              propVal(element,"border"+_position+"Width"):0) +
             (options.includes("p")?
               propVal(element,"padding"+_position):0) +
             (options.includes("m")?
@@ -313,16 +317,23 @@ class Elements extends Array {
     } else {
       if(this.length===1){
         const scrollbarWidth = 
-            this[0].offsetWidth - 
+          this[0].offsetWidth - 
             (this[0].clientWidth +
-            propVal(this[0],"borderLeft") + 
-            propVal(this[0],"borderRight"))
+            propVal(this[0],"borderLeftWidth") + 
+            propVal(this[0],"borderRightWidth"))
         return ( 
           (scrollbarWidth) +
-          (options.includes("c")? propVal(this[0],"width"):0) + 
+          (options.includes("c")? 
+            propVal(this[0],"width")
+              -propVal(this[0],"paddingLeft")
+              -propVal(this[0],"paddingRight")
+              -propVal(this[0],"borderLeftWidth")
+              -propVal(this[0],"borderRightWidth")
+              -propVal(this[0],"marginRight")
+              -propVal(this[0],"marginLeft"):0) + 
           (options.includes("b")? (
-            propVal(this[0],"borderLeft") +
-            propVal(this[0],"borderRight")):0) +
+            propVal(this[0],"borderLeftWidth") +
+            propVal(this[0],"borderRightWidth")):0) +
           (options.includes("p")? (
             propVal(this[0],"paddingLeft") +
             propVal(this[0],"paddingRight")):0) +
@@ -335,14 +346,21 @@ class Elements extends Array {
           const scrollbarWidth = 
             element.offsetWidth - 
             (element.clientWidth +
-            propVal(element,"borderLeft") + 
-            propVal(element,"borderRight"))
+            propVal(element,"borderLeftWidth") + 
+            propVal(element,"borderRightWidth"))
           return ( 
             (scrollbarWidth) +
-            (options.includes("c")? propVal(element,"width"):0) + 
+            (options.includes("c")? 
+              propVal(element,"width")
+                -propVal(element,"paddingLeft")
+                -propVal(element,"paddingRight")
+                -propVal(element,"borderLeftWidth")
+                -propVal(element,"borderRightWidth")
+                -propVal(element,"marginRight")
+                -propVal(element,"marginLeft"):0) + 
             (options.includes("b")? (
-              propVal(element,"borderLeft") +
-              propVal(element,"borderRight")):0) +
+              propVal(element,"borderLeftWidth") +
+              propVal(element,"borderRightWidth")):0) +
             (options.includes("p")? (
               propVal(element,"paddingLeft") +
               propVal(element,"paddingRight")):0) +
@@ -378,32 +396,31 @@ class Elements extends Array {
     if(this[0]===window) return this[0].innerWidth
     else if(this[0]===document) return new Elements("html").width("cp")
     else return (
-      this.length===1? this[0].width("cp"):this.map(element=>element.width("cp"))
+      this.length===1? this.width("cp"):this.map(element=>new Elements(element).width("cp"))
     )
   }
   get outerWidth() {
-    // console.log(this[0], this[0].outerWidth)
     if(this[0]===window) return this[0].outerWidth
     else if(this[0]===document) return new Elements("html").width("cpb")
     else return (
-      this.length===1? this[0].width("cpb"):this.map(element=>element.width("cpb"))
+      this.length===1? this.width("cpb"):this.map(element=>new Elements(element).width("cpb"))
     )
    }
   get innerHeight() {
     if(this[0]===window) return this[0].innerHeight
     else if(this[0]===document) return new Elements("html").height("cp")
     else return (
-      this.length===1? this[0].height("cp"):this.map(element=>element.height("cp"))
+      this.length===1? this.height("cp"):this.map(element=>new Elements(element).height("cp"))
     )
   }
   get outerHeight() {
     if(this[0]===window) return this[0].outerHeight
     else if(this[0]===document) return new Elements("html").height("cpb")
     else return (
-      this.length===1? this[0].height("cpb"):this.map(element=>element.height("cpb"))
+      this.length===1? this.height("cpb"):this.map(element=>new Elements(element).height("cpb"))
     )
-   }
-   get scrollTop() {
+  }
+  get scrollTop() {
     return (
       this.length===1? this[0].scrollTop:this.map(element=>element.scrollTop)
     )
@@ -416,3 +433,35 @@ class Elements extends Array {
 }
 
 export default DOM;
+
+
+// Extra
+    //Append
+    // insert(newElement, position_nodeBefore) {
+    //    const div= document.createElement("div");
+    //    div.innerHTML = newElement
+    //    const _newElement = div.firstChild
+    //    if(this.isElement) {
+    //      if(typeof position_nodeBefore==="undefined") this.elements.append(_newElement)
+    //      else {
+    //        const _nodeBefore = 
+    //          position_nodeBefore instanceof Elements?
+    //            position_nodeBefore[0] : typeof position_nodeBefore==="object" && typeof position_nodeBefore.nodeType!==undefined ?
+    //              position_nodeBefore : this.elements.querySelector(position_nodeBefore)
+    //        this.elements.insertBefore(_newElement, _nodeBefore)
+    //      }
+    //    } else this.map(element=> {
+    //      if(typeof nodeBefore==="undefined") element.append(_newElement)
+    //      else {
+    //        nodeBefore instanceof Elements?
+    //            nodeBefore[0] : typeof nodeBefore==="object" && typeof nodeBefore.nodeType!==undefined ?
+    //              nodeBefore : this.elements.querySelector(nodeBefore)
+    //        element.insertBefore(_newElement, _nodeBefore)
+    //      }
+    //    })
+    //   return this
+    //  }
+    //  extract(element_s) {
+       
+    //    return this
+    //  }
