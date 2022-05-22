@@ -1,4 +1,5 @@
 # ToDoList GoForIt
+a mini todolist application using node, nextjs, expressjs, and self made jquery clone
 
 Application Requires:
 
