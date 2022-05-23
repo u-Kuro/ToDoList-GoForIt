@@ -632,6 +632,7 @@ body.loading .loading{
   align-content:flex-start;
   display:flex;
   flex-wrap:wrap;
+  min-height: 75px;
   gap:1em;
   overflow-y:auto;
   overflow-x:hidden;

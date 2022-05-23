@@ -291,6 +291,7 @@ export default function Home() {
         if(html.outerWidth>html.outerHeight){//landscape
           container.show.css({
             translateX: -container.x("cpbm"),
+            display: "flex",
             opacity: 0
           }).animate({
             translateX: 0,
@@ -300,6 +301,7 @@ export default function Home() {
         else {
           container.show.css({
             translateY: container.y("cpbm"),
+            display: "flex",
             opacity: 0
           }).animate({
             translateY: 0,
@@ -628,15 +630,20 @@ export default function Home() {
       if(html.outerWidth>html.outerHeight){//landscape 
         container.show.css({
           translateX: container.x("cpbm"),
+          display: "flex",
           opacity: 0
         }).animate({
-          translateX: 0
+          translateX: 0,
+          opacity: 1
         },300)
       } else {
         container.show.css({
-          translateY: container.y("cpbm")
+          translateY: container.y("cpbm"),
+          display: "flex",
+          opacity: 0
         }).animate({
-          translateX: 0
+          translateX: 0,
+          opacity: 1
         },300)
       }
     }
@@ -680,6 +687,7 @@ export default function Home() {
       if(html.outerWidth>html.outerHeight){//landscape
         container.show.css({
           translateX: container.x("cpbm"),
+          display: "flex",
           opacity: 0
         }).animate({
           translateX: 0,
@@ -688,6 +696,7 @@ export default function Home() {
       } else if(!closeAllPopups.current) {
         container.show.css({
           translateY: container.y("cpbm"),
+          display: "flex",
           opacity: 0
         }).animate({
           translateY: 0,
@@ -792,6 +801,7 @@ export default function Home() {
       if(html.outerWidth>html.outerHeight){//landscape
         container.show.css({
           translateX: container.x("cpbm"),
+          display: "flex",
           opacity: 0
         }).animate({
           translateX: 0,
@@ -800,6 +810,7 @@ export default function Home() {
       } else {
         container.show.css({
           translateY: container.y("cpmb"),
+          display: "flex",
           opacity: 0
         }).animate({
           translateY: 0,
