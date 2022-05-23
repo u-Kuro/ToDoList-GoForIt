@@ -1,8 +1,8 @@
 import Head from "next/head"
 import Router from "next/router"
 import $ from "jquery"
-
-import DOM from "../../helpers/animation"
+import dom from "@kushii/dom"
+// import dom from "../../helpers/animation"
 
 import { useState, useEffect, useRef } from "react"
 import useUpdateEffect from "./components/useUpdateEffect"
@@ -71,9 +71,6 @@ export default function Home() {
   const currentTimezoneOffset = useRef(new Date().getTimezoneOffset())
     //helper functions
     const nulled = (v) => {return typeof v === "undefined" ? true : v === null ? true : v.length === 0}
-    // const totalSizePosition = (v,position) => {return (
-    //   (position==="Left"||position==="Right")?v.width("cbpm"):v.height("cbpm")
-    // )}
     const val = (v) => {return nulled(v)?[]:v}
 
   //=first render
@@ -175,7 +172,7 @@ export default function Home() {
   //=category form
   const addCategory = (e) => {
     e.preventDefault()
-    if(nulled(addCategoryName)) return DOM("#add-category_name").reportValidity
+    if(nulled(addCategoryName)) return dom("#add-category_name").reportValidity
     if(isRunning.current) return
     isRunning.current=true
     setaddCategoryName([])
@@ -198,7 +195,7 @@ export default function Home() {
 
   const updateCategory = (e) => {
     e.preventDefault()
-    if(nulled(updateCategoryName)) return DOM("#update-category_name").reportValidity
+    if(nulled(updateCategoryName)) return dom("#update-category_name").reportValidity
     if(isRunning.current) return
     isRunning.current=true
     setCategories([{
@@ -252,21 +249,25 @@ export default function Home() {
   const openCategory = (category) => {
     if(isRunning.current) return
     isRunning.current=true
-    const html= DOM("html")
-    const catmenu = DOM("#categoriesMenu")
-    const topbar = DOM("#top-bar")
-    if(DOM("#category-icon").css("display")!=="none") {
+    const html= dom("html")
+    const catmenu = dom("#categoriesMenu")
+    const topbar = dom("#top-bar")
+    if(dom("#category-icon").css("display")!=="none") {
       setopenedCategory(category)
       html.css({"overflow":"visible"})
       catmenu.animate({
-        transform: `translateY(${-catmenu.height("c")}px)`
-      },300,"ease-out",()=>{return isRunning.current=false})
+        translateY: -catmenu.y("c"),
+        opacity: 0
+      },300,"ease-out",()=>{
+        catmenu.hide
+        return isRunning.current=false
+      })
       html.animate({
-        scrollTop: DOM("#tasks").offsetTop - topbar.height("cpb","bottom")
+        scrollTop: dom("#tasks").offsetTop - topbar.y("cpb")
       }, 300); 
     } else {
       html.animate({
-        scrollTop: DOM("#tasks").offsetTop - topbar.height("cpb","bottom")
+        scrollTop: dom("#tasks").offsetTop - topbar.y("cpb")
       }, 300); 
       setopenedCategory(category)
       return isRunning.current=false
@@ -284,22 +285,28 @@ export default function Home() {
   }
   useUpdateEffect(()=>{   
     if(updateCategoryIsOpen && !updateCategoryAlertIsOpen){
-      const w = DOM(window)
-      const container = DOM("#uc-cp-container")
-      if(w.outerWidth>w.outerHeight){//landscape
-        container.animate({
-          transform: `translateX(${-container.width("cpbm","left")}px)`
-        },0,()=>{
-          container.animate({transform:"translateX(0)"},300)
-        })   
-      }
-      else if(!closeAllPopups.current){
-        container.animate({
-          transform: `translateY(${container.height("cpbm","bottom")}px)`
-        },0,()=>{
-          container.animate({transform:"translateY(0)"},300)
-        })
-      }
+      const html = dom("html")
+      const container = dom("#uc-cp-container")
+      if(!closeAllPopups.current){
+        if(html.outerWidth>html.outerHeight){//landscape
+          container.show.css({
+            translateX: -container.x("cpbm"),
+            opacity: 0
+          }).animate({
+            translateX: 0,
+            opacity: 1
+          },300)
+        } 
+        else {
+          container.show.css({
+            translateY: container.y("cpbm"),
+            opacity: 0
+          }).animate({
+            translateY: 0,
+            opacity: 1
+          },300)
+        }
+      } 
     } 
     else if(updateCategoryIsOpen && updateCategoryAlertIsOpen)
       setupdateCategoryAlertIsOpen(false)
@@ -308,20 +315,23 @@ export default function Home() {
   },[updateCategoryIsOpen])
 
   const closeUpdateCategory = () => {
-    const container = DOM("#uc-cp-container")
-    const w = DOM(window)
-    w.outerWidth>w.outerHeight
-    if(w.outerWidth>w.outerHeight){//landscape
+    const container = dom("#uc-cp-container")
+    const html = dom("html")
+    if(html.outerWidth>html.outerHeight){//landscape
       container.animate({
-        transform: `translateX(${-container.width("cbpm","left")}px)`
+        translateX: -(container.x("cpbm")),
+        opacity: 0
       },300,"ease-in",()=>{
+        container.hide
         setchosenUpdateCategory([])
         setupdateCategoryIsOpen(false)
       })
     } else {
       container.animate({
-        transform: `translateY(${container.height("cpbm","bottom")}px)`
+        translateY: container.y("cpbm"),
+        opacity: 0
       },300,"ease-in",()=>{
+        container.hide
         setchosenUpdateCategory([])
         setupdateCategoryIsOpen(false)
       })
@@ -334,33 +344,38 @@ export default function Home() {
   }
   useUpdateEffect(()=>{
     if(updateCategoryAlertIsOpen) {
-      const element = DOM("#uca-pop-body > *")
-      element.animate({
-        transform: `translateX(${element.width("cpbm","right")}px)`
-      },0,()=>{
-        element.animate({transform:"translateX(0)"},300)
-      })
+      const element = dom("#uca-pop-body > *")
+      element.css({
+        translateX: element.x("cpbm"),
+        opacity: 0
+      }).animate({
+        translateX: 0,
+        opacity: 1
+      },300)
     } 
     else if(!closeAllPopups.current) {
-      const element = DOM("#uca-pop-body > *")
-      element.animate({
-        transform: `translateX(${-(element.width("cpbm","left"))}px)`
-      },0,()=>{
-        element.animate({transform:"translateX(0)"},300)
-      })
+      const element = dom("#uca-pop-body > *")
+      element.css({
+        translateX: -element.x("cpbm"),
+        opacity: 0
+      }).animate({
+        translateX: 0,
+        opacity: 1
+      },300)
     }
     // Close All Popups
     if(closeAllPopups.current) closeAllPopups.current=false
   },[updateCategoryAlertIsOpen])
 
   const closeUpdateCategoryAlert = () => {
-    const container = DOM("#uc-cp-container")
-    const w = DOM(window)
+    const container = dom("#uc-cp-container")
+    const html = dom("html")
     if(closeAllPopups.current) {
-      container = DOM(".cp-container")
-      if(w.outerWidth>w.outerHeight){//landscape
+      container = dom(".cp-container")
+      if(html.outerWidth>html.outerHeight){//landscape
         container.animate({
-          transform: `translateX(${-container.width("cpbm","left")}px)`
+          translateX: -container.x("cpbm"),
+          opacity: 0
         },300,"ease-in",()=>{
           setupdateCategoryAlertIsOpen(false)
           setupdateCategoryIsOpen(false)
@@ -368,7 +383,8 @@ export default function Home() {
         })
       } else {
         container.animate({
-          transform: `translateY(${container.height("cpbm","bottom")}px)`
+          translateY: container.y("cpbm"),
+          opacity: 0
         },300,"ease-in",()=>{
           setupdateCategoryAlertIsOpen(false)
           setupdateCategoryIsOpen(false)
@@ -382,22 +398,22 @@ export default function Home() {
   //=task form
   const addTask = (e) => {
     if(nulled(addTaskName)){
-      return DOM("#add-task_name").reportValidity
+      return dom("#add-task_name").reportValidity
     }
     if(nulled(addTaskStartDate)){
-      DOM("#add-start_date").setCustomValidity("")
-      return DOM("#add-start_date").reportValidity
+      dom("#add-start_date").setCustomValidity("")
+      return dom("#add-start_date").reportValidity
     }
     if(nulled(addTaskEndDate)){
-      DOM("#add-end_date").setCustomValidity("")
-      return DOM("#add-end_date").reportValidity
+      dom("#add-end_date").setCustomValidity("")
+      return dom("#add-end_date").reportValidity
     }
     if(addTaskStartDate>=addTaskEndDate){
-      DOM("#add-end_date").setCustomValidity("Start Date should be set before the End Date")
-      return DOM("#add-end_date").reportValidity
+      dom("#add-end_date").setCustomValidity("Start Date should be set before the End Date")
+      return dom("#add-end_date").reportValidity
     }
     if(nulled(addTaskDescription)){
-      return DOM("#add-description").reportValidity
+      return dom("#add-description").reportValidity
     }
     e.preventDefault()
     if(isRunning.current) return
@@ -456,23 +472,23 @@ export default function Home() {
   }
 
   const updateTask = (e) => {
-    if(DOM("#update-task_name").val===""){
-      return DOM("#update-task_name").reportValidity
+    if(dom("#update-task_name").val===""){
+      return dom("#update-task_name").reportValidity
     }
-    if(DOM("#update-start_date").val===""){
-      DOM("#update-start_date").setCustomValidity("")
-      return DOM("#update-start_date").reportValidity
+    if(dom("#update-start_date").val===""){
+      dom("#update-start_date").setCustomValidity("")
+      return dom("#update-start_date").reportValidity
     }
-    if(DOM("#update-end_date").val===""){
-      DOM("#update-end_date").setCustomValidity("")
-      return DOM("#update-end_date").reportValidity
+    if(dom("#update-end_date").val===""){
+      dom("#update-end_date").setCustomValidity("")
+      return dom("#update-end_date").reportValidity
     }
-    if(DOM("#update-start_date").val>=DOM("#update-end_date").val){
-      DOM("#update-end_date").setCustomValidity("Start Date should be set before the End Date")
-      return DOM("#update-end_date").reportValidity
+    if(dom("#update-start_date").val>=dom("#update-end_date").val){
+      dom("#update-end_date").setCustomValidity("Start Date should be set before the End Date")
+      return dom("#update-end_date").reportValidity
     }
-    if(DOM("#update-description").val===""){
-      return DOM("#update-description").reportValidity
+    if(dom("#update-description").val===""){
+      return dom("#update-description").reportValidity
     }
     e.preventDefault()
     if(isRunning.current) return
@@ -607,20 +623,21 @@ export default function Home() {
   }
   useUpdateEffect(()=>{
     if(addTaskIsOpen){
-      const w = DOM(window)
-      const container = DOM("#at-tp-container")
-      if(w.outerWidth>w.outerHeight){//landscape
-        container.animate({
-          transform: `translateX(${container.width("cpbm","right")}px)`
-        },0,()=>{
-          container.animate({transform:"translateX(0)"},300)
-        })
+      const html = dom("html")
+      const container = dom("#at-tp-container")
+      if(html.outerWidth>html.outerHeight){//landscape 
+        container.show.css({
+          translateX: container.x("cpbm"),
+          opacity: 0
+        }).animate({
+          translateX: 0
+        },300)
       } else {
-        container.animate({
-          transform: `translateY(${container.height("cpbm","bottom")}px)`
-        },0,()=>{
-          container.animate({transform:"translateX(0)"},300)
-        })
+        container.show.css({
+          translateY: container.y("cpbm")
+        }).animate({
+          translateX: 0
+        },300)
       }
     }
     // Close All Popups
@@ -628,18 +645,22 @@ export default function Home() {
   },[addTaskIsOpen])
 
   const closeAddTask = () => {
-    const container = DOM("#at-tp-container")
-    const w = DOM(window)
-    if(w.outerWidth>w.outerHeight){//landscape
+    const container = dom("#at-tp-container")
+    const html = dom("html")
+    if(html.outerWidth>html.outerHeight){//landscape
       container.animate({
-        transform: `translateX(${container.width("cpbm","right")}px)`
+        translateX: container.x("cpbm"),
+        opacity: 0
       },300,"ease-in",()=>{
+        container.hide
         setaddTaskIsOpen(false)
       })
     } else {
       container.animate({
-        transform: `translateY(${container.height("cpbm","bottom")}px)`
+        translateY: container.y("cpbm"),
+        opacity: 0
       },300,"ease-in",()=>{
+        container.hide
         setaddTaskIsOpen(false)
       })
     } 
@@ -654,20 +675,24 @@ export default function Home() {
   }
   useUpdateEffect(()=>{
     if(updateTaskIsOpen && !updateTaskAlertIsOpen){
-      const w = DOM(window)
-      const container = DOM("#ut-tp-container")
-      if(w.outerWidth>w.outerHeight){//landscape
-        container.animate({
-          transform: `translateX(${container.width("cpbm","right")}px)`
-        },0,()=>{
-          container.animate({transform:"translateX(0)"},300)
-        })
+      const html = dom("html")
+      const container = dom("#ut-tp-container")
+      if(html.outerWidth>html.outerHeight){//landscape
+        container.show.css({
+          translateX: container.x("cpbm"),
+          opacity: 0
+        }).animate({
+          translateX: 0,
+          opacity: 1
+        },300)
       } else if(!closeAllPopups.current) {
-        container.animate({
-          transform: `translateY(${container.height("cpbm","bottom")}px)`
-        },0,()=>{
-          container.animate({transform:"translateY(0)"},300)
-        })
+        container.show.css({
+          translateY: container.y("cpbm"),
+          opacity: 0
+        }).animate({
+          translateY: 0,
+          opacity: 1
+        },300)
       }
     } else if(updateTaskIsOpen && updateTaskAlertIsOpen)
       setupdateTaskAlertIsOpen(false)
@@ -676,19 +701,23 @@ export default function Home() {
   },[updateTaskIsOpen])
 
   const closeUpdateTask = () => {
-    const container = DOM("#ut-tp-container")
-    const w = DOM(window)
-    if(w.outerWidth>w.outerHeight){//landscape
+    const container = dom("#ut-tp-container")
+    const html = dom("html")
+    if(html.outerWidth>html.outerHeight){//landscape
       container.animate({
-        transform: `translateX(${container.width("cpbm","right")}px)`
+        translateX: container.x("cpbm"),
+        opacity: 0
       },300,"ease-in",()=>{
+        container.hide
         setupdateTaskIsOpen(false)
         setchosenUpdateTask([])
       })
     } else {
       container.animate({
-        transform: `translateY(${container.height("cpbm","bottom")}px)`
+        translateY: container.y("cpbm"),
+        opacity: 0
       },300,"ease-in",()=>{
+        container.hide
         setupdateTaskIsOpen(false)
         setchosenUpdateTask([])
       })
@@ -701,41 +730,49 @@ export default function Home() {
   }
   useUpdateEffect(()=>{
     if(updateTaskAlertIsOpen){
-      const element = DOM("#uta-pop-body > *")
-      element.animate({
-        transform: `translateX(${element.width("cpbm","right")}px)`
-      },0,()=>{
-        element.animate({transform:"translateX(0)"},300)
-      })
+      const element = dom("#uta-pop-body > *")
+      element.css({
+        translateX: element.x("cpbm"),
+        opacity: 0
+      }).animate({
+        translateX: 0,
+        opacity: 1
+      },300)
     } else if(!closeAllPopups.current) {
-      const element = DOM("#uta-pop-body > *")
-      element.animate({
-        transform: `translateX(${-element.width("cpbm","left")}px)`
-      },0,()=>{
-        element.animate({transform:"translateX(0)"},300)
-      })
+      const element = dom("#uta-pop-body > *")
+      element.css({
+        translateX: -element.x("cpbm"),
+        opacity: 0
+      }).animate({
+        translateX: 0,
+        opacity: 1
+      },300)
     }
     // Close All Popups
     if(closeAllPopups.current) closeAllPopups.current=false
   },[updateTaskAlertIsOpen])
 
   const closeUpdateTaskAlert = () => {
-    const container = DOM("#ut-tp-container")
-    const w = DOM(window)
+    const container = dom("#ut-tp-container")
+    const html = dom("html")
     if(closeAllPopups.current){
-      container = DOM(".tp-container")
-      if(w.outerWidth>w.outerHeight){//landscape
+      container = dom(".tp-container")
+      if(html.outerWidth>html.outerHeight){//landscape
         container.animate({
-          transform: `translateX(${container.width("cpmb","right")}px)`
+          translateX: container.x("cpmb"),
+          opacity: 0
         },300,"ease-in",()=>{
+          container.hide
           setupdateTaskAlertIsOpen(false)
           setupdateTaskIsOpen(false)
           setchosenUpdateTask([])
         })
       } else {
         container.animate({
-          transform: `translateY(${container.height("cpbm","bottom")}px)`
+          translateY: container.y("cpbm"),
+          opacity: 0
         },300,"ease-in",()=>{
+          container.hide
           setupdateTaskAlertIsOpen(false)
           setupdateTaskIsOpen(false)
           setchosenUpdateTask([])
@@ -750,20 +787,24 @@ export default function Home() {
   }
   useUpdateEffect(()=>{
     if(deleteAllFinishedTasksIsOpen && !deleteAllFinishedTasksAlertIsOpen){
-      const w = DOM(window)
-      const container = DOM("#daft-tp-container")
-      if(w.outerWidth>w.outerHeight){//landscape
-        container.animate({
-          transform: `translateX(${container.width("cpbm","right")}px)`
-        },0,()=>{
-          container.animate({transform: "translateX(0)"},300)
-        })
+      const html = dom("html")
+      const container = dom("#daft-tp-container")
+      if(html.outerWidth>html.outerHeight){//landscape
+        container.show.css({
+          translateX: container.x("cpbm"),
+          opacity: 0
+        }).animate({
+          translateX: 0,
+          opacity: 1
+        },300)
       } else {
-        container.animate({
-          transform: `translateY(${container.height("cpmb","bottom")}px)`
-        },0,()=>{
-          container.animate({transform: "translateY(0)"},300)
-        })
+        container.show.css({
+          translateY: container.y("cpmb"),
+          opacity: 0
+        }).animate({
+          translateY: 0,
+          opacity: 1
+        },300)
       }
     } else if(deleteAllFinishedTasksIsOpen && deleteAllFinishedTasksAlertIsOpen)
       setdeleteAllFinishedTasksAlertIsOpen(false)
@@ -774,18 +815,22 @@ export default function Home() {
   const closedeleteAllFinishedTasks = () => {
     if(openUpdateTaskIsFromdeleteFinishedTasks) 
       setopenUpdateTaskIsFromdeleteFinishedTasks(false)
-    const container = DOM("#daft-tp-container")
-    const w = DOM(window)
-    if(w.outerWidth>w.outerHeight){//landscape
+    const container = dom("#daft-tp-container")
+    const html = dom("html")
+    if(html.outerWidth>html.outerHeight){//landscape
       container.animate({
-        transform: `translateX(${container.width("cpbm","right")}px)`
+        translateX: container.x("cpbm"),
+        opacity: 0
       },300,"ease-in",()=>{
+        container.hide
         setdeleteAllFinishedTasksIsOpen(false)
       })
     } else {
      container.animate({
-        transform: `translateY(${container.height("cpbm","bottom")}px)`
+        translateY: container.y("cpbm"),
+        opacity: 0
       },300,"ease-in",()=>{
+        container.hide
         setdeleteAllFinishedTasksIsOpen(false)
       })
     } 
@@ -801,40 +846,48 @@ export default function Home() {
   }
   useUpdateEffect(()=>{
     if(deleteAllFinishedTasksAlertIsOpen){
-      const element = DOM("#dafta-pop-body>* , #pop-body>*")
-      element.animate({
-        transform: `translateX(${element.width("cpbm","right")}px)`
-      },0,()=>{
-        element.animate({transform: "translateX(0)"},300)
-      })
+      const element = dom("#dafta-pop-body>* , #pop-body>*")
+      element.css({
+        translateX: element.x("cpbm"),
+        opacity: 0
+      }).animate({
+        translateX: 0,
+        opacity: 1
+      },300)
     } else if(!closeAllPopups.current){
-      const element = DOM("#dafta-pop-body>* , #pop-body>*")
-      element.animate({
-        transform: `translateX(${-element.width("cpbm","left")}+"px)`
-      },0,()=>{
-        element.animate({transform: "translateX(0)"},300)
-      })
+      const element = dom("#dafta-pop-body>* , #pop-body>*")
+      element.css({
+        translateX: -element.x("cpbm"),
+        opacity: 0
+      }).animate({
+        translateX: 0,
+        opacity: 1
+      },300)
     }
     // Close All Popups
     if(closeAllPopups.current) closeAllPopups.current=false
   },[deleteAllFinishedTasksAlertIsOpen])
 
   const closedeleteAllFinishedTasksAlert = () => {
-    const container = DOM("#daft-tp-container")
-    const w = DOM(window)
+    const container = dom("#daft-tp-container")
+    const html = dom("html")
     if(closeAllPopups.current){
-      container = DOM(".tp-container")
-      if(w.outerWidth>w.outerHeight){//landscape
+      container = dom(".tp-container")
+      if(html.outerWidth>html.outerHeight){//landscape
         container.animate({
-          transform: `translateX(${container.width("cpbm","right")}px)`
+          translateX: container.x("cpbm"),
+          opacity: 0
         },300,"ease-in",()=>{
+          container.hide
           setdeleteAllFinishedTasksAlertIsOpen(false)
           setdeleteAllFinishedTasksIsOpen(false)
         })
       } else {
         container.animate({
-          transform: `translateY(${container.height("cpbm","bottom")}+"px)`
+          translateY: container.y("cpbm"),
+          opacity: 0
         },300,"ease-in",()=>{
+          container.hide
           setdeleteAllFinishedTasksAlertIsOpen(false)
           setdeleteAllFinishedTasksIsOpen(false)
         })
@@ -851,32 +904,33 @@ export default function Home() {
 
   //=animation
   const scrollup = () => {
-    const html= DOM("html")
+    const html= dom("html")
     html.animate({
-      scrollTop: (DOM("#dashboard").offsetTop - (DOM("#top-bar").height("cpb")))+"px"
+      scrollTop: (dom("#dashboard").offsetTop - (dom("#top-bar").y("cpb")))+"px"
     }, 300);    
   }
   const categoryMenuIcon = () => {
     if (!isRunning.current) {
       isRunning.current=true
-      const html = DOM("html")
-      const catmenu = DOM("#categoriesMenu")
-      if(catmenu.css("transform") !== "matrix(1, 0, 0, 1, 0, 0)") {//check if translateY is 0
+      const html = dom("html")
+      const catmenu = dom("#categoriesMenu")
+      if(catmenu.css("transform") != "matrix(1, 0, 0, 1, 0, 0)") {//check if translateY is 0
         html.css("overflow","hidden")
-        catmenu.animate({
-          transform: `translateY(${-catmenu.height("c")}px)`
+        catmenu.show.css({
+          translateY: -catmenu.y("c"),
+          opacity: 0
+        }).animate({
+          translateY: 0,
+          opacity: 1
+        },300,"ease-out",() => {
+          return isRunning.current=false
         })
-        catmenu.animate({
-            transform: "translateY(0)"
-          },300,"ease-out",() => {
-            return isRunning.current=false
-          })
       } else {
         html.css("overflow","visible")
-        catmenu.animate({
-          transform: `translateY(${-catmenu.height("c")}px)`
+        catmenu.show.animate({
+          translateY: -catmenu.y("c"),
+          opacity: 0
         },300,"ease-in",() => {
-          catmenu
           return isRunning.current=false
         })
       }
@@ -885,13 +939,13 @@ export default function Home() {
   //=event listeners
   useEffect(()=>{
     if (typeof window !== "undefined") {
-      const win = DOM(window)
-      const html= DOM("html")
+      const win = dom(window)
+      const html= dom("html")
       var oldWinWidth = win.innerWidth
       var newWinWidth = oldWinWidth
       win.on("scroll",() => {
-        const dashboardHeight = DOM("#dashboard").height()
-        const goupicon = DOM("#go-up")
+        const dashboardHeight = dom("#dashboard").y()
+        const goupicon = dom("#go-up")
         if(html.scrollTop > dashboardHeight && goupicon.css("opacity")==="0") 
           return goupicon.show.animate({opacity: "1"},300)
         else if(html.scrollTop < dashboardHeight && goupicon.css("opacity")==="1") 
@@ -901,13 +955,13 @@ export default function Home() {
       })
       //Fix Categories menu after resize
       win.on("resize", () => {
-        const catmenu = DOM("#categoriesMenu")
-        const catupPopup = DOM("#uc-cp-container")
-        const inputs = [DOM("#add-category_name"),DOM("#update-category_name")]
+        const catmenu = dom("#categoriesMenu")
+        const catupPopup = dom("#uc-cp-container")
+        const inputs = [dom("#add-category_name"),dom("#update-category_name")]
         newWinWidth = win.innerWidth
         // Check if Categories Menu is Below in Small Screen or in Use
         const catIsActive = 
-          (catmenu.css("transform")==="matrix(1, 0, 0, 1, 0, 0)" && catmenu.width("cpbm")===html.outerWidth)
+          (catmenu.css("transform")==="matrix(1, 0, 0, 1, 0, 0)" && catmenu.x("cpbm")===html.outerWidth)
         const catIsInuse = 
           typeof catupPopup!=="undefined"||
           inputs.some(input=>{
@@ -916,22 +970,22 @@ export default function Home() {
           })
         if(win.innerWidth>=785) {
           oldWinWidth=newWinWidth
-          catmenu.animate({transform: "translateY(0)"})
+          catmenu.animate({translateY: 0})
           return html.css("overflow","hidden")
         } else if(oldWinWidth>785 && !catIsInuse) {
           oldWinWidth=newWinWidth
-          catmenu.animate({transform: `translateY(${-catmenu.height("c")}px)`})
+          catmenu.animate({translateY: -catmenu.y("c")})
           return html.css("overflow","visible")
         } else if(catIsActive||catIsInuse){
-          catmenu.animate({transform: "translateY(0)"})
+          catmenu.animate({translateY: 0 })
           html.css("overflow","hidden")
         } else {
-          catmenu.animate({transform: `translateY(${-catmenu.height("c")}px)`})
+          catmenu.animate({translateY: -catmenu.y("c")})
           return html.css("overflow","visible")
         }
       })
       // Change Categories Scroll Max Height
-      const catul = DOM("#categoriesul")
+      const catul = dom("#categoriesul")
       win.on("load", () => {
         return catul.css({"maxHeight": win.outerHeight-catul.offsetTop+"px"})
       })
@@ -981,7 +1035,7 @@ export default function Home() {
                 onKeyDown={e => {e.key === "Enter" && addCategory(e)}} placeholder="Add Category" maxLength="35" type="text" required />
             <ul id="categoriesul">
               {nulled(categories) ? (
-                <li className="category-empty">
+                <li key={-1} className="category-empty">
                   <img src="/icons/empty.svg" alt="empty category" />
                   <p>...Whew Empty...</p>
                 </li>
@@ -1021,20 +1075,20 @@ export default function Home() {
               </div>
               <ul>
                 {nulled(categories) || (tasks.filter((task)=>task.category_id===openedCategory.id).length===0)? (
-                  <li className="category-empty">
+                  <li key={-1} className="category-empty">
                     <img src="/icons/empty.svg" alt="empty task" />
                     <p>...Whew Empty...</p>
                   </li>
                 ) : (
-                  tasks.map((task) => {
+                  tasks.map((task, idx) => {
                     return openedCategory.id === task.category_id ? (
                       <li className={"task "+task.date_status+(task.taskisfinished ? " task-finished" : "")} 
-                        key={task.id}>
+                        key={idx}>
                         <div className="cur-def ts-title">
                           <div className="cur-def ts-title-1">
                             {taskStatusIsChanging? null: 
                               <input 
-                                key={task.id} 
+                                key={idx} 
                                 defaultChecked={task.taskisfinished} 
                                 onChange={e=>checkTaskStatus(e,task)}
                                 className="cur-point ts-checkbox" type="checkbox" 
@@ -1042,7 +1096,7 @@ export default function Home() {
                             }
                             <h5 className="cur-def ts-name break-word">{task.task_name}</h5>
                           </div>
-                          <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
+                          <div key={idx} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
                             <img src="/icons/settings black.svg" alt="task settings" />
                           </div>
                         </div>
@@ -1091,7 +1145,7 @@ export default function Home() {
                             <div className="ts-title-1">
                               {taskStatusIsChanging? null: 
                                 <input 
-                                  key={task.id} 
+                                  key={idx} 
                                   defaultChecked={task.taskisfinished} 
                                   onChange={e=>checkTaskStatus(e,task)}
                                   className="cur-point ts-checkbox" type="checkbox" 
@@ -1101,7 +1155,7 @@ export default function Home() {
                                 {task.task_name}
                               </h5>
                             </div>
-                            <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
+                            <div key={idx} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
                               <img src="/icons/settings black.svg" alt="task settings" />
                             </div>
                           </div>
@@ -1134,7 +1188,7 @@ export default function Home() {
                             <div className="ts-title-1">
                               {taskStatusIsChanging? null: 
                                 <input 
-                                  key={task.id} 
+                                  key={idx} 
                                   defaultChecked={task.taskisfinished} 
                                   onChange={e=>checkTaskStatus(e,task)}
                                   className="cur-point ts-checkbox" type="checkbox" 
@@ -1144,7 +1198,7 @@ export default function Home() {
                                 {task.task_name}
                               </h5>
                             </div>
-                            <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
+                            <div key={idx} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
                               <img src="/icons/settings black.svg" alt="task settings" />
                             </div>
                           </div>
@@ -1177,7 +1231,7 @@ export default function Home() {
                             <div className="ts-title-1">
                               {taskStatusIsChanging? null: 
                                 <input 
-                                  key={task.id} 
+                                  key={idx} 
                                   defaultChecked={task.taskisfinished} 
                                   onChange={e=>checkTaskStatus(e,task)}
                                   className="cur-point ts-checkbox" type="checkbox" 
@@ -1187,7 +1241,7 @@ export default function Home() {
                                 {task.task_name}
                               </h5>
                             </div>
-                            <div key={task.id} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
+                            <div key={idx} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
                               <img src="/icons/settings black.svg" alt="task settings" />
                             </div>
                           </div>
@@ -1502,20 +1556,20 @@ export default function Home() {
               <div id="pop-body" className="pop-body">
                 <ul>
                   {nulled(categories) || (tasks.filter((task)=>task.taskisfinished===1).length===0)? (
-                    <li className="category-empty">
+                    <li key={-1} className="category-empty">
                       <img src="/icons/empty.svg" alt="empty task" />
                       <p>...There are no tasks Finished...</p>
                     </li>
                   ) : (
-                    tasks.map((task) => {
+                    tasks.map((task,idx) => {
                       return task.taskisfinished === 1 ? (
                         <li className={"task "+task.date_status+(task.taskisfinished ? " task-finished" : "")} 
-                          key={task.id}>
+                          key={idx}>
                           <div className="cur-def ts-title">
                             <div className="cur-def ts-title-1">
                               {taskStatusIsChanging? null: 
                                 <input 
-                                  key={task.id} 
+                                  key={idx} 
                                   defaultChecked={task.taskisfinished} 
                                   onChange={e=>checkTaskStatus(e,task)}
                                   className="cur-point ts-checkbox" type="checkbox" 
@@ -1523,7 +1577,7 @@ export default function Home() {
                               }
                               <h5 className="cur-def ts-name break-word">{task.task_name}</h5>
                             </div>
-                            <div key={task.id} onClick={e=>openUpdateTaskFromdeleteFinishedTasks(task,e)} className="cur-point task-settings" >
+                            <div key={idx} onClick={e=>openUpdateTaskFromdeleteFinishedTasks(task,e)} className="cur-point task-settings" >
                               <img src="/icons/settings black.svg" alt="task settings" />
                             </div>
                           </div>

@@ -559,7 +559,6 @@ body.loading .loading{
   box-shadow:0 0 0 .05em #ddd8d8;
   border-radius:.5em;
   position:fixed;
-  display:flex;
   flex-flow:column;
   gap:1em
 }
@@ -591,7 +590,6 @@ body.loading .loading{
   box-shadow:0 0 0 .05em #ddd8d8;
   border-radius:.5em;
   position:fixed;
-  display:flex;
   flex-flow:column;
   gap:1em
 }
