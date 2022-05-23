@@ -970,14 +970,15 @@ export default function Home() {
           })
         if(win.innerWidth>=785) {
           oldWinWidth=newWinWidth
-          catmenu.css({translateY: 0,opacity:1})
+          catmenu.animate({translateY: 0,opacity:1})
+          console.log("runned")
           return html.css("overflow","hidden")
         } else if(oldWinWidth>785 && !catIsInuse) {
           oldWinWidth=newWinWidth
-          catmenu.css({translateY: -catmenu.y("c")})
+          catmenu.animate({translateY: -catmenu.y("c")})
           return html.css("overflow","visible")
         } else if(catIsActive||catIsInuse){
-          catmenu.css({translateY: 0})
+          catmenu.animate({translateY: 0})
           html.css("overflow","hidden")
         } else {
           catmenu.animate({translateY: -catmenu.y("c")})
