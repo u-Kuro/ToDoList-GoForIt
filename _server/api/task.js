@@ -282,7 +282,7 @@ router.post("/changetaskcompletionstatus", (req, res) => {
           { taskisfinished: taskisfinished }, 
           (error) => {
             if(error)console.log(error)
-            resolve(task)
+            resolve()
           })
         })
       })

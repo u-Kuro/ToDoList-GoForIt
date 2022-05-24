@@ -554,7 +554,9 @@ export default function Home() {
     // Update Tasks by Order
     setTasks([// Order by asc end_dates, desc id
       ...tasks.filter(x=>{return (new Date(x.end_date)<new Date(task.end_date))&&(x!==task)}),
-      {category_id: task.category_id,
+      {
+      task_id: task.id,
+      category_id: task.category_id,
       task_name: task.task_name,
       start_date: task.start_date,
       end_date: task.end_date,
@@ -564,6 +566,7 @@ export default function Home() {
       ...tasks.filter(x=>{return (new Date(x.end_date)>=new Date(task.end_date))&&(x!==task)})
     ])
     settaskStatusIsChanging(true)
+    console.log(task.id)
     $.ajax({
       type: "POST",
       url: "/task/changetaskcompletionstatus",
@@ -573,7 +576,8 @@ export default function Home() {
       success: (result) => {
         isRunning.current=false
         setCategories(result.categories)
-        return setTasks(result.tasks)
+        setTasks(result.tasks)
+        return settaskStatusIsChanging(true)
       },error: ()=>{return isRunning.current=false}
     })
   }
