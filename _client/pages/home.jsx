@@ -68,6 +68,7 @@ export default function Home() {
   //=helper
   const isRunning = useRef(false)
   const closeAllPopups = useRef(false)
+  const [screenHeight, setscreenHeight] = useState([])
   const currentTimezoneOffset = useRef(new Date().getTimezoneOffset())
     //helper functions
     const nulled = (v) => {return typeof v === "undefined" ? true : v === null ? true : v.length === 0}
@@ -101,7 +102,7 @@ export default function Home() {
   },[categories])
 
   //=CheckDateStatus
-  useUpdateEffectInterval(()=>{ 
+  useUpdateEffectInterval(()=>{
     if(nulled(tasks)) return
     tasks.map((task)=>{
       var currentTaskDateStatus = CheckTimeStatus(new Date(), new Date(task.start_date), new Date(task.end_date))
@@ -136,11 +137,12 @@ export default function Home() {
     new Promise((resolve)=>{
       tasks.map((task) => {
         if (task !== chosenUpdateTask) return
-        setchosenUpdateTask(task)
+        // setchosenUpdateTask(task)
+        settaskDateStatusIsChanging(true)
       })
       resolve()
     }).then(()=>{
-      settaskDateStatusIsChanging(true)
+      
     })
   },[clientTimezoneOffset])
 
@@ -562,6 +564,7 @@ export default function Home() {
       taskisfinished: !task.taskisfinished,},
       ...tasks.filter(x=>{return (new Date(x.end_date)>=new Date(task.end_date))&&(x!==task)})
     ])
+    settaskStatusIsChanging(true)
     $.ajax({
       type: "POST",
       url: "/task/changetaskcompletionstatus",
@@ -571,8 +574,7 @@ export default function Home() {
       success: (result) => {
         isRunning.current=false
         setCategories(result.categories)
-        setTasks(result.tasks)
-        return settaskStatusIsChanging(true)
+        return setTasks(result.tasks)
       },error: ()=>{return isRunning.current=false}
     })
   }
@@ -917,7 +919,7 @@ export default function Home() {
   const scrollup = () => {
     const html= dom("html")
     html.animate({
-      scrollTop: (dom("#dashboard").offsetTop - (dom("#top-bar").y("cpb")))+"px"
+      scrollTop: (dom("#dashboard").offsetTop - (dom("#top-bar").y("cpb")))
     }, 300);    
   }
   const categoryMenuIcon = () => {
@@ -925,8 +927,8 @@ export default function Home() {
       isRunning.current=true
       const html = dom("html")
       const catmenu = dom("#categoriesMenu")
-      if(catmenu.css("transform") != "matrix(1, 0, 0, 1, 0, 0)") {//check if translateY is 0
-        html.css("overflow","hidden")
+      if(catmenu.css("transform") !== "matrix(1, 0, 0, 1, 0, 0)") {//check if translateY is 0
+        html.css({overflow: "hidden"})
         catmenu.show.css({
           translateY: -catmenu.y("c"),
           opacity: 0
@@ -937,7 +939,7 @@ export default function Home() {
           return isRunning.current=false
         })
       } else {
-        html.css("overflow","visible")
+        html.css({overflow: "visible"})
         catmenu.show.animate({
           translateY: -catmenu.y("c"),
           opacity: 0
@@ -952,7 +954,7 @@ export default function Home() {
     if (typeof window !== "undefined") {
       const win = dom(window)
       const html= dom("html")
-      var oldWinWidth = win.innerWidth
+      var oldWinWidth = html.outerWidth
       var newWinWidth = oldWinWidth
       win.on("scroll",() => {
         const dashboardHeight = dom("#dashboard").y()
@@ -969,7 +971,7 @@ export default function Home() {
         const catmenu = dom("#categoriesMenu")
         const catupPopup = dom("#uc-cp-container")
         const inputs = [dom("#add-category_name"),dom("#update-category_name")]
-        newWinWidth = win.innerWidth
+        newWinWidth = html.outerWidth
         // Check if Categories Menu is Below in Small Screen or in Use
         const catIsActive = 
           (catmenu.css("transform")==="matrix(1, 0, 0, 1, 0, 0)" && catmenu.x("cpbm")===html.outerWidth)
@@ -979,31 +981,32 @@ export default function Home() {
             if(typeof input==="undefined") return false
             else return input.isActive || !nulled(input.val)
           })
-        if(win.innerWidth>=785) {
+        if(html.outerWidth>=785) {
           oldWinWidth=newWinWidth
-          catmenu.animate({translateY: 0,opacity:1})
-          console.log("runned")
-          return html.css("overflow","hidden")
+          catmenu.css({translateY: 0, opacity:1})
+          return html.css({overflow: "hidden"})
         } else if(oldWinWidth>785 && !catIsInuse) {
           oldWinWidth=newWinWidth
           catmenu.animate({translateY: -catmenu.y("c")})
-          return html.css("overflow","visible")
+          return html.css({overflow: "visible"})
         } else if(catIsActive||catIsInuse){
-          catmenu.animate({translateY: 0})
-          html.css("overflow","hidden")
+          catmenu.css({translateY: 0})
+          html.css({overflow: "hidden"})
         } else {
-          catmenu.animate({translateY: -catmenu.y("c")})
-          return html.css("overflow","visible")
+          catmenu.css({translateY: -catmenu.y("c")})
+          return html.css({overflow: "visible"})
         }
       })
       // Change Categories Scroll Max Height
       const catul = dom("#categoriesul")
       win.on("load", () => {
-        return catul.css({"maxHeight": win.outerHeight-catul.offsetTop+"px"})
+        setscreenHeight(html.outerHeight)
+        return catul.css({maxHeight: html.outerHeight-catul.offsetTop})
       })
 
       win.on("resize", () => {
-        return catul.css({"maxHeight": win.outerHeight-catul.offsetTop+"px"})
+        setscreenHeight(html.outerHeight)
+        return catul.css({maxHeight: html.outerHeight-catul.offsetTop})
       }) 
     }
   },[])
@@ -1018,8 +1021,12 @@ export default function Home() {
           <div className="container">
             <img className="logo" src="/icons/favicon.ico" alt="logo" />
             <img onClick={() => {categoryMenuIcon()}} id="category-icon" className="cur-point category-icon" src="/icons/hamburger.svg" alt="categories menu small screen" />
-            <img onClick={() => {setaddTaskIsOpen(true)}} className="cur-point logout-icon icon" src="/icons/add task white.svg" alt="add task" />
-            <img onClick={() => {setdeleteAllFinishedTasksIsOpen(true)}} className="cur-point logout-icon icon" src="/icons/trash white.svg" alt="delete all finished tasks" />
+            {screenHeight>350 &&
+              <img onClick={() => {setaddTaskIsOpen(true)}} className="cur-point logout-icon icon" src="/icons/add task white.svg" alt="add task" />
+            }
+            {screenHeight>450 &&
+              <img onClick={() => {setdeleteAllFinishedTasksIsOpen(true)}} className="cur-point logout-icon icon" src="/icons/trash white.svg" alt="delete all finished tasks" />
+            }
             <img onClick={e => {logout(e)}} className="icon logout-icon cur-point" src="/icons/logout white.svg" alt="logout"/>
           </div>
         </nav>
@@ -1098,14 +1105,12 @@ export default function Home() {
                         key={idx}>
                         <div className="cur-def ts-title">
                           <div className="cur-def ts-title-1">
-                            {taskStatusIsChanging? null: 
-                              <input 
-                                key={idx} 
-                                defaultChecked={task.taskisfinished} 
-                                onChange={e=>checkTaskStatus(e,task)}
-                                className="cur-point ts-checkbox" type="checkbox" 
-                              />
-                            }
+                            <input 
+                              key={taskStatusIsChanging?-1:idx} // Update Input
+                              defaultChecked={task.taskisfinished} 
+                              onChange={e=>checkTaskStatus(e,task)}
+                              className="cur-point ts-checkbox" type="checkbox" 
+                            />
                             <h5 className="cur-def ts-name break-word">{task.task_name}</h5>
                           </div>
                           <div key={idx} onClick={e=>openUpdateTask(task, e)} className="cur-point task-settings" >
@@ -1155,14 +1160,12 @@ export default function Home() {
                         >
                           <div className="ts-title">
                             <div className="ts-title-1">
-                              {taskStatusIsChanging? null: 
-                                <input 
-                                  key={idx} 
-                                  defaultChecked={task.taskisfinished} 
-                                  onChange={e=>checkTaskStatus(e,task)}
-                                  className="cur-point ts-checkbox" type="checkbox" 
-                                />
-                              }
+                              <input 
+                                key={taskStatusIsChanging?-1:idx} // Update Input
+                                defaultChecked={task.taskisfinished} 
+                                onChange={e=>checkTaskStatus(e,task)}
+                                className="cur-point ts-checkbox" type="checkbox" 
+                              />
                               <h5 className="cur-def ts-name break-word">
                                 {task.task_name}
                               </h5>
@@ -1198,14 +1201,12 @@ export default function Home() {
                         <li key={idx} className={"task "+task.date_status+(task.taskisfinished? " task-finished":"")}>
                           <div className="ts-title">
                             <div className="ts-title-1">
-                              {taskStatusIsChanging? null: 
-                                <input 
-                                  key={idx} 
-                                  defaultChecked={task.taskisfinished} 
-                                  onChange={e=>checkTaskStatus(e,task)}
-                                  className="cur-point ts-checkbox" type="checkbox" 
-                                />
-                              }
+                              <input 
+                                key={taskStatusIsChanging?-1:idx} // Update Input
+                                defaultChecked={task.taskisfinished} 
+                                onChange={e=>checkTaskStatus(e,task)}
+                                className="cur-point ts-checkbox" type="checkbox" 
+                              />
                               <h5 className="cur-def ts-name break-word">
                                 {task.task_name}
                               </h5>
@@ -1240,15 +1241,13 @@ export default function Home() {
                       return task.date_status === "Soon" ? (
                         <li key={idx} className={"task "+task.date_status+(task.taskisfinished? " task-finished":"")}>
                           <div className="ts-title">
-                            <div className="ts-title-1">
-                              {taskStatusIsChanging? null: 
-                                <input 
-                                  key={idx} 
-                                  defaultChecked={task.taskisfinished} 
-                                  onChange={e=>checkTaskStatus(e,task)}
-                                  className="cur-point ts-checkbox" type="checkbox" 
-                                />
-                              }
+                            <div className="ts-title-1"> 
+                              <input 
+                                key={taskStatusIsChanging?-1:idx} // Update Input 
+                                defaultChecked={task.taskisfinished} 
+                                onChange={e=>checkTaskStatus(e,task)}
+                                className="cur-point ts-checkbox" type="checkbox" 
+                              />
                               <h5 className="cur-def ts-name break-word">
                                 {task.task_name}
                               </h5>
@@ -1441,9 +1440,9 @@ export default function Home() {
                     maxLength="40" id="update-task_name" placeholder="Task Name" type="text" required />
                   </div>
                   <div>
-                    <label htmlFor="start_date">Start Date</label>
-                    {taskDateStatusIsChanging? null: 
+                    <label htmlFor="start_date">Start Date</label> 
                       <input 
+                      key={taskDateStatusIsChanging? -1:1} // Update Value
                       onChange={e=>setupdateTaskStartDate(e.target.value)}
                       defaultValue={UTCSQLtoLocalHTML(chosenUpdateTask.start_date)}
                       onKeyDown={e => {
@@ -1459,12 +1458,11 @@ export default function Home() {
                       id="update-start_date" 
                       type="datetime-local" 
                       required />
-                    }
                   </div>
                   <div>
                     <label htmlFor="end_date">End Date</label>
-                    {taskDateStatusIsChanging? null: 
                       <input 
+                      key={taskDateStatusIsChanging? -1:1} // Update Value
                       onChange={e=>setupdateTaskEndDate(e.target.value)}
                       defaultValue={UTCSQLtoLocalHTML(chosenUpdateTask.end_date)} 
                       onKeyDown={e => {
@@ -1480,7 +1478,6 @@ export default function Home() {
                       id="update-end_date" 
                       type="datetime-local" 
                       required />
-                    }
                   </div>
                   <div>
                     <label htmlFor="update-description">Description</label>
@@ -1579,14 +1576,12 @@ export default function Home() {
                           key={idx}>
                           <div className="cur-def ts-title">
                             <div className="cur-def ts-title-1">
-                              {taskStatusIsChanging? null: 
-                                <input 
-                                  key={idx} 
-                                  defaultChecked={task.taskisfinished} 
-                                  onChange={e=>checkTaskStatus(e,task)}
-                                  className="cur-point ts-checkbox" type="checkbox" 
-                                />
-                              }
+                              <input 
+                                key={taskStatusIsChanging?-1:idx} // Update Input
+                                defaultChecked={task.taskisfinished} 
+                                onChange={e=>checkTaskStatus(e,task)}
+                                className="cur-point ts-checkbox" type="checkbox" 
+                              />
                               <h5 className="cur-def ts-name break-word">{task.task_name}</h5>
                             </div>
                             <div key={idx} onClick={e=>openUpdateTaskFromdeleteFinishedTasks(task,e)} className="cur-point task-settings" >

@@ -1,5 +1,7 @@
 const dom = (element_s) => {
-  if(typeof element_s==="string" 
+  if(element_s instanceof Elements)
+    return element_s
+  else if(typeof element_s==="string" 
   || element_s instanceof String){
     if(document.querySelectorAll(element_s).length===0)
       return undefined
@@ -32,6 +34,10 @@ const getSize = (element, property) => {
 }
 
 class Elements extends Array {   
+  //Re-Initialize
+  dom(element_s) {
+    return dom(element_s)
+  }
   //Listener
   ready(callback) {
     if(this.some(element=>element.readyState!==null 
@@ -138,6 +144,7 @@ class Elements extends Array {
           setProp(element,property,value)
         })
     })
+    this.animate(_props)// Fix props to elements that was Changed by Animate keyframes
     return this
   }
   animate(keyframe, duration_callback, easing_callback, callback) {
@@ -161,7 +168,7 @@ class Elements extends Array {
       [ "translate", "translateY", "translateX", "translate3d", "translateZ",
         "scale", "scaleX", "scaleY", "scale3d", "scaleZ",
         "rotate", "rotateX", "rotateY", "rotate3d", "rotateZ",
-        "skew", "skewX", "skewY", "perspective", "matrix", "matrix3d"]
+        "skew", "skewX", "skewY", "perspective", "matrix", "matrix3d" ]
     const _keyframes = 
       Object.entries(keyframe).reduce((kfs, [p, v]) => {
         if(nonStylesProp.some(prop=>{return p===prop}))
