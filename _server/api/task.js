@@ -259,27 +259,14 @@ router.post("/deleteallfinishedtask", (req, res) => {
 
 router.post("/changetaskcompletionstatus", (req, res) => {
   if (req.session.isAuth) {
-    const { task_id } = req.body
-    new Promise((resolve)=>{
-      db.query(
-      "SELECT category_id,"+
-      "taskisfinished "+
-      "FROM tasks WHERE id = '"+task_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",
-      (error, results)=>{
-        if(error)console.log(error)
-        resolve(results)
-      })
-    })
-    .then((task)=>{
+    const { task_id, category_id, taskisfinished } = req.body
       new Promise((resolve)=>{
-        const current_server_date = new Date()
-        db.query("UPDATE category SET ? WHERE id = '"+task[0].category_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",
-        {recent_update: current_server_date},
+        db.query("UPDATE category SET ? WHERE id = '"+category_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",
+        {recent_update: new Date()},
         (error)=>{
           if(error)console.log(error)
-          const taskisfinished = !task[0].taskisfinished
           db.query("UPDATE tasks SET ? WHERE id = '"+task_id+"' AND users_id = '"+req.session.users_id+"' LIMIT 1",
-          { taskisfinished: taskisfinished }, 
+          { taskisfinished: taskisfinished=="true" }, 
           (error) => {
             if(error)console.log(error)
             resolve()
@@ -314,7 +301,7 @@ router.post("/changetaskcompletionstatus", (req, res) => {
           })
         })
       })
-    })  
+    // })  
   } 
   else return handle(req, res)
 })
