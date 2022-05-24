@@ -1,5 +1,5 @@
 # ToDoList GoForIt
-  a mini todolist application using node, nextjs, expressjs, and self made jquery clone
+  A mini todolist application using node, nextjs, expressjs, and self made jquery clone
 
 ## Prerequisites
   - [XAMPP](https://www.apachefriends.org/xampp-files/7.4.28/xampp-windows-x64-7.4.28-1-VC15-installer.exe)
