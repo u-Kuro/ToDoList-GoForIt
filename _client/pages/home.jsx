@@ -137,12 +137,11 @@ export default function Home() {
     new Promise((resolve)=>{
       tasks.map((task) => {
         if (task !== chosenUpdateTask) return
-        // setchosenUpdateTask(task)
-        settaskDateStatusIsChanging(true)
+        setchosenUpdateTask(task)
       })
       resolve()
     }).then(()=>{
-      
+      settaskDateStatusIsChanging(true)
     })
   },[clientTimezoneOffset])
 
