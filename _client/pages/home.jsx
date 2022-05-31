@@ -468,6 +468,7 @@ export default function Home() {
         if (result.noCategory)
           setopenedCategory(result.categories[0])
         setTasks(result.tasks||[])
+        settaskStatusIsChanging(true)
       },error: ()=>{return isRunning.current=false}
     })
   }
