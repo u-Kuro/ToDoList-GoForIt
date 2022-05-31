@@ -445,6 +445,7 @@ export default function Home() {
       taskisfinished: 0},
       ...tasks.filter(x=>{return (new Date(x.end_date)>=new Date(end_date))})
     ])
+    settaskStatusIsChanging(true)
     closeAddTask()
     setaddTaskName([])
     setaddTaskStartDate([])
