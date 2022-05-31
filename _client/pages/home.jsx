@@ -59,10 +59,12 @@ export default function Home() {
     const [taskDateStatusIsChanging, settaskDateStatusIsChanging] = useState(false)
     //update default input functions
     useUpdateEffect(()=>{
-      taskDateStatusIsChanging? settaskDateStatusIsChanging(false) : null
+      if(taskDateStatusIsChanging)
+        settaskDateStatusIsChanging(false)
     },[taskDateStatusIsChanging])
     useUpdateEffect(()=>{
-      taskStatusIsChanging? settaskStatusIsChanging(false) : null
+      if(taskStatusIsChanging)
+        settaskStatusIsChanging(false)
     },[taskStatusIsChanging])
 
   //=helper
@@ -72,7 +74,6 @@ export default function Home() {
   const currentTimezoneOffset = useRef(new Date().getTimezoneOffset())
     //helper functions
     const nulled = (v) => {return typeof v === "undefined" ? true : v === null ? true : v.length === 0}
-    const val = (v) => {return nulled(v)?[]:v}
 
   //=first render
   useEffect(() => {
@@ -85,7 +86,7 @@ export default function Home() {
           Router.push({pathname: "/login"},"/login",{ shallow: true })
         }
         else {
-          return setData(val(result))
+          setData(result||[])
         }
       },
     })
@@ -93,19 +94,19 @@ export default function Home() {
 
   //=consequent renders
   useUpdateEffect(() => {
-    setCategories(data.categories)
-    setTasks(data.tasks)
+    nulled(data.categories)?null:setCategories(data.categories||[])
+    nulled(data.tasks)?null:setTasks(data.tasks||[])
   },[data])
 
   useUpdateEffect(() => {
-    setopenedCategory(val(categories[0]))
+    nulled(categories[0])?null:setopenedCategory(categories[0]||[])
   },[categories])
 
   //=CheckDateStatus
   useUpdateEffectInterval(()=>{
     if(nulled(tasks)) return
     tasks.map((task)=>{
-      var currentTaskDateStatus = CheckTimeStatus(new Date(), new Date(task.start_date), new Date(task.end_date))
+      const currentTaskDateStatus = CheckTimeStatus(new Date(), new Date(task.start_date), new Date(task.end_date))
       if(currentTaskDateStatus!==task.date_status){
         $.ajax({
           type: "POST",
@@ -115,7 +116,7 @@ export default function Home() {
             date_status: currentTaskDateStatus
           },
           success: (result) => {
-            setTasks(result.tasks)
+            setTasks(result.tasks||[])
           }
         })
       }
@@ -129,26 +130,19 @@ export default function Home() {
     alert("Detected changes in Location, new Timezone: (UTC"
     +(clientOffset[0]<0?"-":"+")
     +((clientOffset[0]<10&&clientOffset[0]>=0)||(clientOffset[0]>-10&&clientOffset[0]<=0)?"0"
-    +Math.abs(clientOffset[0]):(Math.abs(TimeOffset[0])))+":"
+    +Math.abs(clientOffset[0]):(Math.abs(clientOffset[0])))+":"
     +((clientOffset[1]<10&&clientOffset[1]>=0)||(clientOffset[1]>-10&&clientOffset[1]<=0)?"0"
     +Math.abs(clientOffset[1]):Math.abs(clientOffset[1]))+") at \n'"
     +Intl.DateTimeFormat().resolvedOptions().timeZone
     +"', you may notice some changes.")
-    new Promise((resolve)=>{
-      tasks.map((task) => {
-        if (task !== chosenUpdateTask) return
-        setchosenUpdateTask(task)
-      })
-      resolve()
-    }).then(()=>{
-      settaskDateStatusIsChanging(true)
-    })
+    settaskDateStatusIsChanging(true)
   },[clientTimezoneOffset])
 
   //=check live timezones
   useEffectInterval(()=>{
-    if(currentTimezoneOffset.current!==new Date().getTimezoneOffset()){
-      currentTimezoneOffset.current=new Date().getTimezoneOffset()
+    const toffset = new Date().getTimezoneOffset()
+    if(currentTimezoneOffset.current!==toffset){
+      currentTimezoneOffset.current=toffset
       setclientTimezoneOffset(TimezoneOffset())
     }
   },[],500)
@@ -164,10 +158,10 @@ export default function Home() {
         url: "/auth/logout",
         success: () => {
           Router.push("/login", undefined, { shallow: true })
-          return isRunning.current=false
-        },error: ()=>{return isRunning.current=false}
+          isRunning.current=false
+        },error: ()=>isRunning.current=false
       })               
-    } else return isRunning.current=false
+    } else isRunning.current=false
   }
 
   //=category form
@@ -176,21 +170,22 @@ export default function Home() {
     if(nulled(addCategoryName)) return dom("#add-category_name").reportValidity
     if(isRunning.current) return
     isRunning.current=true
+    const _addCategoryName = addCategoryName
     setaddCategoryName([])
     setCategories([{
-      category_name:addCategoryName,
+      category_name:_addCategoryName,
     },...categories])
     $.ajax({
       type: "POST",
       url: "/category/addcategory",
       data: {
-        category_name: addCategoryName
+        category_name: _addCategoryName
       },
       success: (result) => {
-        setCategories(result.categories)
-        setopenedCategory(result.categories[0])
-        return isRunning.current=false
-      },error: ()=>{return isRunning.current=false}
+        setCategories(result.categories||[])
+        setopenedCategory(result.categories[0]||[])
+        isRunning.current=false
+      },error: ()=> isRunning.current=false
     })
   }
 
@@ -199,8 +194,10 @@ export default function Home() {
     if(nulled(updateCategoryName)) return dom("#update-category_name").reportValidity
     if(isRunning.current) return
     isRunning.current=true
+    const _updateCategoryName = updateCategoryName
+    setupdateCategoryName([])
     setCategories([{
-      category_name: updateCategoryName,
+      category_name: _updateCategoryName,
       ...categories
     }])
     closeUpdateCategory()
@@ -208,14 +205,14 @@ export default function Home() {
       type: "POST",
       url: "/category/updatecategory",
       data: {
-        category_name: updateCategoryName,
+        category_name: _updateCategoryName,
         category_id: chosenUpdateCategory.id,
       },
       success: (result) => {
         isRunning.current=false
-        setopenedCategory(result.categories[0])
-        return setCategories(result.categories)
-      },error: ()=>{return isRunning.current=false}
+        setopenedCategory(result.categories[0]||[])
+        setCategories(result.categories||[])
+      },error: ()=> isRunning.current=false
     })
   }
 
@@ -226,7 +223,7 @@ export default function Home() {
     closeAllPopups.current=true
     closeUpdateCategoryAlert()
     if(openedCategory === chosenUpdateCategory)
-      setopenedCategory(val(categories[0]))
+      setopenedCategory(categories[0]||[])
     setTasks(tasks.filter((task)=>{return task.category_id!==chosenUpdateCategory.id}))
     setCategories(categories.filter((category)=>{return category!==chosenUpdateCategory}))
     $.ajax({
@@ -239,10 +236,10 @@ export default function Home() {
         isRunning.current=false
         if(nulled(result.categories)) return setopenedCategory([])
         else if(openedCategory === chosenUpdateCategory)
-          setopenedCategory(result.categories[0])
-        setTasks(result.tasks)
-        return setCategories(result.categories)
-      },error: ()=>{return isRunning.current=false}
+          setopenedCategory(result.categories[0]||[])
+        setTasks(result.tasks||[])
+        setCategories(result.categories)
+      },error: ()=> isRunning.current=false
     })
   }
   
@@ -280,7 +277,7 @@ export default function Home() {
     if(nulled(categories)) return
     categories.map((xcategory) => {
       if (xcategory !== category) return
-      setchosenUpdateCategory(category)
+      setchosenUpdateCategory(category||[])
       setupdateCategoryIsOpen(true)
     })
   }
@@ -445,7 +442,7 @@ export default function Home() {
       end_date: end_date,
       description: addTaskDescription,
       date_status: date_status,
-      taskisfinished: 0,},
+      taskisfinished: 0},
       ...tasks.filter(x=>{return (new Date(x.end_date)>=new Date(end_date))})
     ])
     closeAddTask()
@@ -469,7 +466,7 @@ export default function Home() {
         setCategories(result.categories)
         if (result.noCategory)
           setopenedCategory(result.categories[0])
-        setTasks(val(result.tasks))
+        setTasks(result.tasks||[])
       },error: ()=>{return isRunning.current=false}
     })
   }
@@ -578,7 +575,7 @@ export default function Home() {
         isRunning.current=false
         setCategories(result.categories)
         setTasks(result.tasks)
-        return settaskStatusIsChanging(true)
+        settaskStatusIsChanging(true)
       }
       ,error: ()=>{return isRunning.current=false}
     })
@@ -987,9 +984,10 @@ export default function Home() {
             else return input.isActive || !nulled(input.val)
           })
         if(html.outerWidth>=785) {
+          console.log(html.outerWidth)
           oldWinWidth=newWinWidth
           catmenu.css({translateY: 0, opacity:1})
-          return html.css({overflow: "hidden"})
+          return html.css({overflow: "visible"})
         } else if(oldWinWidth>785 && !catIsInuse) {
           oldWinWidth=newWinWidth
           catmenu.animate({translateY: -catmenu.y("c")})
@@ -1091,7 +1089,7 @@ export default function Home() {
                 {nulled(categories) ? (
                   <h3>Tasks</h3>
                 ) : (
-                  <h3 className="break-word">Tasks: {val(openedCategory.category_name)}</h3>
+                  <h3 className="break-word">Tasks{(": "+openedCategory.category_name)||""}</h3>
                 )}
                 <div className="icon-container-dark">
                   <img className="cur-point" onClick={openAddTask} src="/icons/add button black.svg" alt="add task" />
