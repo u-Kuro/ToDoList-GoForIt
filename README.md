@@ -1,17 +1,54 @@
-# ToDoList GoForIt
-  A mini todolist application using node, nextjs, expressjs, and self made jquery clone
+# GoForIt — Task Management Web App
 
-## Prerequisites
-  - [XAMPP](https://www.apachefriends.org/xampp-files/7.4.28/xampp-windows-x64-7.4.28-1-VC15-installer.exe)
-  - [Node](https://nodejs.org/dist/v16.14.2/node-v16.14.2-x64.msi)
+A full-stack, multi-user task management application with real-time status tracking, session-based authentication, and a relational data model. Built end-to-end without scaffolded boilerplate beyond the core framework.
 
-## Get Started Locally
-  1) Start Apache and MySQL in XAMPP
-  2) Create database named gfi_v1 in http://localhost/phpmyadmin/index.php?route=/server/databases&server=1
-  3) Import and choose file named gfi_v1.sql (from the zip) in the created database, click go then...
-  4) Open Start Server.bat (two consecutive 'ctrl+c' to end server)
-  5) Search http://localhost:5500 in browser if it did not automatically start
+---
 
-## See Deployed Example in Heroku
-  - [ToDoList-GoForIt](https://todolist-goforit.herokuapp.com)
+## What It Does
 
+Users register, log in, and manage tasks organized into named categories. Each task carries a name, description, start/end datetimes, and a computed status — **Soon**, **Ongoing**, or **Missed** — that updates automatically based on the current time. Users can mark tasks complete, bulk-delete finished tasks, and rename or delete categories.
+
+---
+
+## Technical Highlights
+
+### Data Modeling & SQL
+Designed a normalized relational schema across four tables (`users`, `category`, `tasks`, `sessions`) with foreign key relationships enforcing per-user data ownership. All queries explicitly scope results to `users_id` — no user can read or mutate another user's data. Cascade deletes on category removal are handled at the application layer, keeping dependent tasks consistent.
+
+### Backend Architecture
+Built a RESTful API in **Node.js + Express** with route-level session authentication guards. Every mutation endpoint returns a fresh server-side snapshot of the affected data, avoiding stale client state without a separate polling layer. Used **MySQL connection pooling** to handle concurrent requests efficiently.
+
+### Authentication & Security
+Passwords are hashed with **bcryptjs** (cost factor 8) before storage. Sessions are persisted server-side in MySQL via `express-mysql-session`, with configurable expiration and automatic cleanup — avoiding the security risks of purely client-side JWTs for this use case.
+
+### Timezone-Aware Datetime Handling
+Wrote a custom time utility module that converts between UTC (storage), local browser time (display), and HTML datetime-input format. The `CheckTimeStatus` function computes task urgency relative to the client's local clock, not the server's — a deliberate design choice to correctly handle users across timezones.
+
+### Frontend & Custom Hooks
+Built the UI in **React + Next.js** (SSR). Authored a suite of custom React hooks — `useUpdateEffect`, `useEffectInterval`, `useUpdateEffectInterval`, `useUpdateOnceEffect`, `useUpdateEffectIf` — to give fine-grained control over when effects re-run, avoiding the "run on mount" behavior of the standard `useEffect` where it was undesirable.
+
+### Custom DOM Utility Library
+Authored `animation.js`, a jQuery-inspired DOM abstraction built on the Web Animations API. It supports CSS property setting, transform shorthand, keyframe animation, scroll manipulation, and element dimension utilities — written from scratch to understand what abstraction layers like jQuery actually do under the hood.
+
+---
+
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Runtime | Node.js |
+| Server | Express.js |
+| Frontend | React 18, Next.js 12 |
+| Database | MySQL (via `mysql` connection pool) |
+| Auth | `express-session` + `bcryptjs` |
+| Session Store | `express-mysql-session` |
+| Deployment | Heroku |
+
+---
+
+## What This Demonstrates
+
+- Ability to **own a full system** — from schema design to UI rendering — without splitting the problem into pre-solved parts
+- Practical understanding of **relational data ownership and query scoping**
+- Deliberate decisions around **data freshness, timezone correctness, and auth persistence** — not just wiring libraries together
+- Comfort writing **low-level utilities** (time conversion, DOM animation) rather than defaulting to dependencies
