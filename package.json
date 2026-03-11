@@ -1,7 +1,7 @@
 {
   "name": "goforit-v1",
   "version": "1.0.0",
-  "description": "",
+  "description": "A mini todolist application using node, nextjs, expressjs, and self made jquery clone",
   "main": "home.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -16,15 +16,15 @@
     "@kushii/dom": "^2.1.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.0.0",
-    "express": "^4.17.3",
+    "express": "^4.22.1",
     "express-mysql-session": "^2.1.7",
     "express-session": "^1.17.2",
     "jquery": "^3.6.0",
     "mysql": "^2.18.1",
-    "next": "^12.1.5",
+    "next": "^12.3.7",
     "nodemon": "^2.0.15",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "request": "^2.88.2"
   }
 }
